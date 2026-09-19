@@ -10,86 +10,112 @@
 }
 
 @layer base {
-  .theme {
-    --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
-  }
   :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
-  }
-  .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: #080d17;
+    --foreground: #f1f5f9;
+    --card: #0e1626;
+    --card-foreground: #f1f5f9;
+    --popover: #0e1626;
+    --popover-foreground: #f1f5f9;
+    --primary: #00e5a3;
+    --primary-foreground: #04100c;
+    --secondary: #162032;
+    --secondary-foreground: #f1f5f9;
+    --muted: #162032;
+    --muted-foreground: #94a3b8;
+    --accent: #00f2fe;
+    --accent-foreground: #04100c;
+    --destructive: #ef4444;
+    --border: #1e2d42;
+    --input: #1e2d42;
+    --ring: #00e5a3;
+    --radius: 0.75rem;
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: #080d17;
+    color: #f1f5f9;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+  
   html {
     @apply font-sans;
   }
 }
 
+/* Aurora Mint & Midnight Obsidian Ambient Canvas Background */
+.bg-tactical-grid {
+  background-color: #080d17;
+  background-image: 
+    radial-gradient(ellipse at 90% 5%, rgba(0, 229, 163, 0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 5% 95%, rgba(0, 242, 254, 0.08) 0%, transparent 40%),
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+}
+
+/* Subdued Tactical Map Tiles */
+.tactical-map-tiles {
+  filter: saturate(0.85) contrast(1.1) brightness(0.92);
+}
+
+.tactical-satellite-tiles {
+  filter: saturate(0.88) contrast(1.08) brightness(0.95);
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #080d17;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e2d42;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00e5a3;
+}
+
+/* Leaflet Customizations */
+.leaflet-container {
+  background-color: #080d17 !important;
+  font-family: inherit !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #0e1626 !important;
+  color: #f8fafc !important;
+  border: 1px solid #1e2d42 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 14px 30px -5px rgba(0, 0, 0, 0.7) !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+  background: #0e1626 !important;
+  border: 1px solid #1e2d42 !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: #0e1626 !important;
+  color: #cbd5e1 !important;
+  border-color: #1e2d42 !important;
+  border-radius: 8px !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #162032 !important;
+  color: #00e5a3 !important;
+}
+
 .custom-tiles {
-  /* No filter needed for rich street basemap */
+  filter: saturate(0.88) contrast(1.08) brightness(0.94);
 }
