@@ -486,13 +486,9 @@ export default function Dashboard() {
               <span className="text-base font-bold tracking-wider uppercase text-[#263238] font-mono">
                 CIVICPULSE
               </span>
-              <span className="text-[9px] bg-[#E6F7F0] text-[#0f766e] border border-[#A7F3D0] px-2 py-0.5 rounded-full font-mono font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] animate-ping inline-block" />
-                100% REAL LIVE DATA
-              </span>
             </div>
             <div className="text-[9px] text-[#6B6F6B] uppercase font-mono tracking-wider">
-              NOAA NWS & Open-Meteo Municipal Climate Action Engine
+              AI-Powered Urban Risk Intelligence & Response Simulator
             </div>
           </div>
         </div>
