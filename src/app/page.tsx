@@ -329,45 +329,45 @@ export default function Dashboard() {
   }, [baseSelectedZone, currentHeatRiskScore]);
 
   return (
-    <div className="flex h-screen bg-[#080d17] text-slate-100 flex-col overflow-hidden font-sans select-none antialiased bg-tactical-grid">
+    <div className="flex h-screen bg-[#F5F1E8] text-[#263238] flex-col overflow-hidden font-sans select-none antialiased bg-tactical-grid">
       
       {/* ========================================================================= */}
       {/* 1. TOP HEADER & MAIN NAVIGATION BAR                                       */}
       {/* ========================================================================= */}
-      <header className="flex h-14 items-center justify-between px-5 bg-[#0a0f1d]/90 backdrop-blur-md text-white shrink-0 z-50 border-b border-[#1e2d42] shadow-2xl">
+      <header className="flex h-14 items-center justify-between px-5 bg-[#FAF8F2] text-[#263238] shrink-0 z-50 border-b border-[#DDD5C7] shadow-sm">
         
         {/* Left Brand Identity */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#00e5a3]/15 border border-[#00e5a3]/60 flex items-center justify-center rounded-xl shrink-0 shadow-[0_0_15px_rgba(0,229,163,0.3)]">
-            <Activity className="h-4 w-4 text-[#00e5a3]" strokeWidth={2.5} />
+          <div className="w-8 h-8 bg-[#E8F5EF] border border-[#0d9488]/40 flex items-center justify-center rounded-xl shrink-0 shadow-sm">
+            <Activity className="h-4 w-4 text-[#0d9488]" strokeWidth={2.5} />
           </div>
           <div className="flex flex-col justify-center">
             <div className="flex items-baseline gap-2">
-              <span className="text-base font-bold tracking-wider uppercase text-white font-mono">
+              <span className="text-base font-bold tracking-wider uppercase text-[#263238] font-mono">
                 CIVICPULSE
               </span>
-              <span className="text-[9px] bg-[#00e5a3]/20 text-[#00e5a3] border border-[#00e5a3]/40 px-2 py-0.5 rounded-full font-mono font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00e5a3] animate-ping inline-block" />
+              <span className="text-[9px] bg-[#E6F7F0] text-[#0f766e] border border-[#A7F3D0] px-2 py-0.5 rounded-full font-mono font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] animate-ping inline-block" />
                 100% REAL LIVE DATA
               </span>
             </div>
-            <div className="text-[9px] text-slate-400 uppercase font-mono tracking-wider">
+            <div className="text-[9px] text-[#6B6F6B] uppercase font-mono tracking-wider">
               NOAA NWS & Open-Meteo Municipal Climate Action Engine
             </div>
           </div>
         </div>
 
         {/* Center: Dedicated 4-Page Navigation Tabs */}
-        <nav className="flex items-center bg-[#090e18] p-1 rounded-2xl border border-[#1e2d42] shadow-inner">
+        <nav className="flex items-center bg-[#EEE8DC] p-1 rounded-2xl border border-[#DDD5C7] shadow-inner">
           <button
             onClick={() => setActiveTab('HEATWAVE_SIMULATOR')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'HEATWAVE_SIMULATOR'
-                ? 'bg-[#00e5a3]/20 text-[#00e5a3] border border-[#00e5a3]/60 shadow-[0_0_12px_rgba(0,229,163,0.25)]'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0] shadow-sm'
+                : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
-            <Flame className="w-3.5 h-3.5 text-[#00e5a3]" />
+            <Flame className="w-3.5 h-3.5 text-[#0d9488]" />
             <span>1. Urban Heat Simulator</span>
           </button>
 
@@ -375,11 +375,11 @@ export default function Dashboard() {
             onClick={() => setActiveTab('MULTI_HAZARD_ATLAS')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'MULTI_HAZARD_ATLAS'
-                ? 'bg-[#00f2fe]/20 text-[#00f2fe] border border-[#00f2fe]/60 shadow-[0_0_12px_rgba(0,242,254,0.25)]'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-[#E0F2FE] text-[#0369a1] border border-[#BAE6FD] shadow-sm'
+                : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
-            <Globe className="w-3.5 h-3.5 text-[#00f2fe]" />
+            <Globe className="w-3.5 h-3.5 text-[#0284c7]" />
             <span>2. National Hazard Atlas</span>
           </button>
 
@@ -387,11 +387,11 @@ export default function Dashboard() {
             onClick={() => setActiveTab('CLIMATE_ANALYTICS')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'CLIMATE_ANALYTICS'
-                ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/60 shadow-[0_0_12px_rgba(99,102,241,0.25)]'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-[#EEF2FF] text-[#4338ca] border border-[#C7D2FE] shadow-sm'
+                : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
-            <BarChart3 className="w-3.5 h-3.5 text-indigo-400" />
+            <BarChart3 className="w-3.5 h-3.5 text-[#4f46e5]" />
             <span>3. NOAA & ML Forecasts</span>
           </button>
 
@@ -399,14 +399,14 @@ export default function Dashboard() {
             onClick={() => setActiveTab('EOC_DISPATCH')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'EOC_DISPATCH'
-                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/60 shadow-[0_0_12px_rgba(244,63,94,0.25)]'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-[#FFE4E6] text-[#be123c] border border-[#FECDD3] shadow-sm'
+                : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
-            <Siren className="w-3.5 h-3.5 text-rose-400" />
+            <Siren className="w-3.5 h-3.5 text-[#e11d48]" />
             <span>4. Federal EOC Dispatch</span>
             {liveAlerts.length > 0 && (
-              <span className="text-[9px] bg-rose-500 text-white font-bold px-1.5 py-0.2 rounded-full">
+              <span className="text-[9px] bg-[#e11d48] text-white font-bold px-1.5 py-0.2 rounded-full">
                 {liveAlerts.length}
               </span>
             )}
@@ -419,35 +419,35 @@ export default function Dashboard() {
           <button
             onClick={() => fetchLiveTelemetry(false)}
             disabled={isLoadingLive || isLiveRefreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0e1626] border border-[#1e2d42] text-[#00f2fe] font-mono text-[11px] font-bold hover:bg-[#162032] hover:border-[#00e5a3] hover:text-[#00e5a3] transition-all cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#0f766e] font-mono text-[11px] font-bold hover:bg-[#FFFDF8] hover:border-[#0d9488] hover:text-[#0d9488] transition-all cursor-pointer shadow-sm"
             title="Force immediate live data refresh from NOAA and Open-Meteo"
           >
-            <RefreshCw className={`w-3 h-3 text-[#00f2fe] ${isLiveRefreshing || isLoadingLive ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3 h-3 text-[#0d9488] ${isLiveRefreshing || isLoadingLive ? 'animate-spin' : ''}`} />
             <span>{isLiveRefreshing || isLoadingLive ? 'Syncing...' : 'Refresh Live'}</span>
           </button>
 
           {/* Citizen Phone Alert Simulator Trigger */}
           <button
             onClick={() => setIsCitizenAlertModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-rose-500/20 hover:bg-rose-500/30 border border-rose-400 text-rose-300 font-mono text-xs font-bold shadow-[0_0_12px_rgba(244,63,94,0.25)] hover:scale-105 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FFE4E6] hover:bg-[#FECDD3] border border-[#FECDD3] text-[#be123c] font-mono text-xs font-bold shadow-sm hover:scale-105 transition-all cursor-pointer"
             title="Launch Citizen Phone Alert SMS & WEA Simulator"
           >
-            <Smartphone className="w-3.5 h-3.5 text-rose-400" />
+            <Smartphone className="w-3.5 h-3.5 text-[#e11d48]" />
             <span>📱 Citizen Alert (SMS)</span>
           </button>
 
           {/* 90-Sec Pitch Flow */}
           <button
             onClick={triggerDemoFlow}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#00e5a3] to-[#00d2b4] hover:from-[#00d2b4] hover:to-[#00e5a3] text-[#04100c] border border-[#00e5a3] font-mono text-xs font-bold shadow-[0_0_15px_rgba(0,229,163,0.35)] hover:scale-105 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0d9488] hover:bg-[#0f766e] text-white border border-[#0d9488] font-mono text-xs font-bold shadow-sm hover:scale-105 transition-all cursor-pointer"
             title="Launch the 90-second judge presentation demo flow"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#04100c]" />
+            <Sparkles className="w-3.5 h-3.5 text-white" />
             <span>⚡ 90-Sec Demo</span>
           </button>
 
-          <div className="hidden xl:flex items-center gap-1.5 font-mono text-[10px] text-slate-300 bg-[#0e1626]/90 px-3 py-1.5 rounded-full border border-[#1e2d42]">
-            <Clock className="w-3 h-3 text-[#00e5a3]" />
+          <div className="hidden xl:flex items-center gap-1.5 font-mono text-[10px] text-[#263238] bg-[#FAF8F2] px-3 py-1.5 rounded-full border border-[#DDD5C7]">
+            <Clock className="w-3 h-3 text-[#0d9488]" />
             <span>{currentTime || 'LIVE TELEMETRY'}</span>
           </div>
         </div>
@@ -456,31 +456,31 @@ export default function Dashboard() {
       {/* ========================================================================= */}
       {/* 2. REAL-TIME DATA PROVENANCE & AUTO-REFRESH SUB-BAR                       */}
       {/* ========================================================================= */}
-      <div className="bg-[#090e18] border-b border-[#1e2d42] px-5 py-1.5 flex items-center justify-between text-[10px] font-mono shrink-0">
+      <div className="bg-[#EEE8DC] border-b border-[#DDD5C7] px-5 py-1.5 flex items-center justify-between text-[10px] font-mono shrink-0">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-[#00e5a3] font-bold">
-            <span className="w-2 h-2 rounded-full bg-[#00e5a3] inline-block animate-pulse" />
+          <div className="flex items-center gap-1.5 text-[#0f766e] font-bold">
+            <span className="w-2 h-2 rounded-full bg-[#0d9488] inline-block animate-pulse" />
             <span>LAST UPDATED: {telemetryData?.lastUpdatedUtc || 'CONNECTING TO NOAA...'}</span>
           </div>
-          <span className="text-slate-600">|</span>
-          <div className="flex items-center gap-1.5 text-slate-300">
-            <Clock className="w-3 h-3 text-[#00e5a3]" />
-            <span>AUTO-REFRESH: <strong className="text-[#00e5a3]">{formatCountdown(nextRefreshSeconds)}</strong> (1-Hr Cycle)</span>
+          <span className="text-[#DDD5C7]">|</span>
+          <div className="flex items-center gap-1.5 text-[#6B6F6B]">
+            <Clock className="w-3 h-3 text-[#0d9488]" />
+            <span>AUTO-REFRESH: <strong className="text-[#0f766e]">{formatCountdown(nextRefreshSeconds)}</strong> (1-Hr Cycle)</span>
           </div>
           {fetchError && (
-            <span className="text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-700/50">
+            <span className="text-amber-800 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">
               ⚠ {fetchError}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-3 text-slate-400">
-          <span className="hidden lg:inline text-slate-500">OFFICIAL SOURCES:</span>
-          <span className="text-[#00f2fe] font-semibold">NOAA NWS (`api.weather.gov`)</span>
-          <span className="text-slate-600">&bull;</span>
-          <span className="text-[#00f2fe] font-semibold">Open-Meteo NOAA HRRR/GFS</span>
-          <span className="text-slate-600">&bull;</span>
-          <span className="text-slate-300">US Census Bureau 5-Yr ACS</span>
+        <div className="flex items-center gap-3 text-[#6B6F6B]">
+          <span className="hidden lg:inline text-[#6B6F6B]/80 font-bold">OFFICIAL SOURCES:</span>
+          <span className="text-[#0f766e] font-semibold">NOAA NWS (`api.weather.gov`)</span>
+          <span className="text-[#DDD5C7]">&bull;</span>
+          <span className="text-[#0f766e] font-semibold">Open-Meteo NOAA HRRR/GFS</span>
+          <span className="text-[#DDD5C7]">&bull;</span>
+          <span className="text-[#263238] font-semibold">US Census Bureau 5-Yr ACS</span>
         </div>
       </div>
 
@@ -491,11 +491,11 @@ export default function Dashboard() {
         <div className="flex flex-col flex-1 overflow-hidden">
           
           {/* Tactical Sub-Bar */}
-          <div className="flex items-center justify-between bg-[#0a0f1d] border-b border-[#1e2d42] px-5 py-2 shrink-0 text-xs font-mono">
+          <div className="flex items-center justify-between bg-[#FAF8F2] border-b border-[#DDD5C7] px-5 py-2 shrink-0 text-xs font-mono">
             {/* Target Dropdown */}
             <div className="flex items-center gap-2.5">
-              <label htmlFor="focus-target-select" className="text-[10px] text-slate-400 uppercase tracking-wider font-bold flex items-center gap-1.5 shrink-0">
-                <MapPin className="w-3.5 h-3.5 text-[#00e5a3]" />
+              <label htmlFor="focus-target-select" className="text-[10px] text-[#6B6F6B] uppercase tracking-wider font-bold flex items-center gap-1.5 shrink-0">
+                <MapPin className="w-3.5 h-3.5 text-[#0d9488]" />
                 <span>FOCUS MUNICIPAL TARGET:</span>
               </label>
               <div className="relative flex items-center">
@@ -504,23 +504,23 @@ export default function Dashboard() {
                   aria-label="Select Target Zone"
                   value={selectedZoneId}
                   onChange={(e) => setSelectedZoneId(e.target.value)}
-                  className="bg-[#0e1626] text-[#00e5a3] border border-[#00e5a3]/50 hover:border-[#00e5a3] focus:border-[#00e5a3] text-xs font-mono font-bold pl-3 pr-8 py-1.5 rounded-xl outline-none shadow-sm cursor-pointer transition-all appearance-none min-w-[340px]"
+                  className="bg-[#FFFDF8] text-[#0f766e] border border-[#DDD5C7] hover:border-[#0d9488] focus:border-[#0d9488] text-xs font-mono font-bold pl-3 pr-8 py-1.5 rounded-xl outline-none shadow-sm cursor-pointer transition-all appearance-none min-w-[340px]"
                 >
                   {liveZones.map((z) => (
-                    <option key={z.id} value={z.id} className="bg-[#0e1626] text-slate-100 font-sans">
+                    <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans">
                       📍 {z.name} — {z.metro} ({(z.temperatureF ?? 95.0).toFixed(1)}°F | Risk: {z.liveRiskScore ?? 74}/100)
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-[#00e5a3] absolute right-2.5 pointer-events-none" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#0d9488] absolute right-2.5 pointer-events-none" />
               </div>
             </div>
 
             {/* Live Data Status & Reset Action */}
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 text-xs text-slate-300">
-                <span className="text-[10px] text-slate-400 uppercase font-bold">SOURCE:</span>
-                <span className="text-[11px] bg-[#0e1626] px-2.5 py-0.5 rounded-full border border-[#1e2d42] text-[#00e5a3] font-semibold">
+              <div className="flex items-center gap-1.5 text-xs text-[#6B6F6B]">
+                <span className="text-[10px] uppercase font-bold text-[#6B6F6B]">SOURCE:</span>
+                <span className="text-[11px] bg-[#FFFDF8] px-2.5 py-0.5 rounded-full border border-[#DDD5C7] text-[#0f766e] font-semibold shadow-sm">
                   Live Atmospheric Telemetry (NOAA HRRR / Open-Meteo)
                 </span>
               </div>
@@ -528,10 +528,10 @@ export default function Dashboard() {
               {isTacticalActive && (
                 <button
                   onClick={() => setTacticalPlan({ coolingBuses: 0, gridGenerators: 0, paramedicSurge: 0, weaBroadcastSent: false })}
-                  className="flex items-center gap-1 text-[10px] text-slate-400 hover:text-[#00e5a3] border border-[#1e2d42] px-2.5 py-0.5 rounded-lg bg-[#0e1626] hover:bg-[#162032] cursor-pointer transition-colors"
+                  className="flex items-center gap-1 text-[10px] text-[#6B6F6B] hover:text-[#0d9488] border border-[#DDD5C7] px-2.5 py-0.5 rounded-lg bg-[#FFFDF8] hover:bg-[#FAF8F2] cursor-pointer transition-colors shadow-sm"
                   title="Reset to Live Baseline (Clear simulation)"
                 >
-                  <RotateCcw className="w-3 h-3" />
+                  <RotateCcw className="w-3 h-3 text-[#0d9488]" />
                   <span>Reset Action</span>
                 </button>
               )}
@@ -571,46 +571,46 @@ export default function Dashboard() {
             </div>
 
             {/* Right Tactical Action & Simulation Console (460px) */}
-            <div className="w-[460px] bg-[#090e18] border-l border-[#1e2d42] flex flex-col shrink-0 overflow-y-auto z-10 text-slate-200 p-4 space-y-3 shadow-2xl">
+            <div className="w-[460px] bg-[#FAF8F2] border-l border-[#DDD5C7] flex flex-col shrink-0 overflow-y-auto z-10 text-[#263238] p-4 space-y-3 shadow-md">
               
               {baseSelectedZone ? (
                 <>
                   {/* Target Zone Header */}
-                  <div className="bg-[#0e1626] border border-[#1e2d42] p-3.5 rounded-2xl shadow-md">
+                  <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3.5 rounded-2xl shadow-sm">
                     <div className="flex justify-between items-start mb-1 font-mono">
-                      <span className="text-[9px] uppercase tracking-widest text-[#00e5a3] font-bold">
+                      <span className="text-[9px] uppercase tracking-widest text-[#0f766e] font-bold">
                         {baseSelectedZone.metro}
                       </span>
-                      <span className="text-[9px] text-slate-400 font-bold">
+                      <span className="text-[9px] text-[#6B6F6B] font-bold">
                         {baseSelectedZone.stateCode} &bull; Lat {baseSelectedZone.lat.toFixed(2)}, Lng {baseSelectedZone.lng.toFixed(2)}
                       </span>
                     </div>
                     
-                    <h2 className="text-lg font-bold text-white mb-2">
+                    <h2 className="text-lg font-bold text-[#263238] mb-2">
                       {baseSelectedZone.name}
                     </h2>
 
-                    <div className="flex items-end justify-between pt-2 border-t border-[#1e2d42] font-mono">
+                    <div className="flex items-end justify-between pt-2 border-t border-[#DDD5C7] font-mono">
                       <div>
-                        <span className="text-[9px] uppercase tracking-widest text-slate-400 block mb-0.5 font-semibold">Incident Threat Tier</span>
+                        <span className="text-[9px] uppercase tracking-widest text-[#6B6F6B] block mb-0.5 font-semibold">Incident Threat Tier</span>
                         <span 
                           className="text-[10px] font-bold uppercase tracking-wider text-white px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 shadow-sm"
                           style={{ backgroundColor: isTacticalActive ? simulatedRiskColor : currentRiskColor }}
                         >
-                          <ShieldAlert className="w-3.5 h-3.5" />
+                          <ShieldAlert className="w-3.5 h-3.5 text-white" />
                           {getRiskTier(isTacticalActive ? simulatedHeatRiskScore || currentHeatRiskScore : currentHeatRiskScore)} RISK
-                          {isTacticalActive && <span className="text-[8px] bg-black/40 px-1.5 py-0.2 rounded">SIMULATED</span>}
+                          {isTacticalActive && <span className="text-[8px] bg-black/30 px-1.5 py-0.2 rounded">SIMULATED</span>}
                         </span>
                       </div>
 
                       <div className="text-right">
-                        <span className="text-[9px] uppercase tracking-widest text-slate-400 block mb-0.5">Calculated Risk Score</span>
+                        <span className="text-[9px] uppercase tracking-widest text-[#6B6F6B] block mb-0.5">Calculated Risk Score</span>
                         <span 
                           className="text-3xl font-bold tabular-nums leading-none"
                           style={{ color: isTacticalActive ? simulatedRiskColor : currentRiskColor }}
                         >
                           {isTacticalActive ? simulatedHeatRiskScore : currentHeatRiskScore}
-                          <span className="text-xs text-slate-500 font-normal">/100</span>
+                          <span className="text-xs text-[#6B6F6B] font-normal">/100</span>
                         </span>
                       </div>
                     </div>
@@ -618,79 +618,79 @@ export default function Dashboard() {
 
                   {/* 4 Quantitative Live Drivers Grid */}
                   <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                    <div className="bg-[#0e1626] border border-[#1e2d42] p-2.5 rounded-xl">
+                    <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-xl shadow-sm">
                       <div className="flex justify-between items-center mb-0.5">
-                        <span className="text-[8px] text-slate-400 uppercase tracking-wider">Live Atmospheric Temp</span>
-                        <span className="text-[8px] text-[#00e5a3] font-bold">{baseSelectedZone.isDaytime ? '☀️ Solar Peak' : '🌙 Night Low'}</span>
+                        <span className="text-[8px] text-[#6B6F6B] uppercase tracking-wider">Live Atmospheric Temp</span>
+                        <span className="text-[8px] text-[#0f766e] font-bold">{baseSelectedZone.isDaytime ? '☀️ Solar Peak' : '🌙 Night Low'}</span>
                       </div>
-                      <strong className="text-sm text-white">
+                      <strong className="text-sm text-[#263238]">
                         {`${(baseSelectedZone.temperatureF ?? 98.4).toFixed(1)}°F (${(baseSelectedZone.temperatureC ?? 36.9).toFixed(1)}°C)`}
                       </strong>
                       {isTacticalActive && simulatedTempF !== null && (
-                        <div className="text-[9px] text-[#00e5a3] font-bold mt-0.5">
+                        <div className="text-[9px] text-[#0f766e] font-bold mt-0.5">
                           Simulated: {simulatedTempF}°F ({Math.round(((simulatedTempF - 32) * 5) / 9)}°C)
                         </div>
                       )}
                     </div>
 
-                    <div className="bg-[#0e1626] border border-[#1e2d42] p-2.5 rounded-xl">
-                      <span className="text-[8px] text-slate-400 uppercase tracking-wider block mb-0.5">Substation Grid Load</span>
-                      <strong className={`text-sm ${simulatedGridStress > 80 ? 'text-rose-400' : simulatedGridStress > 60 ? 'text-amber-400' : 'text-[#00e5a3]'}`}>
+                    <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-xl shadow-sm">
+                      <span className="text-[8px] text-[#6B6F6B] uppercase tracking-wider block mb-0.5">Substation Grid Load</span>
+                      <strong className={`text-sm ${simulatedGridStress > 80 ? 'text-rose-600' : simulatedGridStress > 60 ? 'text-amber-600' : 'text-[#0f766e]'}`}>
                         {simulatedGridStress}% {simulatedGridStress > 80 ? '(CRITICAL)' : simulatedGridStress > 60 ? '(ELEVATED)' : '(STABLE)'}
                       </strong>
-                      <span className="text-[8px] text-slate-500 block mt-0.5">
+                      <span className="text-[8px] text-[#6B6F6B] block mt-0.5">
                         Baseline: {baselineGridStress}% Max Load
                       </span>
                     </div>
 
-                    <div className="bg-[#0e1626] border border-[#1e2d42] p-2.5 rounded-xl">
-                      <span className="text-[8px] text-slate-400 uppercase tracking-wider block mb-0.5">Hospital ER/ICU Load</span>
-                      <strong className={`text-sm ${simulatedHospitalIcu > 80 ? 'text-rose-400' : simulatedHospitalIcu > 60 ? 'text-amber-400' : 'text-[#00e5a3]'}`}>
+                    <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-xl shadow-sm">
+                      <span className="text-[8px] text-[#6B6F6B] uppercase tracking-wider block mb-0.5">Hospital ER/ICU Load</span>
+                      <strong className={`text-sm ${simulatedHospitalIcu > 80 ? 'text-rose-600' : simulatedHospitalIcu > 60 ? 'text-amber-600' : 'text-[#0f766e]'}`}>
                         {simulatedHospitalIcu}% {simulatedHospitalIcu > 80 ? '(OVERFLOW)' : '(SAFE)'}
                       </strong>
-                      <span className="text-[8px] text-slate-500 block mt-0.5">
-                        {erAdmissionsAvoided > 0 ? `${erAdmissionsAvoided} ER admissions avoided` : `Baseline: ${baselineHospitalIcu}% capacity`}
+                      <span className="text-[8px] text-[#6B6F6B] block mt-0.5">
+                        {erAdmissionsAvoided > 0 ? `${erAdmissionsAvoided} ER avoided` : `Baseline: ${baselineHospitalIcu}% cap`}
                       </span>
                     </div>
 
-                    <div className="bg-[#0e1626] border border-[#1e2d42] p-2.5 rounded-xl">
-                      <span className="text-[8px] text-slate-400 uppercase tracking-wider block mb-0.5">District Population Exposure</span>
-                      <strong className="text-sm text-white">
+                    <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-xl shadow-sm">
+                      <span className="text-[8px] text-[#6B6F6B] uppercase tracking-wider block mb-0.5">District Population Exposure</span>
+                      <strong className="text-sm text-[#263238]">
                         {baseSelectedZone.population.toLocaleString()} Residents
                       </strong>
-                      <span className="text-[8px] text-[#00f2fe] block mt-0.5">
+                      <span className="text-[8px] text-[#0284c7] font-semibold block mt-0.5">
                         {shelterWalkingCoverage}% covered by walk-in cooling
                       </span>
                     </div>
                   </div>
 
                   {/* Gemini AI Diagnostic */}
-                  <div className="bg-[#0e1626] border border-[#1e2d42] p-3 rounded-xl shadow-md space-y-1.5">
-                    <div className="flex items-center justify-between font-mono border-b border-[#1e2d42] pb-1">
-                      <span className="text-[9px] uppercase tracking-widest text-[#00e5a3] font-bold flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-[#00e5a3]" />
+                  <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3 rounded-xl shadow-sm space-y-1.5">
+                    <div className="flex items-center justify-between font-mono border-b border-[#DDD5C7] pb-1">
+                      <span className="text-[9px] uppercase tracking-widest text-[#0f766e] font-bold flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-[#0d9488]" />
                         Gemini AI Live Root-Cause Diagnostic
                       </span>
-                      <span className="text-[8px] text-[#00f2fe] bg-[#00f2fe]/10 border border-[#00f2fe]/40 px-1.5 py-0.2 rounded-full font-bold">
+                      <span className="text-[8px] text-[#0f766e] bg-[#E8F5EF] border border-[#A7F3D0] px-1.5 py-0.2 rounded-full font-bold">
                         REASONING ENGINE
                       </span>
                     </div>
 
                     {isAnalyzing ? (
-                      <div className="py-3 flex items-center justify-center text-slate-400 gap-2">
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00e5a3]" />
+                      <div className="py-3 flex items-center justify-center text-[#6B6F6B] gap-2">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#0d9488]" />
                         <span className="text-[10px] font-mono">Analyzing live telemetry...</span>
                       </div>
                     ) : aiAnalysis ? (
                       <div className="space-y-1.5">
-                        <p className="text-[10px] text-slate-300 leading-relaxed bg-[#080d17] p-2 rounded-lg border border-[#1e2d42] font-sans">
+                        <p className="text-[10px] text-[#263238] leading-relaxed bg-[#FAF8F2] p-2 rounded-lg border border-[#DDD5C7] font-sans">
                           {aiAnalysis.explanation}
                         </p>
                         <div className="grid grid-cols-2 gap-1.5 font-mono">
                           {aiAnalysis.recommendations.slice(0, 2).map((rec, i) => (
-                            <div key={i} className="text-[9px] text-slate-300 bg-[#080d17] p-1.5 rounded-lg border border-[#1e2d42]/80 truncate">
-                              <span className="text-[#00e5a3] font-bold mr-1">#{rec.priority}</span>
-                              <span className="text-slate-200 font-sans">{rec.action}</span>
+                            <div key={i} className="text-[9px] text-[#263238] bg-[#FAF8F2] p-1.5 rounded-lg border border-[#DDD5C7] truncate">
+                              <span className="text-[#0d9488] font-bold mr-1">#{rec.priority}</span>
+                              <span className="text-[#263238] font-sans">{rec.action}</span>
                             </div>
                           ))}
                         </div>
@@ -701,18 +701,18 @@ export default function Dashboard() {
                   {/* ========================================================================= */}
                   {/* THE REAL TACTICAL WHAT-IF EMERGENCY OPERATIONS SIMULATOR                   */}
                   {/* ========================================================================= */}
-                  <div className="bg-gradient-to-b from-[#0e1626] to-[#080d17] border-2 border-[#00e5a3]/50 rounded-2xl p-3.5 shadow-2xl space-y-3 font-mono">
-                    <div className="flex items-center justify-between border-b border-[#1e2d42] pb-1.5">
-                      <span className="text-xs font-bold text-[#00e5a3] flex items-center gap-1.5">
-                        <Zap className="w-4 h-4 text-[#00e5a3]" />
+                  <div className="bg-gradient-to-b from-[#FFFDF8] to-[#FAF8F2] border-2 border-[#0d9488]/40 rounded-2xl p-3.5 shadow-md space-y-3 font-mono">
+                    <div className="flex items-center justify-between border-b border-[#DDD5C7] pb-1.5">
+                      <span className="text-xs font-bold text-[#0f766e] flex items-center gap-1.5">
+                        <Zap className="w-4 h-4 text-[#0d9488]" />
                         Tactical EOC Intervention Simulator
                       </span>
-                      <span className="text-[8.5px] bg-[#00e5a3]/20 text-[#00e5a3] px-2 py-0.5 rounded-full font-bold">
+                      <span className="text-[8.5px] bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0] px-2 py-0.5 rounded-full font-bold">
                         LIVE DISASTER TWIN
                       </span>
                     </div>
 
-                    <p className="text-[10px] text-slate-300 font-sans leading-tight">
+                    <p className="text-[10px] text-[#6B6F6B] font-sans leading-tight">
                       Simulate immediate municipal disaster assets (cooling buses, power grid generators, and paramedic triage) to observe live quantified relief across the power grid, hospital ICU load, and citizen safety.
                     </p>
 
@@ -720,34 +720,34 @@ export default function Dashboard() {
                     <div className="grid grid-cols-3 gap-1.5 text-[9.5px]">
                       <button
                         onClick={() => setTacticalPlan({ coolingBuses: 12, gridGenerators: 6, paramedicSurge: 8, weaBroadcastSent: true })}
-                        className="p-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/60 text-rose-300 font-bold transition-all text-center cursor-pointer shadow-sm"
+                        className="p-1.5 rounded-lg bg-[#FFE4E6] hover:bg-[#FECDD3] border border-[#FECDD3] text-[#be123c] font-bold transition-all text-center cursor-pointer shadow-sm"
                       >
                         ⚡ Full Code-Red Surge
                       </button>
                       <button
                         onClick={() => setTacticalPlan({ coolingBuses: 15, gridGenerators: 2, paramedicSurge: 4, weaBroadcastSent: false })}
-                        className="p-1.5 rounded-lg bg-[#00f2fe]/20 hover:bg-[#00f2fe]/30 border border-[#00f2fe]/60 text-[#00f2fe] font-bold transition-all text-center cursor-pointer shadow-sm"
+                        className="p-1.5 rounded-lg bg-[#E0F2FE] hover:bg-[#BAE6FD] border border-[#BAE6FD] text-[#0369a1] font-bold transition-all text-center cursor-pointer shadow-sm"
                       >
                         ❄️ 15 Cooling Buses
                       </button>
                       <button
                         onClick={() => setTacticalPlan({ coolingBuses: 4, gridGenerators: 8, paramedicSurge: 2, weaBroadcastSent: false })}
-                        className="p-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/60 text-amber-300 font-bold transition-all text-center cursor-pointer shadow-sm"
+                        className="p-1.5 rounded-lg bg-[#FEF3C7] hover:bg-[#FDE68A] border border-[#FDE68A] text-[#b45309] font-bold transition-all text-center cursor-pointer shadow-sm"
                       >
                         ⚡ Grid Defense First
                       </button>
                     </div>
 
                     {/* Interactive Tactical Sliders */}
-                    <div className="space-y-2.5 bg-[#0a101d] p-3 rounded-xl border border-[#1e2d42]">
+                    <div className="space-y-2.5 bg-[#FAF8F2] p-3 rounded-xl border border-[#DDD5C7]">
                       {/* Slider 1: Mobile Cooling Buses */}
                       <div>
                         <div className="flex justify-between items-center text-[10px] mb-1">
-                          <span className="text-white font-bold flex items-center gap-1.5">
+                          <span className="text-[#263238] font-bold flex items-center gap-1.5">
                             <span>❄️</span>
                             <span>Deploy Mobile AC Cooling Buses:</span>
                           </span>
-                          <span className="text-[#00e5a3] font-bold bg-[#00e5a3]/10 px-2 py-0.5 rounded border border-[#00e5a3]/30">
+                          <span className="text-[#0f766e] font-bold bg-[#E8F5EF] px-2 py-0.5 rounded border border-[#A7F3D0]">
                             {tacticalPlan.coolingBuses} Buses Active ({shelterWalkingCoverage}% Walk Radius)
                           </span>
                         </div>
@@ -758,18 +758,18 @@ export default function Dashboard() {
                           step="1"
                           value={tacticalPlan.coolingBuses}
                           onChange={(e) => setTacticalPlan(prev => ({ ...prev, coolingBuses: parseInt(e.target.value) }))}
-                          className="w-full accent-[#00e5a3] cursor-pointer h-1.5 bg-[#162032] rounded-lg appearance-none"
+                          className="w-full accent-[#0d9488] cursor-pointer h-1.5 bg-[#EEE8DC] rounded-lg appearance-none"
                         />
                       </div>
 
                       {/* Slider 2: Substation Grid Relief Generators */}
                       <div>
                         <div className="flex justify-between items-center text-[10px] mb-1">
-                          <span className="text-white font-bold flex items-center gap-1.5">
+                          <span className="text-[#263238] font-bold flex items-center gap-1.5">
                             <span>⚡</span>
                             <span>Power Substation Mega-Generators:</span>
                           </span>
-                          <span className="text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                          <span className="text-[#b45309] font-bold bg-[#FEF3C7] px-2 py-0.5 rounded border border-[#FDE68A]">
                             {tacticalPlan.gridGenerators} Units (+{tacticalPlan.gridGenerators * 10} MW | {simulatedGridStress}% Load)
                           </span>
                         </div>
@@ -780,18 +780,18 @@ export default function Dashboard() {
                           step="1"
                           value={tacticalPlan.gridGenerators}
                           onChange={(e) => setTacticalPlan(prev => ({ ...prev, gridGenerators: parseInt(e.target.value) }))}
-                          className="w-full accent-amber-400 cursor-pointer h-1.5 bg-[#162032] rounded-lg appearance-none"
+                          className="w-full accent-amber-600 cursor-pointer h-1.5 bg-[#EEE8DC] rounded-lg appearance-none"
                         />
                       </div>
 
                       {/* Slider 3: Paramedic Field Triage Surge */}
                       <div>
                         <div className="flex justify-between items-center text-[10px] mb-1">
-                          <span className="text-white font-bold flex items-center gap-1.5">
+                          <span className="text-[#263238] font-bold flex items-center gap-1.5">
                             <span>🚑</span>
                             <span>Paramedic Field Triage Units:</span>
                           </span>
-                          <span className="text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30">
+                          <span className="text-[#be123c] font-bold bg-[#FFE4E6] px-2 py-0.5 rounded border border-[#FECDD3]">
                             {tacticalPlan.paramedicSurge} Units ({simulatedHospitalIcu}% ICU | {erAdmissionsAvoided} ER Avoided)
                           </span>
                         </div>
@@ -802,44 +802,44 @@ export default function Dashboard() {
                           step="1"
                           value={tacticalPlan.paramedicSurge}
                           onChange={(e) => setTacticalPlan(prev => ({ ...prev, paramedicSurge: parseInt(e.target.value) }))}
-                          className="w-full accent-rose-400 cursor-pointer h-1.5 bg-[#162032] rounded-lg appearance-none"
+                          className="w-full accent-rose-600 cursor-pointer h-1.5 bg-[#EEE8DC] rounded-lg appearance-none"
                         />
                       </div>
                     </div>
 
                     {/* Live Quantified Before vs After Dashboard */}
-                    <div className="bg-[#0a101d] p-2.5 rounded-xl border border-[#1e2d42] space-y-2">
-                      <div className="flex items-center justify-between text-[9px] text-slate-400 border-b border-slate-800 pb-1">
-                        <span className="font-bold uppercase tracking-wider text-slate-300">Live Impact Readout</span>
-                        <span className="text-[#00e5a3] font-bold">{citizensProtected.toLocaleString()} Citizens Shielded</span>
+                    <div className="bg-[#FAF8F2] p-2.5 rounded-xl border border-[#DDD5C7] space-y-2">
+                      <div className="flex items-center justify-between text-[9px] text-[#6B6F6B] border-b border-[#DDD5C7] pb-1">
+                        <span className="font-bold uppercase tracking-wider text-[#263238]">Live Impact Readout</span>
+                        <span className="text-[#0f766e] font-bold">{citizensProtected.toLocaleString()} Citizens Shielded</span>
                       </div>
 
                       <div className="grid grid-cols-3 gap-2 text-center text-[10px]">
-                        <div className="bg-[#080d17] p-2 rounded-lg border border-[#1e2d42]">
-                          <span className="text-slate-500 block text-[8px]">GRID BLACKOUT</span>
-                          <strong className={simulatedGridStress > 80 ? 'text-rose-400' : 'text-[#00e5a3]'}>
+                        <div className="bg-[#FFFDF8] p-2 rounded-lg border border-[#DDD5C7]">
+                          <span className="text-[#6B6F6B] block text-[8px] uppercase">GRID BLACKOUT</span>
+                          <strong className={simulatedGridStress > 80 ? 'text-rose-600' : 'text-[#0f766e]'}>
                             {baselineGridStress}% &rarr; {simulatedGridStress}%
                           </strong>
                         </div>
 
-                        <div className="bg-[#080d17] p-2 rounded-lg border border-[#1e2d42]">
-                          <span className="text-slate-500 block text-[8px]">HOSPITAL STRAIN</span>
-                          <strong className={simulatedHospitalIcu > 80 ? 'text-rose-400' : 'text-[#00e5a3]'}>
+                        <div className="bg-[#FFFDF8] p-2 rounded-lg border border-[#DDD5C7]">
+                          <span className="text-[#6B6F6B] block text-[8px] uppercase">HOSPITAL STRAIN</span>
+                          <strong className={simulatedHospitalIcu > 80 ? 'text-rose-600' : 'text-[#0f766e]'}>
                             {baselineHospitalIcu}% &rarr; {simulatedHospitalIcu}%
                           </strong>
                         </div>
 
-                        <div className="bg-[#080d17] p-2 rounded-lg border border-[#1e2d42]">
-                          <span className="text-slate-500 block text-[8px]">THREAT SCORE</span>
-                          <strong className="text-[#00e5a3]">
+                        <div className="bg-[#FFFDF8] p-2 rounded-lg border border-[#DDD5C7]">
+                          <span className="text-[#6B6F6B] block text-[8px] uppercase">THREAT SCORE</span>
+                          <strong className="text-[#0f766e]">
                             {currentHeatRiskScore} &rarr; {simulatedHeatRiskScore}
                           </strong>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between bg-[#080d17] px-3 py-1.5 rounded-lg border border-[#00e5a3]/40 text-xs">
-                        <span className="text-slate-300 font-bold">Total Risk Drop:</span>
-                        <span className="text-[#00e5a3] font-bold text-sm">
+                      <div className="flex items-center justify-between bg-[#E8F5EF] px-3 py-1.5 rounded-lg border border-[#A7F3D0] text-xs">
+                        <span className="text-[#0f766e] font-bold">Total Risk Drop:</span>
+                        <span className="text-[#0f766e] font-bold text-sm">
                           -{scoreDelta} PTS ({scoreDelta > 30 ? 'CRITICAL → STABILIZED' : scoreDelta > 15 ? 'HIGH MITIGATION' : 'NOMINAL'})
                         </span>
                       </div>
@@ -848,7 +848,7 @@ export default function Dashboard() {
                     {/* Citizen Phone Alert Trigger Button */}
                     <button
                       onClick={() => setIsCitizenAlertModalOpen(true)}
-                      className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-rose-600 via-rose-500 to-[#00e5a3] hover:from-rose-500 hover:to-[#00d2b4] text-white font-mono text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-rose-950/50 border border-rose-400/60 transition-all cursor-pointer transform hover:scale-[1.01]"
+                      className="w-full py-2.5 px-3 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white font-mono text-xs font-bold flex items-center justify-center gap-2 shadow-sm border border-[#0d9488] transition-all cursor-pointer transform hover:scale-[1.01]"
                     >
                       <Smartphone className="w-4 h-4 text-white animate-bounce" />
                       <span>📱 Dispatch Citizen Phone Alert (WEA SMS Demo)</span>
@@ -856,8 +856,8 @@ export default function Dashboard() {
                   </div>
                 </>
               ) : (
-                <div className="p-8 text-center text-slate-400 font-mono text-xs">
-                  <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#00e5a3]" />
+                <div className="p-8 text-center text-[#6B6F6B] font-mono text-xs">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#0d9488]" />
                   CONNECTING TO LIVE TELEMETRY...
                 </div>
               )}
@@ -872,11 +872,11 @@ export default function Dashboard() {
       {activeTab === 'MULTI_HAZARD_ATLAS' && (
         <div className="flex flex-col flex-1 overflow-hidden">
           {/* Sub-Bar */}
-          <div className="flex items-center justify-between bg-[#0a0f1d] border-b border-[#1e2d42] px-5 py-2 shrink-0 text-xs font-mono">
+          <div className="flex items-center justify-between bg-[#FAF8F2] border-b border-[#DDD5C7] px-5 py-2 shrink-0 text-xs font-mono">
             {/* State Target Dropdown */}
             <div className="flex items-center gap-2.5">
-              <label htmlFor="state-target-select" className="text-[10px] text-slate-400 uppercase tracking-wider font-bold flex items-center gap-1.5 shrink-0">
-                <Globe className="w-3.5 h-3.5 text-[#00f2fe]" />
+              <label htmlFor="state-target-select" className="text-[10px] text-[#6B6F6B] uppercase tracking-wider font-bold flex items-center gap-1.5 shrink-0">
+                <Globe className="w-3.5 h-3.5 text-[#0369a1]" />
                 <span>STATE FOCUS:</span>
               </label>
               <div className="relative flex items-center">
@@ -885,30 +885,30 @@ export default function Dashboard() {
                   aria-label="Select Target State"
                   value={selectedStateId}
                   onChange={(e) => setSelectedStateId(e.target.value)}
-                  className="bg-[#0e1626] text-[#00f2fe] border border-[#00f2fe]/50 hover:border-[#00f2fe] focus:border-[#00f2fe] text-xs font-mono font-bold pl-3 pr-8 py-1.5 rounded-xl outline-none shadow-sm cursor-pointer transition-all appearance-none min-w-[340px]"
+                  className="bg-[#FFFDF8] text-[#263238] border border-[#DDD5C7] hover:border-[#0369a1] focus:border-[#0369a1] text-xs font-mono font-bold pl-3 pr-8 py-1.5 rounded-xl outline-none shadow-sm cursor-pointer transition-all appearance-none min-w-[340px]"
                 >
                   {liveStates.map((st) => (
-                    <option key={st.id} value={st.id} className="bg-[#0e1626] text-slate-100 font-sans">
+                    <option key={st.id} value={st.id} className="bg-[#FFFDF8] text-[#263238] font-sans">
                       🏛️ {st.name} ({st.stateCode}) — Live Temp: {st.currentTempF !== null ? `${st.currentTempF}°F` : 'N/A'} (Anomaly: {st.tempAnomalyF !== null ? `${st.tempAnomalyF > 0 ? '+' : ''}${st.tempAnomalyF}°F` : 'N/A'})
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-[#00f2fe] absolute right-2.5 pointer-events-none" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#0369a1] absolute right-2.5 pointer-events-none" />
               </div>
             </div>
 
             {/* Hazard Layer Filter */}
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-slate-400 uppercase font-bold">HAZARD LAYER:</span>
-              <div className="flex items-center bg-[#090e18] p-0.5 rounded-xl border border-[#1e2d42]">
+              <span className="text-[10px] text-[#6B6F6B] uppercase font-bold">HAZARD LAYER:</span>
+              <div className="flex items-center bg-[#EEE8DC] p-0.5 rounded-xl border border-[#DDD5C7]">
                 {(['overall', 'heat', 'flood', 'wildfire', 'drought'] as ClimateHazardType[]).map((layer) => (
                   <button
                     key={layer}
                     onClick={() => setActiveHazardLayer(layer)}
                     className={`text-[10px] font-bold px-3 py-1 rounded-lg capitalize transition-all cursor-pointer ${
                       activeHazardLayer === layer
-                        ? 'bg-[#00f2fe]/20 text-[#00f2fe] border border-[#00f2fe]/60 shadow-[0_0_10px_rgba(0,242,254,0.2)]'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-[#E0F2FE] text-[#0369a1] border border-[#BAE6FD] shadow-sm'
+                        : 'text-[#6B6F6B] hover:text-[#263238]'
                     }`}
                   >
                     {layer}
@@ -948,26 +948,26 @@ export default function Dashboard() {
             </div>
 
             {/* Right State Intelligence Panel */}
-            <div className="w-[410px] bg-[#090e18] border-l border-[#1e2d42] flex flex-col shrink-0 overflow-y-auto z-10 text-slate-200 p-4 space-y-3.5 shadow-2xl">
+            <div className="w-[410px] bg-[#FAF8F2] border-l border-[#DDD5C7] flex flex-col shrink-0 overflow-y-auto z-10 text-[#263238] p-4 space-y-3.5 shadow-sm">
               
               {selectedState ? (
                 <>
                   {/* State Header Card */}
-                  <div className="bg-[#0e1626] border border-[#1e2d42] p-4 rounded-2xl shadow-md font-mono">
+                  <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-4 rounded-2xl shadow-sm font-mono">
                     <div className="flex justify-between items-start mb-1">
-                      <span className="text-[9px] uppercase tracking-widest text-[#00f2fe] font-bold">
+                      <span className="text-[9px] uppercase tracking-widest text-[#0369a1] font-bold">
                         {selectedState.region} REGION
                       </span>
-                      <span className="text-[10px] font-bold text-slate-400">{selectedState.stateCode}</span>
+                      <span className="text-[10px] font-bold text-[#6B6F6B]">{selectedState.stateCode}</span>
                     </div>
 
-                    <h2 className="text-xl font-bold text-white mb-2 font-sans">
+                    <h2 className="text-xl font-bold text-[#263238] mb-2 font-sans">
                       {selectedState.name}
                     </h2>
 
-                    <div className="flex items-end justify-between pt-2 border-t border-[#1e2d42]">
+                    <div className="flex items-end justify-between pt-2 border-t border-[#EEE8DC]">
                       <div>
-                        <span className="text-[9px] uppercase tracking-widest text-slate-400 block mb-0.5">Composite Risk Tier</span>
+                        <span className="text-[9px] uppercase tracking-widest text-[#6B6F6B] block mb-0.5">Composite Risk Tier</span>
                         <span 
                           className="text-[10px] font-bold uppercase tracking-wider text-white px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 shadow-sm"
                           style={{ backgroundColor: getScoreColor(selectedState.overallRisk) }}
@@ -978,10 +978,10 @@ export default function Dashboard() {
                       </div>
 
                       <div className="text-right">
-                        <span className="text-[9px] uppercase tracking-widest text-slate-400 block mb-0.5">Live Climate Score</span>
+                        <span className="text-[9px] uppercase tracking-widest text-[#6B6F6B] block mb-0.5">Live Climate Score</span>
                         <span className="text-3xl font-bold tabular-nums leading-none" style={{ color: getScoreColor(selectedState.overallRisk ?? 88) }}>
                           {selectedState.overallRisk ?? 88}
-                          <span className="text-xs text-slate-500 font-normal">/100</span>
+                          <span className="text-xs text-[#6B6F6B] font-normal">/100</span>
                         </span>
                       </div>
                     </div>
@@ -989,76 +989,76 @@ export default function Dashboard() {
 
                   {/* State Key Live Statistics */}
                   <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                    <div className="bg-[#0e1626] border border-[#1e2d42] p-3 rounded-xl">
-                      <span className="text-[8.5px] text-slate-400 uppercase tracking-wider block mb-0.5">Total Population (Census)</span>
-                      <strong className="text-base text-white">{selectedState.population.toLocaleString()}</strong>
+                    <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3 rounded-xl shadow-sm">
+                      <span className="text-[8.5px] text-[#6B6F6B] uppercase tracking-wider block mb-0.5">Total Population (Census)</span>
+                      <strong className="text-base text-[#263238]">{selectedState.population.toLocaleString()}</strong>
                     </div>
-                    <div className="bg-[#0e1626] border border-[#1e2d42] p-3 rounded-xl">
-                      <span className="text-[8.5px] text-slate-400 uppercase tracking-wider block mb-0.5">Live Temp & Anomaly</span>
-                      <strong className="text-base text-[#00e5a3]">
+                    <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3 rounded-xl shadow-sm">
+                      <span className="text-[8.5px] text-[#6B6F6B] uppercase tracking-wider block mb-0.5">Live Temp & Anomaly</span>
+                      <strong className="text-base text-[#0f766e]">
                         {`${(selectedState.currentTempF ?? (selectedState.historicalAvgTempF + 3.2)).toFixed(1)}°F (${(selectedState.tempAnomalyF !== null && selectedState.tempAnomalyF !== undefined && selectedState.tempAnomalyF > 0 ? '+' : '')}${(selectedState.tempAnomalyF ?? 3.2)}°F)`}
                       </strong>
                     </div>
                   </div>
 
                   {/* 10-Hazard State Multi-Risk Matrix */}
-                  <div className="bg-[#0e1626] p-4 rounded-2xl border border-[#1e2d42] space-y-2">
-                    <div className="text-[9.5px] font-mono uppercase tracking-widest text-[#00f2fe] font-bold border-b border-[#1e2d42] pb-1.5 flex justify-between items-center">
+                  <div className="bg-[#FFFDF8] p-4 rounded-2xl border border-[#DDD5C7] space-y-2 shadow-sm">
+                    <div className="text-[9.5px] font-mono uppercase tracking-widest text-[#0369a1] font-bold border-b border-[#EEE8DC] pb-1.5 flex justify-between items-center">
                       <span>Hazard Breakdown</span>
-                      <span className="text-slate-500 text-[8.5px]">NCEI 1980–2025</span>
+                      <span className="text-[#6B6F6B] text-[8.5px]">NCEI 1980–2025</span>
                     </div>
 
                     <div className="space-y-2 text-xs font-mono">
                       <div>
-                        <div className="flex justify-between text-[10px] text-slate-300 mb-0.5">
-                          <span className="flex items-center gap-1"><Sun className="w-3 h-3 text-[#00e5a3]" /> Extreme Heat Risk</span>
-                          <strong className="text-rose-400">{selectedState.heatRisk !== null ? `${selectedState.heatRisk}/100` : 'N/A'}</strong>
+                        <div className="flex justify-between text-[10px] text-[#263238] mb-0.5">
+                          <span className="flex items-center gap-1"><Sun className="w-3 h-3 text-[#0d9488]" /> Extreme Heat Risk</span>
+                          <strong className="text-rose-600">{selectedState.heatRisk !== null ? `${selectedState.heatRisk}/100` : 'N/A'}</strong>
                         </div>
-                        <div className="h-1.5 w-full bg-[#080d17] rounded-full overflow-hidden">
+                        <div className="h-1.5 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
                           <div className="h-full bg-rose-500 rounded-full" style={{ width: `${selectedState.heatRisk || 0}%` }} />
                         </div>
                       </div>
 
                       <div>
-                        <div className="flex justify-between text-[10px] text-slate-300 mb-0.5">
-                          <span className="flex items-center gap-1"><CloudRain className="w-3 h-3 text-[#00f2fe]" /> Inland & Flash Flooding</span>
-                          <strong className="text-[#00f2fe]">{selectedState.floodRisk}/100</strong>
+                        <div className="flex justify-between text-[10px] text-[#263238] mb-0.5">
+                          <span className="flex items-center gap-1"><CloudRain className="w-3 h-3 text-[#0284c7]" /> Inland & Flash Flooding</span>
+                          <strong className="text-[#0369a1]">{selectedState.floodRisk}/100</strong>
                         </div>
-                        <div className="h-1.5 w-full bg-[#080d17] rounded-full overflow-hidden">
-                          <div className="h-full bg-[#00f2fe] rounded-full" style={{ width: `${selectedState.floodRisk}%` }} />
+                        <div className="h-1.5 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
+                          <div className="h-full bg-[#0284c7] rounded-full" style={{ width: `${selectedState.floodRisk}%` }} />
                         </div>
                       </div>
 
                       <div>
-                        <div className="flex justify-between text-[10px] text-slate-300 mb-0.5">
-                          <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-orange-400" /> Wildfire Vulnerability</span>
-                          <strong className="text-orange-400">{selectedState.wildfireRisk}/100</strong>
+                        <div className="flex justify-between text-[10px] text-[#263238] mb-0.5">
+                          <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-orange-500" /> Wildfire Vulnerability</span>
+                          <strong className="text-orange-600">{selectedState.wildfireRisk}/100</strong>
                         </div>
-                        <div className="h-1.5 w-full bg-[#080d17] rounded-full overflow-hidden">
+                        <div className="h-1.5 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
                           <div className="h-full bg-orange-500 rounded-full" style={{ width: `${selectedState.wildfireRisk}%` }} />
                         </div>
                       </div>
 
                       <div>
-                        <div className="flex justify-between text-[10px] text-slate-300 mb-0.5">
-                          <span className="flex items-center gap-1"><Waves className="w-3 h-3 text-amber-300" /> Drought Severity</span>
-                          <strong className="text-amber-300">{selectedState.droughtRisk}/100</strong>
+                        <div className="flex justify-between text-[10px] text-[#263238] mb-0.5">
+                          <span className="flex items-center gap-1"><Waves className="w-3 h-3 text-amber-600" /> Drought Severity</span>
+                          <strong className="text-amber-700">{selectedState.droughtRisk}/100</strong>
                         </div>
-                        <div className="h-1.5 w-full bg-[#080d17] rounded-full overflow-hidden">
-                          <div className="h-full bg-amber-400 rounded-full" style={{ width: `${selectedState.droughtRisk}%` }} />
+                        <div className="h-1.5 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
+                          <div className="h-full bg-amber-500 rounded-full" style={{ width: `${selectedState.droughtRisk}%` }} />
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Active NOAA Alerts for this State */}
-                  <div className="bg-[#0e1626] p-3.5 rounded-2xl border border-[#1e2d42] text-[10px] font-mono text-slate-400 space-y-2">
-                    <div className="flex items-center justify-between text-rose-400 font-bold border-b border-[#1e2d42] pb-1.5">
+                  <div className="bg-[#FFFDF8] p-3.5 rounded-2xl border border-[#DDD5C7] text-[10px] font-mono text-[#6B6F6B] space-y-2 shadow-sm">
+                    <div className="flex items-center justify-between text-[#be123c] font-bold border-b border-[#EEE8DC] pb-1.5">
                       <span className="flex items-center gap-1.5">
                         <AlertTriangle className="w-3.5 h-3.5" />
                         <span>LIVE NOAA NWS ALERTS FOR {selectedState.name.toUpperCase()}</span>
                       </span>
-                      <span className="text-[9px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded-full font-bold">
+                      <span className="text-[9px] bg-[#FFF1F2] text-[#be123c] border border-[#FECDD3] px-2 py-0.5 rounded-full font-bold">
                         {selectedState.activeNWSAlertCount} ACTIVE
                       </span>
                     </div>
@@ -1066,18 +1066,18 @@ export default function Dashboard() {
                     {selectedState.activeNWSAlerts.length > 0 ? (
                       <div className="space-y-1.5 max-h-44 overflow-y-auto pr-1">
                         {selectedState.activeNWSAlerts.map((alt) => (
-                          <div key={alt.id} className="bg-[#080d17] p-2.5 rounded-xl border border-rose-500/30 text-slate-200">
-                            <div className="font-bold text-rose-400 text-[10.5px] flex items-center justify-between">
+                          <div key={alt.id} className="bg-[#FFF1F2] p-2.5 rounded-xl border border-[#FECDD3] text-[#263238]">
+                            <div className="font-bold text-[#be123c] text-[10.5px] flex items-center justify-between">
                               <span>{alt.event}</span>
-                              <span className="text-[8.5px] bg-rose-900/60 px-1.5 py-0.5 rounded-full uppercase">{alt.severity}</span>
+                              <span className="text-[8.5px] bg-[#FFE4E6] text-[#be123c] px-1.5 py-0.5 rounded-full uppercase font-bold">{alt.severity}</span>
                             </div>
-                            <div className="text-[9.5px] text-slate-300 font-sans mt-0.5">{alt.headline}</div>
-                            <div className="text-[8.5px] text-slate-500 mt-1">{alt.senderName} &bull; {alt.areaDesc}</div>
+                            <div className="text-[9.5px] text-[#263238] font-sans mt-0.5">{alt.headline}</div>
+                            <div className="text-[8.5px] text-[#6B6F6B] mt-1">{alt.senderName} &bull; {alt.areaDesc}</div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-slate-400 font-sans text-[11px] py-1">
+                      <p className="text-[#6B6F6B] font-sans text-[11px] py-1">
                         No critical NOAA National Weather Service mandatory warnings currently active for {selectedState.name}. Multi-hazard baseline monitoring active.
                       </p>
                     )}
@@ -1093,23 +1093,23 @@ export default function Dashboard() {
       {/* 5. TAB 3: CLIMATE FORECASTS & NOAA TRAJECTORY                             */}
       {/* ========================================================================= */}
       {activeTab === 'CLIMATE_ANALYTICS' && (
-        <div className="flex flex-col flex-1 overflow-y-auto p-6 space-y-5">
+        <div className="flex flex-col flex-1 overflow-y-auto p-6 space-y-5 bg-[#F5F1E8]">
           {/* Sub-Bar */}
-          <div className="flex items-center justify-between bg-[#0a0f1d] border border-[#1e2d42] p-4 rounded-2xl shrink-0 text-xs font-mono">
+          <div className="flex items-center justify-between bg-[#FFFDF8] border border-[#DDD5C7] p-4 rounded-2xl shrink-0 text-xs font-mono shadow-sm">
             <div className="flex items-center gap-3">
-              <span className="text-[#00e5a3] font-bold flex items-center gap-1.5">
-                <TrendingUp className="w-4 h-4 text-[#00e5a3]" />
+              <span className="text-[#0f766e] font-bold flex items-center gap-1.5">
+                <TrendingUp className="w-4 h-4 text-[#0f766e]" />
                 <span>PREDICTIVE ML TRAJECTORY ENGINE:</span>
               </span>
-              <span className="text-slate-300">10-Year Forward Horizon (2021–2030)</span>
+              <span className="text-[#263238] font-sans font-medium">10-Year Forward Horizon (2021–2030)</span>
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-[10px] text-slate-400 uppercase font-bold">HORIZON YEAR:</span>
+              <span className="text-[10px] text-[#6B6F6B] uppercase font-bold">HORIZON YEAR:</span>
               <select
                 value={selectedHorizonYear}
                 onChange={(e) => setSelectedHorizonYear(Number(e.target.value))}
-                className="bg-[#0e1626] border border-[#1e2d42] px-3.5 py-1.5 rounded-xl text-xs text-[#00e5a3] font-bold outline-none cursor-pointer"
+                className="bg-[#FAF8F2] border border-[#DDD5C7] px-3.5 py-1.5 rounded-xl text-xs text-[#0f766e] font-bold outline-none cursor-pointer hover:border-[#0f766e]"
               >
                 <option value={2025}>2025 (Active Baseline)</option>
                 <option value={2026}>2026 (Model Projection)</option>
@@ -1122,15 +1122,15 @@ export default function Dashboard() {
           {/* Top Row: Trajectory Cone & Rapid Leap Detector */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Trajectory Cone Card */}
-            <div className="bg-[#0e1626] border border-[#1e2d42] p-5 rounded-2xl shadow-lg space-y-3 font-mono">
-              <div className="flex justify-between items-center border-b border-[#1e2d42] pb-2">
+            <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-5 rounded-2xl shadow-sm space-y-3 font-mono">
+              <div className="flex justify-between items-center border-b border-[#EEE8DC] pb-2">
                 <div>
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-[#263238] flex items-center gap-2">
                     <span>10-Year Warming Velocity Cone</span>
                   </h3>
-                  <p className="text-[10px] text-slate-400">NOAA GHCN Historical Actuals (2021–25) + ML Uncertainty Cone (2026–30)</p>
+                  <p className="text-[10px] text-[#6B6F6B]">NOAA GHCN Historical Actuals (2021–25) + ML Uncertainty Cone (2026–30)</p>
                 </div>
-                <span className="text-xs bg-[#00e5a3]/20 text-[#00e5a3] border border-[#00e5a3]/40 px-2.5 py-1 rounded-full font-bold">
+                <span className="text-xs bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0] px-2.5 py-1 rounded-full font-bold">
                   +{forecastModelOutput.warmingVelocityPerDecadeF}°F/Decade
                 </span>
               </div>
@@ -1138,58 +1138,58 @@ export default function Dashboard() {
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <ComposedChart data={forecastModelOutput.multiYearTrajectory} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
-                    <YAxis domain={[52, 58]} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} ticks={[53, 54, 55, 56, 57]} />
+                    <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#6B6F6B' }} />
+                    <YAxis domain={[52, 58]} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#6B6F6B' }} ticks={[53, 54, 55, 56, 57]} />
                     <RechartsTooltip 
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           const data = payload[0].payload;
                           return (
-                            <div className="bg-[#0e1626] border border-[#00e5a3]/50 p-3 rounded-xl text-xs font-mono shadow-2xl">
-                              <div className="font-bold text-[#00e5a3]">{data.year} {data.isForecast ? '(ML Projection)' : '(NOAA Actual)'}</div>
-                              <div className="text-slate-200">Avg Temp: <strong>{data.avgTempF}°F</strong></div>
-                              <div className="text-[#00f2fe]">Risk Score: <strong>{data.riskScore}/100</strong></div>
-                              {data.isForecast && <div className="text-[10px] text-slate-400">Range: {data.tempLowerF}°F – {data.tempUpperF}°F</div>}
+                            <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3 rounded-xl text-xs font-mono shadow-xl text-[#263238]">
+                              <div className="font-bold text-[#0f766e]">{data.year} {data.isForecast ? '(ML Projection)' : '(NOAA Actual)'}</div>
+                              <div>Avg Temp: <strong>{data.avgTempF}°F</strong></div>
+                              <div className="text-[#0369a1]">Risk Score: <strong>{data.riskScore}/100</strong></div>
+                              {data.isForecast && <div className="text-[10px] text-[#6B6F6B]">Range: {data.tempLowerF}°F – {data.tempUpperF}°F</div>}
                             </div>
                           );
                         }
                         return null;
                       }}
                     />
-                    <Area type="monotone" dataKey="tempUpperF" stroke="none" fill="#00e5a3" fillOpacity={0.16} />
-                    <Line type="monotone" dataKey="avgTempF" stroke="#00e5a3" strokeWidth={3} dot={{ r: 4, fill: '#00e5a3' }} />
+                    <Area type="monotone" dataKey="tempUpperF" stroke="none" fill="#0d9488" fillOpacity={0.12} />
+                    <Line type="monotone" dataKey="avgTempF" stroke="#0d9488" strokeWidth={3} dot={{ r: 4, fill: '#0d9488' }} />
                   </ComposedChart>
                 </ResponsiveContainer>
               </div>
-              <div className="text-[10px] text-slate-500 text-center">
-                Mint Line: Historical & Mean Projected Temperature | Shaded Band: 95% Confidence Interval
+              <div className="text-[10px] text-[#6B6F6B] text-center">
+                Teal Line: Historical & Mean Projected Temperature | Shaded Band: 95% Confidence Interval
               </div>
             </div>
 
             {/* Rapid Climate Fluctuation Detector */}
-            <div className="bg-[#0e1626] border border-[#1e2d42] p-5 rounded-2xl shadow-lg space-y-3 font-mono">
-              <div className="border-b border-[#1e2d42] pb-2">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-[#00e5a3]" />
+            <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-5 rounded-2xl shadow-sm space-y-3 font-mono">
+              <div className="border-b border-[#EEE8DC] pb-2">
+                <h3 className="text-sm font-bold text-[#263238] flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-[#0f766e]" />
                   <span>Rapid Climate Leap & Fluctuation Alerts</span>
                 </h3>
-                <p className="text-[10px] text-slate-400">Automated algorithmic detection of multi-year temperature jumps & anomaly swings</p>
+                <p className="text-[10px] text-[#6B6F6B]">Automated algorithmic detection of multi-year temperature jumps & anomaly swings</p>
               </div>
 
               <div className="space-y-2.5">
                 {detectedFluctuations.slice(0, 3).map((f, idx) => (
-                  <div key={idx} className="bg-[#080d17] p-3 rounded-xl border border-[#1e2d42] space-y-1">
+                  <div key={idx} className="bg-[#FAF8F2] p-3 rounded-xl border border-[#DDD5C7] space-y-1">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-[#00e5a3]">{f.years} Multi-Year Swing</span>
-                      <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold ${f.isRecord ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-[#00f2fe]/20 text-[#00f2fe] border border-[#00f2fe]/40'}`}>
+                      <span className="text-xs font-bold text-[#0f766e]">{f.years} Multi-Year Swing</span>
+                      <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold ${f.isRecord ? 'bg-[#FFF1F2] text-[#be123c] border border-[#FECDD3]' : 'bg-[#E0F2FE] text-[#0369a1] border border-[#BAE6FD]'}`}>
                         {f.isRecord ? 'RECORD ANOMALY' : 'ELEVATED SHIFT'}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-200 font-sans">
+                    <div className="text-xs text-[#263238] font-sans">
                       {f.description}
                     </div>
-                    <div className="text-[10px] text-slate-400 font-mono">
-                      Temperature Delta: <strong className="text-white">{f.tempDelta > 0 ? `+${f.tempDelta}` : f.tempDelta}°F</strong> | Precipitation Delta: <strong className="text-white">{f.precipDelta > 0 ? `+${f.precipDelta}` : f.precipDelta} in</strong>
+                    <div className="text-[10px] text-[#6B6F6B] font-mono">
+                      Temperature Delta: <strong className="text-[#263238]">{f.tempDelta > 0 ? `+${f.tempDelta}` : f.tempDelta}°F</strong> | Precipitation Delta: <strong className="text-[#263238]">{f.precipDelta > 0 ? `+${f.precipDelta}` : f.precipDelta} in</strong>
                     </div>
                   </div>
                 ))}
@@ -1198,16 +1198,16 @@ export default function Dashboard() {
           </div>
 
           {/* Bottom Table: NOAA Billion-Dollar Disasters Database */}
-          <div className="bg-[#0e1626] border border-[#1e2d42] p-5 rounded-2xl shadow-lg font-mono space-y-3">
-            <div className="flex justify-between items-center border-b border-[#1e2d42] pb-2">
+          <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-5 rounded-2xl shadow-sm font-mono space-y-3">
+            <div className="flex justify-between items-center border-b border-[#EEE8DC] pb-2">
               <div>
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-[#00e5a3]" />
+                <h3 className="text-sm font-bold text-[#263238] flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-[#0f766e]" />
                   <span>NOAA NCEI Billion-Dollar Weather & Climate Disasters Record (1980–2025)</span>
                 </h3>
-                <p className="text-[10px] text-slate-400">Official National Centers for Environmental Information historical chronology</p>
+                <p className="text-[10px] text-[#6B6F6B]">Official National Centers for Environmental Information historical chronology</p>
               </div>
-              <span className="text-[10px] text-[#00e5a3] bg-[#080d17] px-3 py-1 rounded-full border border-[#1e2d42]">
+              <span className="text-[10px] text-[#0f766e] bg-[#E8F5EF] px-3 py-1 rounded-full border border-[#A7F3D0] font-bold">
                 TOTAL DATABASE: $2.6 Trillion+ Federal Historical Archive
               </span>
             </div>
@@ -1215,7 +1215,7 @@ export default function Dashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-[#1e2d42] text-[10px] text-slate-400 uppercase tracking-wider">
+                  <tr className="border-b border-[#DDD5C7] bg-[#EEE8DC]/60 text-[10px] text-[#6B6F6B] uppercase tracking-wider">
                     <th className="py-2.5 px-3">Year / Date</th>
                     <th className="py-2.5 px-3">Disaster Event Title</th>
                     <th className="py-2.5 px-3">Region</th>
@@ -1224,23 +1224,23 @@ export default function Dashboard() {
                     <th className="py-2.5 px-3">Key Impact Measurement</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1e2d42]/60">
+                <tbody className="divide-y divide-[#EEE8DC]">
                   {historicalDisasterEvents.map((evt, i) => (
-                    <tr key={i} className="hover:bg-[#162032]/40 transition-colors">
-                      <td className="py-2.5 px-3 font-bold text-[#00e5a3]">{evt.date || evt.year}</td>
-                      <td className="py-2.5 px-3 text-white font-sans font-semibold">{evt.title}</td>
-                      <td className="py-2.5 px-3 text-slate-300">{evt.state}</td>
-                      <td className="py-2.5 px-3 text-[#00f2fe]">{evt.hazardType}</td>
+                    <tr key={i} className="hover:bg-[#FAF8F2] transition-colors">
+                      <td className="py-2.5 px-3 font-bold text-[#0f766e]">{evt.date || evt.year}</td>
+                      <td className="py-2.5 px-3 text-[#263238] font-sans font-semibold">{evt.title}</td>
+                      <td className="py-2.5 px-3 text-[#6B6F6B]">{evt.state}</td>
+                      <td className="py-2.5 px-3 text-[#0369a1] font-medium">{evt.hazardType}</td>
                       <td className="py-2.5 px-3 text-center">
                         <span className={`text-[9px] px-2.5 py-0.5 rounded-full font-bold ${
                           evt.severity === 'EXTREME' 
-                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' 
-                            : 'bg-orange-500/20 text-orange-300 border border-orange-500/40'
+                            ? 'bg-[#FFF1F2] text-[#be123c] border border-[#FECDD3]' 
+                            : 'bg-[#FEF3C7] text-[#b45309] border border-[#FDE68A]'
                         }`}>
                           {evt.severity}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-slate-300 text-[11px] font-sans">{evt.measurement}</td>
+                      <td className="py-2.5 px-3 text-[#6B6F6B] text-[11px] font-sans">{evt.measurement}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1254,26 +1254,26 @@ export default function Dashboard() {
       {/* 6. TAB 4: FEDERAL EOC DISPATCH & LOGISTICS                                */}
       {/* ========================================================================= */}
       {activeTab === 'EOC_DISPATCH' && (
-        <div className="flex flex-col flex-1 overflow-y-auto p-6 space-y-5 font-mono">
+        <div className="flex flex-col flex-1 overflow-y-auto p-6 space-y-5 font-mono bg-[#F5F1E8]">
           {/* Status Sub-Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-[#180e1a] border border-rose-500/40 p-4 rounded-2xl shrink-0 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-[#FFFDF8] border border-[#FECDD3] p-4 rounded-2xl shrink-0 text-xs shadow-sm">
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 text-rose-400 font-bold animate-pulse">
+              <span className="flex items-center gap-1.5 text-[#be123c] font-bold animate-pulse">
                 <Siren className="w-4 h-4" />
                 <span>NATIONAL INCIDENT MANAGEMENT: NOAA NWS ACTIVE FEED</span>
               </span>
-              <span className="text-slate-400 hidden md:inline">| FEMA-NDRF Incident Command System Connected</span>
+              <span className="text-[#6B6F6B] hidden md:inline">| FEMA-NDRF Incident Command System Connected</span>
             </div>
             
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsCitizenAlertModalOpen(true)}
-                className="bg-gradient-to-r from-rose-600 via-rose-500 to-[#00e5a3] hover:from-rose-500 hover:to-[#00d2b4] text-white font-mono text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-md border border-rose-400/50 cursor-pointer transition-all"
+                className="bg-[#be123c] hover:bg-[#9f1239] text-white font-mono text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm border border-[#be123c] cursor-pointer transition-all"
               >
                 <Smartphone className="w-3.5 h-3.5" />
                 <span>Broadcast Citizen Alert (WEA/SMS)</span>
               </button>
-              <span className="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2.5 py-1 rounded-full font-bold">
+              <span className="text-[10px] bg-[#FFF1F2] text-[#be123c] border border-[#FECDD3] px-2.5 py-1 rounded-full font-bold">
                 {liveAlerts.length} ACTIVE ALERTS
               </span>
             </div>
@@ -1283,29 +1283,29 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             
             {/* Column 1: Active NOAA Dispatches */}
-            <div className="bg-[#0e1626] border border-[#1e2d42] p-5 rounded-2xl shadow-lg space-y-3">
-              <div className="border-b border-[#1e2d42] pb-2">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-rose-400" />
+            <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="border-b border-[#EEE8DC] pb-2">
+                <h3 className="text-sm font-bold text-[#263238] flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4 text-[#be123c]" />
                   <span>Real-Time NOAA Weather Dispatches</span>
                 </h3>
-                <p className="text-[10px] text-slate-400">Direct active alerts from NOAA NWS emergency feed (`api.weather.gov`)</p>
+                <p className="text-[10px] text-[#6B6F6B]">Direct active alerts from NOAA NWS emergency feed (`api.weather.gov`)</p>
               </div>
 
               <div className="space-y-2.5 text-xs max-h-[480px] overflow-y-auto pr-1">
                 {liveAlerts.length > 0 ? (
                   liveAlerts.slice(0, 6).map((alt) => (
-                    <div key={alt.id} className="bg-[#080d17] p-3 rounded-xl border border-rose-500/30 space-y-1">
+                    <div key={alt.id} className="bg-[#FFF1F2] p-3 rounded-xl border border-[#FECDD3] space-y-1">
                       <div className="flex justify-between items-center">
-                        <span className="font-bold text-rose-400">{alt.event}</span>
-                        <span className="text-[9px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded-full uppercase">{alt.severity}</span>
+                        <span className="font-bold text-[#be123c]">{alt.event}</span>
+                        <span className="text-[9px] bg-[#FFE4E6] text-[#be123c] px-2 py-0.5 rounded-full uppercase font-bold">{alt.severity}</span>
                       </div>
-                      <div className="text-slate-300 text-[11px] font-sans">{alt.headline}</div>
-                      <div className="text-[10px] text-slate-500">{alt.senderName} &bull; {alt.areaDesc}</div>
+                      <div className="text-[#263238] text-[11px] font-sans">{alt.headline}</div>
+                      <div className="text-[10px] text-[#6B6F6B]">{alt.senderName} &bull; {alt.areaDesc}</div>
                     </div>
                   ))
                 ) : (
-                  <div className="p-4 text-center text-slate-400 text-xs">
+                  <div className="p-4 text-center text-[#6B6F6B] text-xs">
                     No severe active NOAA alerts currently reported.
                   </div>
                 )}
@@ -1313,52 +1313,52 @@ export default function Dashboard() {
             </div>
 
             {/* Column 2: Critical Infrastructure Meters */}
-            <div className="bg-[#0e1626] border border-[#1e2d42] p-5 rounded-2xl shadow-lg space-y-3">
-              <div className="border-b border-[#1e2d42] pb-2">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-[#00e5a3]" />
+            <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="border-b border-[#EEE8DC] pb-2">
+                <h3 className="text-sm font-bold text-[#263238] flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-[#0f766e]" />
                   <span>Critical Infrastructure Stress Metrics</span>
                 </h3>
-                <p className="text-[10px] text-slate-400">Atmospheric stress levels on power grids, reservoirs, and health networks</p>
+                <p className="text-[10px] text-[#6B6F6B]">Atmospheric stress levels on power grids, reservoirs, and health networks</p>
               </div>
 
               <div className="space-y-3.5 pt-2">
                 <div>
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-slate-300 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-rose-400" /> Regional Power Grids (Thermal Load)</span>
-                    <span className="text-rose-400 font-bold">96% CRITICAL</span>
+                    <span className="text-[#263238] flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-[#be123c]" /> Regional Power Grids (Thermal Load)</span>
+                    <span className="text-[#be123c] font-bold">96% CRITICAL</span>
                   </div>
-                  <div className="h-2 w-full bg-[#080d17] rounded-full overflow-hidden">
+                  <div className="h-2 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
                     <div className="h-full bg-rose-500 rounded-full" style={{ width: '96%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-slate-300 flex items-center gap-1.5"><Waves className="w-3.5 h-3.5 text-[#00f2fe]" /> Dams & Water Reservoirs (Drought Factor)</span>
-                    <span className="text-[#00e5a3] font-bold">58% STABLE</span>
+                    <span className="text-[#263238] flex items-center gap-1.5"><Waves className="w-3.5 h-3.5 text-[#0369a1]" /> Dams & Water Reservoirs (Drought Factor)</span>
+                    <span className="text-[#0f766e] font-bold">58% STABLE</span>
                   </div>
-                  <div className="h-2 w-full bg-[#080d17] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#00e5a3] rounded-full" style={{ width: '58%' }} />
+                  <div className="h-2 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
+                    <div className="h-full bg-[#0d9488] rounded-full" style={{ width: '58%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-slate-300 flex items-center gap-1.5"><ShieldAlert className="w-3.5 h-3.5 text-rose-400" /> Healthcare & ICU Capacity</span>
-                    <span className="text-rose-400 font-bold">84% HIGH SURGE</span>
+                    <span className="text-[#263238] flex items-center gap-1.5"><ShieldAlert className="w-3.5 h-3.5 text-[#be123c]" /> Healthcare & ICU Capacity</span>
+                    <span className="text-[#be123c] font-bold">84% HIGH SURGE</span>
                   </div>
-                  <div className="h-2 w-full bg-[#080d17] rounded-full overflow-hidden">
+                  <div className="h-2 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
                     <div className="h-full bg-rose-500 rounded-full" style={{ width: '84%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-slate-300 flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-[#00f2fe]" /> Evacuation Corridors</span>
-                    <span className="text-orange-400 font-bold">72% HIGH CONGESTION</span>
+                    <span className="text-[#263238] flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-[#0369a1]" /> Evacuation Corridors</span>
+                    <span className="text-orange-600 font-bold">72% HIGH CONGESTION</span>
                   </div>
-                  <div className="h-2 w-full bg-[#080d17] rounded-full overflow-hidden">
+                  <div className="h-2 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
                     <div className="h-full bg-orange-500 rounded-full" style={{ width: '72%' }} />
                   </div>
                 </div>
@@ -1366,52 +1366,52 @@ export default function Dashboard() {
             </div>
 
             {/* Column 3: Resource Allocation */}
-            <div className="bg-[#0e1626] border border-[#1e2d42] p-5 rounded-2xl shadow-lg space-y-3">
-              <div className="border-b border-[#1e2d42] pb-2">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#00e5a3]" />
+            <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="border-b border-[#EEE8DC] pb-2">
+                <h3 className="text-sm font-bold text-[#263238] flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#0f766e]" />
                   <span>NDRF Emergency Resource Allocation</span>
                 </h3>
-                <p className="text-[10px] text-slate-400">Deployed vs. Reserve federal & municipal response units</p>
+                <p className="text-[10px] text-[#6B6F6B]">Deployed vs. Reserve federal & municipal response units</p>
               </div>
 
               <div className="space-y-3 pt-1 text-xs">
-                <div className="bg-[#080d17] p-3 rounded-xl border border-[#1e2d42] space-y-1.5">
+                <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#DDD5C7] space-y-1.5">
                   <div className="flex justify-between">
-                    <span className="text-slate-300 font-semibold">NDRF Response Teams</span>
-                    <span className="text-[#00e5a3] font-bold">48 / 60 Active</span>
+                    <span className="text-[#263238] font-semibold">NDRF Response Teams</span>
+                    <span className="text-[#0f766e] font-bold">48 / 60 Active</span>
                   </div>
-                  <div className="h-1.5 w-full bg-[#0e1626] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#00e5a3] rounded-full" style={{ width: '80%' }} />
+                  <div className="h-1.5 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
+                    <div className="h-full bg-[#0d9488] rounded-full" style={{ width: '80%' }} />
                   </div>
                 </div>
 
-                <div className="bg-[#080d17] p-3 rounded-xl border border-[#1e2d42] space-y-1.5">
+                <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#DDD5C7] space-y-1.5">
                   <div className="flex justify-between">
-                    <span className="text-slate-300 font-semibold">Mobile Cooling Shelters</span>
-                    <span className="text-[#00e5a3] font-bold">32 / 40 Active</span>
+                    <span className="text-[#263238] font-semibold">Mobile Cooling Shelters</span>
+                    <span className="text-[#0f766e] font-bold">32 / 40 Active</span>
                   </div>
-                  <div className="h-1.5 w-full bg-[#0e1626] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#00e5a3] rounded-full" style={{ width: '80%' }} />
+                  <div className="h-1.5 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
+                    <div className="h-full bg-[#0d9488] rounded-full" style={{ width: '80%' }} />
                   </div>
                 </div>
 
-                <div className="bg-[#080d17] p-3 rounded-xl border border-[#1e2d42] space-y-1.5">
+                <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#DDD5C7] space-y-1.5">
                   <div className="flex justify-between">
-                    <span className="text-slate-300 font-semibold">High-Volume Water Pumps</span>
-                    <span className="text-[#00f2fe] font-bold">24 / 30 Active</span>
+                    <span className="text-[#263238] font-semibold">High-Volume Water Pumps</span>
+                    <span className="text-[#0369a1] font-bold">24 / 30 Active</span>
                   </div>
-                  <div className="h-1.5 w-full bg-[#0e1626] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#00f2fe] rounded-full" style={{ width: '80%' }} />
+                  <div className="h-1.5 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
+                    <div className="h-full bg-[#0284c7] rounded-full" style={{ width: '80%' }} />
                   </div>
                 </div>
 
-                <div className="bg-[#080d17] p-3 rounded-xl border border-[#1e2d42] space-y-1.5">
+                <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#DDD5C7] space-y-1.5">
                   <div className="flex justify-between">
-                    <span className="text-slate-300 font-semibold">Air Ambulances & Evac Buses</span>
-                    <span className="text-rose-400 font-bold">18 / 20 Active</span>
+                    <span className="text-[#263238] font-semibold">Air Ambulances & Evac Buses</span>
+                    <span className="text-[#be123c] font-bold">18 / 20 Active</span>
                   </div>
-                  <div className="h-1.5 w-full bg-[#0e1626] rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-[#EEE8DC] rounded-full overflow-hidden">
                     <div className="h-full bg-rose-500 rounded-full" style={{ width: '90%' }} />
                   </div>
                 </div>

@@ -92,25 +92,25 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      <div className="bg-[#0b101c] border border-slate-700 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col font-sans">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+      <div className="bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col font-sans">
         
         {/* Modal Header */}
-        <div className="px-5 py-3.5 bg-[#0e1626] border-b border-[#1e2d42] flex items-center justify-between font-mono">
+        <div className="px-5 py-3.5 bg-[#FFFDF8] border-b border-[#DDD5C7] flex items-center justify-between font-mono">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
+            <div className="w-8 h-8 rounded-xl bg-[#FFF1F2] border border-[#FECDD3] flex items-center justify-center text-[#be123c]">
               <Radio className="w-4 h-4 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-white uppercase tracking-wide">
+                <span className="text-sm font-bold text-[#263238] uppercase tracking-wide">
                   Citizen Emergency Mobile Broadcast Simulator
                 </span>
-                <span className="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-1.5 py-0.5 rounded-full font-bold">
+                <span className="text-[9px] bg-[#FFF1F2] text-[#be123c] border border-[#FECDD3] px-1.5 py-0.5 rounded-full font-bold">
                   FEMA WEA 3.0
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px] text-[#6B6F6B]">
                 Direct wireless push & SMS notification sent to every resident in {zone.name}
               </p>
             </div>
@@ -118,7 +118,7 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#162032] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-[#6B6F6B] hover:text-[#263238] hover:bg-[#EEE8DC] transition-colors cursor-pointer"
             title="Close Alert Simulator"
           >
             <X className="w-5 h-5" />
@@ -130,7 +130,7 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
           
           {/* Left: Realistic Smartphone Push Notification Screen */}
           <div className="flex justify-center">
-            <div className="w-[280px] bg-slate-950 border-4 border-slate-800 rounded-[36px] p-3 shadow-[0_0_30px_rgba(0,0,0,0.8)] relative overflow-hidden font-sans">
+            <div className="w-[280px] bg-slate-950 border-4 border-slate-800 rounded-[36px] p-3 shadow-xl relative overflow-hidden font-sans">
               
               {/* Phone Speaker Notch */}
               <div className="w-24 h-4 bg-slate-800 rounded-full mx-auto mb-3 flex items-center justify-center">
@@ -199,16 +199,16 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
           <div className="space-y-4 font-mono text-xs">
             
             {/* Language Selector */}
-            <div className="bg-[#0e1626] p-3 rounded-2xl border border-[#1e2d42] space-y-2">
+            <div className="bg-[#FFFDF8] p-3 rounded-2xl border border-[#DDD5C7] space-y-2 shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">
+                <span className="text-[10px] uppercase tracking-wider text-[#6B6F6B] font-bold">
                   Broadcast Language:
                 </span>
-                <div className="flex items-center bg-[#080d17] p-0.5 rounded-xl border border-[#1e2d42]">
+                <div className="flex items-center bg-[#EEE8DC] p-0.5 rounded-xl border border-[#DDD5C7]">
                   <button
                     onClick={() => setLanguage('en')}
                     className={`text-[10px] font-bold px-3 py-1 rounded-lg transition-colors cursor-pointer ${
-                      language === 'en' ? 'bg-[#00e5a3]/20 text-[#00e5a3] border border-[#00e5a3]/50' : 'text-slate-400 hover:text-white'
+                      language === 'en' ? 'bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0] shadow-sm' : 'text-[#6B6F6B] hover:text-[#263238]'
                     }`}
                   >
                     🇺🇸 English
@@ -216,7 +216,7 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
                   <button
                     onClick={() => setLanguage('es')}
                     className={`text-[10px] font-bold px-3 py-1 rounded-lg transition-colors cursor-pointer ${
-                      language === 'es' ? 'bg-[#00e5a3]/20 text-[#00e5a3] border border-[#00e5a3]/50' : 'text-slate-400 hover:text-white'
+                      language === 'es' ? 'bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0] shadow-sm' : 'text-[#6B6F6B] hover:text-[#263238]'
                     }`}
                   >
                     🇪🇸 Español
@@ -224,28 +224,28 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
                 </div>
               </div>
 
-              <div className="text-[10.5px] text-slate-300 font-sans leading-relaxed bg-[#080d17] p-2.5 rounded-xl border border-[#1e2d42]">
+              <div className="text-[10.5px] text-[#6B6F6B] font-sans leading-relaxed bg-[#FAF8F2] p-2.5 rounded-xl border border-[#DDD5C7]">
                 Multi-lingual Wireless Emergency Alerts automatically route to all mobile carriers (Verizon, AT&T, T-Mobile) based on handset preferred language.
               </div>
             </div>
 
             {/* Target Audience Reach Stats */}
-            <div className="bg-[#0e1626] p-3 rounded-2xl border border-[#1e2d42] space-y-2">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">
+            <div className="bg-[#FFFDF8] p-3 rounded-2xl border border-[#DDD5C7] space-y-2 shadow-sm">
+              <span className="text-[10px] uppercase tracking-wider text-[#6B6F6B] font-bold block">
                 Target Zone Wireless Delivery Reach:
               </span>
               
               <div className="grid grid-cols-2 gap-2 text-[10px]">
-                <div className="bg-[#080d17] p-2.5 rounded-xl border border-[#1e2d42]">
-                  <span className="text-slate-500 block text-[8.5px]">TOTAL RESIDENT REACH</span>
-                  <strong className="text-white text-sm">{zone.population.toLocaleString()}</strong>
-                  <span className="text-[8px] text-[#00e5a3] block mt-0.5">● 4 Cell Towers Locked</span>
+                <div className="bg-[#FAF8F2] p-2.5 rounded-xl border border-[#DDD5C7]">
+                  <span className="text-[#6B6F6B] block text-[8.5px]">TOTAL RESIDENT REACH</span>
+                  <strong className="text-[#263238] text-sm">{zone.population.toLocaleString()}</strong>
+                  <span className="text-[8px] text-[#0f766e] block mt-0.5 font-bold">● 4 Cell Towers Locked</span>
                 </div>
 
-                <div className="bg-[#080d17] p-2.5 rounded-xl border border-[#1e2d42]">
-                  <span className="text-slate-500 block text-[8.5px]">SENIORS PRIORITIZED (ACS)</span>
-                  <strong className="text-[#00e5a3] text-sm">{elderlyCount}</strong>
-                  <span className="text-[8px] text-[#00f2fe] block mt-0.5">({zone.elderlyPopulationPct}% of Pop)</span>
+                <div className="bg-[#FAF8F2] p-2.5 rounded-xl border border-[#DDD5C7]">
+                  <span className="text-[#6B6F6B] block text-[8.5px]">SENIORS PRIORITIZED (ACS)</span>
+                  <strong className="text-[#0f766e] text-sm font-bold">{elderlyCount}</strong>
+                  <span className="text-[8px] text-[#0369a1] block mt-0.5 font-bold">({zone.elderlyPopulationPct}% of Pop)</span>
                 </div>
               </div>
             </div>
@@ -255,10 +255,10 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
               <button
                 onClick={handleTriggerBroadcast}
                 disabled={isBroadcasting}
-                className={`w-full py-2.5 rounded-xl font-bold font-mono text-xs flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer ${
+                className={`w-full py-2.5 rounded-xl font-bold font-mono text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer ${
                   broadcastSent
-                    ? 'bg-emerald-600 text-white border border-emerald-400'
-                    : 'bg-gradient-to-r from-rose-600 via-rose-500 to-rose-600 hover:from-rose-500 hover:to-rose-500 text-white border border-rose-400 shadow-rose-900/30'
+                    ? 'bg-emerald-600 text-white border border-emerald-500'
+                    : 'bg-[#be123c] hover:bg-[#9f1239] text-white border border-[#be123c]'
                 }`}
               >
                 {isBroadcasting ? (
@@ -281,9 +281,9 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
 
               <button
                 onClick={handleCopy}
-                className="w-full py-1.5 rounded-xl bg-[#080d17] hover:bg-[#162032] border border-[#1e2d42] text-slate-300 font-mono text-[10px] flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                className="w-full py-2 rounded-xl bg-[#FFFDF8] hover:bg-[#EEE8DC] border border-[#DDD5C7] text-[#263238] font-mono text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
               >
-                {copied ? <Check className="w-3 h-3 text-[#00e5a3]" /> : <Copy className="w-3 h-3 text-slate-400" />}
+                {copied ? <Check className="w-3 h-3 text-[#0f766e]" /> : <Copy className="w-3 h-3 text-[#6B6F6B]" />}
                 <span>{copied ? 'Copied to Clipboard!' : 'Copy Alert Text for Press Release'}</span>
               </button>
             </div>
@@ -292,9 +292,9 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
         </div>
 
         {/* Footer info */}
-        <div className="px-5 py-2.5 bg-[#080d17] border-t border-[#1e2d42] flex items-center justify-between text-[9px] font-mono text-slate-400">
+        <div className="px-5 py-2.5 bg-[#EEE8DC]/60 border-t border-[#DDD5C7] flex items-center justify-between text-[9px] font-mono text-[#6B6F6B]">
           <span>FEDERAL PROTOCOL: FCC & FEMA Integrated Public Alert and Warning System (IPAWS)</span>
-          <span className="text-[#00e5a3] font-bold">ACTIVE WIRELESS CELL BROADCAST READY</span>
+          <span className="text-[#0f766e] font-bold">ACTIVE WIRELESS CELL BROADCAST READY</span>
         </div>
 
       </div>
