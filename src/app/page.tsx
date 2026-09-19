@@ -87,6 +87,44 @@ interface AIAnalysis {
 
 type PlatformTab = 'HEATWAVE_SIMULATOR' | 'MULTI_HAZARD_ATLAS' | 'CLIMATE_ANALYTICS' | 'EOC_DISPATCH';
 
+const DEMO_STEPS = [
+  {
+    id: 0,
+    badge: 'STEP 1 OF 5',
+    title: '🚨 Real-Time Threat Detection',
+    desc: 'Locking onto Phoenix Core (104°F) — NOAA Telemetry & Gemini AI senior demographic vulnerability analysis.',
+    duration: 12,
+  },
+  {
+    id: 1,
+    badge: 'STEP 2 OF 5',
+    title: '🛠️ EOC What-If Intervention Simulation',
+    desc: 'Deploying mobile cooling buses, emergency microgrids & medics — dynamically reducing heat threat from 76 to 38.',
+    duration: 16,
+  },
+  {
+    id: 2,
+    badge: 'STEP 3 OF 5',
+    title: '🗺️ 50-State Multi-Hazard Atlas',
+    desc: 'Switching nationwide Doppler radar, Wildfire vulnerability, and live NOAA NWS emergency warnings across states.',
+    duration: 14,
+  },
+  {
+    id: 3,
+    badge: 'STEP 4 OF 5',
+    title: '📈 10-Year ML Climate Forecasts',
+    desc: 'Projecting 2021–2030 temperature velocity cones and accessing the $2.6T NOAA historical disaster archives.',
+    duration: 14,
+  },
+  {
+    id: 4,
+    badge: 'STEP 5 OF 5',
+    title: '📱 Citizen WEA Phone Alert Broadcast',
+    desc: 'Simulating bilingual FEMA WEA / SMS emergency push broadcast to 142,000 residents across the municipal zone.',
+    duration: 16,
+  },
+];
+
 export default function Dashboard() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<PlatformTab>('HEATWAVE_SIMULATOR');
@@ -272,44 +310,6 @@ export default function Dashboard() {
   const [demoTick, setDemoTick] = useState<number>(0);
   const [isDemoPaused, setIsDemoPaused] = useState<boolean>(false);
 
-  const DEMO_STEPS = [
-    {
-      id: 0,
-      badge: 'STEP 1 OF 5',
-      title: '🚨 Real-Time Threat Detection',
-      desc: 'Locking onto Phoenix Core (104°F) — NOAA Telemetry & Gemini AI senior demographic vulnerability analysis.',
-      duration: 12,
-    },
-    {
-      id: 1,
-      badge: 'STEP 2 OF 5',
-      title: '🛠️ EOC What-If Intervention Simulation',
-      desc: 'Deploying mobile cooling buses, emergency microgrids & medics — dynamically reducing heat threat from 76 to 38.',
-      duration: 16,
-    },
-    {
-      id: 2,
-      badge: 'STEP 3 OF 5',
-      title: '🗺️ 50-State Multi-Hazard Atlas',
-      desc: 'Switching nationwide Doppler radar, Wildfire vulnerability, and live NOAA NWS emergency warnings across states.',
-      duration: 14,
-    },
-    {
-      id: 3,
-      badge: 'STEP 4 OF 5',
-      title: '📈 10-Year ML Climate Forecasts',
-      desc: 'Projecting 2021–2030 temperature velocity cones and accessing the $2.6T NOAA historical disaster archives.',
-      duration: 14,
-    },
-    {
-      id: 4,
-      badge: 'STEP 5 OF 5',
-      title: '📱 Citizen WEA Phone Alert Broadcast',
-      desc: 'Simulating bilingual FEMA WEA / SMS emergency push broadcast to 142,000 residents across the municipal zone.',
-      duration: 16,
-    },
-  ];
-
   const applyDemoStep = useCallback((stepIdx: number) => {
     setDemoStep(stepIdx);
     setDemoTick(0);
@@ -358,7 +358,7 @@ export default function Dashboard() {
     } else {
       stopDemoTour();
     }
-  }, [demoStep, DEMO_STEPS.length, applyDemoStep, stopDemoTour]);
+  }, [demoStep, applyDemoStep, stopDemoTour]);
 
   const prevDemoStep = useCallback(() => {
     if (demoStep > 0) {
@@ -409,7 +409,7 @@ export default function Dashboard() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isDemoRunning, isDemoPaused, demoStep, applyDemoStep, DEMO_STEPS]);
+  }, [isDemoRunning, isDemoPaused, demoStep, applyDemoStep]);
 
   // Gemini AI Analysis Trigger
   useEffect(() => {
