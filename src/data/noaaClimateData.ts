@@ -667,6 +667,44 @@ export const stateClimateProfiles: StateClimateProfile[] = [
     yearlyRisk: [72, 70, 76, 82, 78],
     projectedTemps: [51.9, 52.3, 52.9, 52.6, 53.3],
     projectedRisk: [80, 82, 86, 84, 89]
+  },
+  {
+    id: 'LA',
+    name: 'Louisiana',
+    stateCode: 'LA',
+    region: 'Southeast',
+    lat: 30.9843,
+    lng: -91.9623,
+    population: 4590241,
+    historicalAvgTempF: 66.4,
+    currentTempF: 69.8,
+    tempAnomalyF: +3.4,
+    historicalPrecipIn: 60.1,
+    currentPrecipIn: 65.4,
+    precipAnomalyIn: +5.3,
+    heatRisk: 92,
+    coldRisk: 15,
+    floodRisk: 98,
+    droughtRisk: 42,
+    stormRisk: 94,
+    tornadoRisk: 86,
+    hurricaneRisk: 98,
+    wildfireRisk: 58,
+    windRisk: 90,
+    snowRisk: 5,
+    overallRisk: 95,
+    droughtPdsi: -0.8,
+    annualTornadoes: 54,
+    wildfireAcresBurnedK: 65,
+    extremeHeatDays: 56,
+    extremeRainDays: 32,
+    hasFluctuation: true,
+    fluctuationDetail: 'Severe coastal marsh subsidence, historic hurricane landfall vulnerability, and compound humid heat stress.',
+    yearlyTemps: [68.1, 68.7, 69.4, 70.5, 69.8],
+    yearlyPrecip: [58.2, 61.4, 63.8, 67.2, 65.4],
+    yearlyRisk: [86, 88, 92, 97, 95],
+    projectedTemps: [70.2, 70.6, 71.3, 71.0, 71.8],
+    projectedRisk: [96, 97, 99, 98, 100]
   }
 ];
 
@@ -734,6 +772,16 @@ export const historicalDisasterEvents: ClimateEventTimeline[] = [
   },
   {
     year: 2024,
+    date: 'September - November 2024',
+    title: 'Southern California & Los Angeles Wildfire Siege (Bridge, Line & Mountain Fires)',
+    state: 'CA (Los Angeles & Ventura)',
+    hazardType: 'Wildfire',
+    severity: 'EXTREME',
+    measurement: '120,000+ acres burned / Santa Ana wind gusts 80+ mph / Critical urban-interface evacuations across LA Basin',
+    source: 'CAL FIRE / NOAA Storm Prediction Center Fire Weather'
+  },
+  {
+    year: 2024,
     date: 'September 2024',
     title: 'Hurricane Helene Southern Appalachian Flooding',
     state: 'NC / GA / FL',
@@ -761,6 +809,16 @@ export const historicalDisasterEvents: ClimateEventTimeline[] = [
     severity: 'EXTREME',
     measurement: '55.5°F average (+3.5°F anomaly / 27 billion-dollar disasters)',
     source: 'NOAA Annual State of the Climate'
+  },
+  {
+    year: 2025,
+    date: 'January 2025',
+    title: 'Palisades & Los Angeles Coastal Wildfire Flare-Up',
+    state: 'CA (Los Angeles County)',
+    hazardType: 'Wildfire',
+    severity: 'EXTREME',
+    measurement: 'Fierce offshore Santa Ana wind event / Widespread canyon and coastal wildfire alerts',
+    source: 'NOAA NWS Los Angeles / Oxnard Weather Forecast Office'
   },
   {
     year: 2025,

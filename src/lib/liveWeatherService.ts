@@ -181,6 +181,59 @@ export const MUNICIPAL_ZONES: MunicipalZoneMeta[] = [
     baseEmergencyResources: 'High',
   },
 
+  // Los Angeles Metro & Southern California Wildfire Urban Interface
+  {
+    id: 'zone-la-core',
+    name: 'Downtown LA & Central Basin',
+    metro: 'Los Angeles, CA',
+    state: 'California',
+    stateCode: 'CA',
+    timeZone: 'America/Los_Angeles',
+    noaaStation: 'NOAA Station KCUX (Downtown LA / USC)',
+    lat: 34.0522,
+    lng: -118.2437,
+    population: 250000,
+    populationDensity: 14500,
+    elderlyPopulationPct: 19,
+    treeCoveragePct: 7,
+    baseCoolingCapacity: 'Low',
+    baseEmergencyResources: 'Medium',
+  },
+  {
+    id: 'zone-la-valley',
+    name: 'San Fernando Valley & Wildfire Foothills',
+    metro: 'Los Angeles, CA',
+    state: 'California',
+    stateCode: 'CA',
+    timeZone: 'America/Los_Angeles',
+    noaaStation: 'NOAA Station KVNY (Van Nuys)',
+    lat: 34.1808,
+    lng: -118.4490,
+    population: 320000,
+    populationDensity: 11200,
+    elderlyPopulationPct: 22,
+    treeCoveragePct: 8,
+    baseCoolingCapacity: 'Low',
+    baseEmergencyResources: 'Low',
+  },
+  {
+    id: 'zone-la-coastal',
+    name: 'Santa Monica & Westside Basin',
+    metro: 'Los Angeles, CA',
+    state: 'California',
+    stateCode: 'CA',
+    timeZone: 'America/Los_Angeles',
+    noaaStation: 'NOAA Station KSMO (Santa Monica)',
+    lat: 34.0195,
+    lng: -118.4912,
+    population: 165000,
+    populationDensity: 10200,
+    elderlyPopulationPct: 20,
+    treeCoveragePct: 18,
+    baseCoolingCapacity: 'High',
+    baseEmergencyResources: 'High',
+  },
+
   // Las Vegas Metro
   {
     id: 'zone-las-core',
@@ -517,7 +570,8 @@ export const STATE_METAS = [
   { id: 'IL', name: 'Illinois', stateCode: 'IL', region: 'Midwest' as const, lat: 40.6331, lng: -89.3985, population: 12582032, historicalAvgTempF: 51.8, floodRisk: 79, wildfireRisk: 20, droughtRisk: 55 },
   { id: 'NV', name: 'Nevada', stateCode: 'NV', region: 'Southwest' as const, lat: 38.8026, lng: -116.4194, population: 3177772, historicalAvgTempF: 49.9, floodRisk: 48, wildfireRisk: 89, droughtRisk: 94 },
   { id: 'GA', name: 'Georgia', stateCode: 'GA', region: 'Southeast' as const, lat: 32.1656, lng: -82.9001, population: 10912876, historicalAvgTempF: 63.5, floodRisk: 84, wildfireRisk: 45, droughtRisk: 48 },
-  { id: 'PA', name: 'Pennsylvania', stateCode: 'PA', region: 'Northeast' as const, lat: 41.2033, lng: -77.1945, population: 12972008, historicalAvgTempF: 48.8, floodRisk: 81, wildfireRisk: 22, droughtRisk: 38 }
+  { id: 'PA', name: 'Pennsylvania', stateCode: 'PA', region: 'Northeast' as const, lat: 41.2033, lng: -77.1945, population: 12972008, historicalAvgTempF: 48.8, floodRisk: 81, wildfireRisk: 22, droughtRisk: 38 },
+  { id: 'LA', name: 'Louisiana', stateCode: 'LA', region: 'Southeast' as const, lat: 30.9843, lng: -91.9623, population: 4590241, historicalAvgTempF: 66.4, floodRisk: 98, wildfireRisk: 58, droughtRisk: 42 }
 ];
 
 function getLocalObservationMeta(timeZone: string): { localTimeStr: string; isDaytime: boolean } {
