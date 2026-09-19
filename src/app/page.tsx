@@ -42,7 +42,12 @@ import {
   Siren,
   ShieldCheck,
   RefreshCw,
-  Smartphone
+  Smartphone,
+  Play,
+  Pause,
+  SkipForward,
+  SkipBack,
+  X
 } from 'lucide-react';
 import CitizenAlertModal from '@/components/CitizenAlertModal';
 import { 
@@ -259,17 +264,152 @@ export default function Dashboard() {
   const currentRiskColor = getScoreColor(currentHeatRiskScore);
   const simulatedRiskColor = getScoreColor(simulatedHeatRiskScore ?? currentHeatRiskScore);
 
-  // 90-Second Demo Pitch Shortcut
-  const triggerDemoFlow = () => {
-    setActiveTab('HEATWAVE_SIMULATOR');
-    setSelectedZoneId('zone-phx-core');
-    setTacticalPlan({
-      coolingBuses: 12,
-      gridGenerators: 6,
-      paramedicSurge: 8,
-      weaBroadcastSent: true
-    });
-  };
+  // =========================================================================
+  // 90-SECOND INTERACTIVE AUTOPILOT TOUR CONTROLLER
+  // =========================================================================
+  const [isDemoRunning, setIsDemoRunning] = useState<boolean>(false);
+  const [demoStep, setDemoStep] = useState<number>(0);
+  const [demoTick, setDemoTick] = useState<number>(0);
+  const [isDemoPaused, setIsDemoPaused] = useState<boolean>(false);
+
+  const DEMO_STEPS = [
+    {
+      id: 0,
+      badge: 'STEP 1 OF 5',
+      title: '🚨 Real-Time Threat Detection',
+      desc: 'Locking onto Phoenix Core (104°F) — NOAA Telemetry & Gemini AI senior demographic vulnerability analysis.',
+      duration: 12,
+    },
+    {
+      id: 1,
+      badge: 'STEP 2 OF 5',
+      title: '🛠️ EOC What-If Intervention Simulation',
+      desc: 'Deploying mobile cooling buses, emergency microgrids & medics — dynamically reducing heat threat from 76 to 38.',
+      duration: 16,
+    },
+    {
+      id: 2,
+      badge: 'STEP 3 OF 5',
+      title: '🗺️ 50-State Multi-Hazard Atlas',
+      desc: 'Switching nationwide Doppler radar, Wildfire vulnerability, and live NOAA NWS emergency warnings across states.',
+      duration: 14,
+    },
+    {
+      id: 3,
+      badge: 'STEP 4 OF 5',
+      title: '📈 10-Year ML Climate Forecasts',
+      desc: 'Projecting 2021–2030 temperature velocity cones and accessing the $2.6T NOAA historical disaster archives.',
+      duration: 14,
+    },
+    {
+      id: 4,
+      badge: 'STEP 5 OF 5',
+      title: '📱 Citizen WEA Phone Alert Broadcast',
+      desc: 'Simulating bilingual FEMA WEA / SMS emergency push broadcast to 142,000 residents across the municipal zone.',
+      duration: 16,
+    },
+  ];
+
+  const applyDemoStep = useCallback((stepIdx: number) => {
+    setDemoStep(stepIdx);
+    setDemoTick(0);
+
+    if (stepIdx === 0) {
+      setActiveTab('HEATWAVE_SIMULATOR');
+      setSelectedZoneId('zone-phx-core');
+      setTacticalPlan({ coolingBuses: 0, gridGenerators: 0, paramedicSurge: 0, weaBroadcastSent: false });
+      setIsCitizenAlertModalOpen(false);
+    } else if (stepIdx === 1) {
+      setActiveTab('HEATWAVE_SIMULATOR');
+      setSelectedZoneId('zone-phx-core');
+      setIsCitizenAlertModalOpen(false);
+      setTacticalPlan({ coolingBuses: 4, gridGenerators: 2, paramedicSurge: 3, weaBroadcastSent: false });
+    } else if (stepIdx === 2) {
+      setIsCitizenAlertModalOpen(false);
+      setActiveTab('MULTI_HAZARD_ATLAS');
+      setSelectedStateId('state-ca');
+      setActiveHazardLayer('wildfire');
+    } else if (stepIdx === 3) {
+      setIsCitizenAlertModalOpen(false);
+      setActiveTab('CLIMATE_ANALYTICS');
+      setSelectedHorizonYear(2028);
+    } else if (stepIdx === 4) {
+      setActiveTab('EOC_DISPATCH');
+      setIsCitizenAlertModalOpen(true);
+    }
+  }, []);
+
+  const startDemoTour = useCallback(() => {
+    setIsDemoRunning(true);
+    setIsDemoPaused(false);
+    applyDemoStep(0);
+  }, [applyDemoStep]);
+
+  const stopDemoTour = useCallback(() => {
+    setIsDemoRunning(false);
+    setIsDemoPaused(false);
+    setDemoStep(0);
+    setDemoTick(0);
+  }, []);
+
+  const nextDemoStep = useCallback(() => {
+    if (demoStep < DEMO_STEPS.length - 1) {
+      applyDemoStep(demoStep + 1);
+    } else {
+      stopDemoTour();
+    }
+  }, [demoStep, DEMO_STEPS.length, applyDemoStep, stopDemoTour]);
+
+  const prevDemoStep = useCallback(() => {
+    if (demoStep > 0) {
+      applyDemoStep(demoStep - 1);
+    }
+  }, [demoStep, applyDemoStep]);
+
+  // Demo Timer Effect
+  useEffect(() => {
+    if (!isDemoRunning || isDemoPaused) return;
+
+    const interval = setInterval(() => {
+      setDemoTick((prevTick) => {
+        const nextTick = prevTick + 1;
+        const currentDuration = DEMO_STEPS[demoStep]?.duration ?? 15;
+
+        // Sub-step dynamic animations during Step 1 (Interventions)
+        if (demoStep === 1) {
+          if (nextTick === 3) {
+            setTacticalPlan({ coolingBuses: 8, gridGenerators: 4, paramedicSurge: 5, weaBroadcastSent: false });
+          } else if (nextTick === 7) {
+            setTacticalPlan({ coolingBuses: 12, gridGenerators: 6, paramedicSurge: 8, weaBroadcastSent: true });
+          }
+        }
+
+        // Sub-step dynamic animations during Step 2 (Atlas)
+        if (demoStep === 2) {
+          if (nextTick === 5) {
+            setSelectedStateId('state-fl');
+            setActiveHazardLayer('flood');
+          } else if (nextTick === 10) {
+            setSelectedStateId('state-tx');
+            setActiveHazardLayer('heat');
+          }
+        }
+
+        if (nextTick >= currentDuration) {
+          if (demoStep < DEMO_STEPS.length - 1) {
+            applyDemoStep(demoStep + 1);
+          } else {
+            setIsDemoRunning(false);
+          }
+          return 0;
+        }
+
+        return nextTick;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isDemoRunning, isDemoPaused, demoStep, applyDemoStep, DEMO_STEPS]);
 
   // Gemini AI Analysis Trigger
   useEffect(() => {
@@ -414,39 +554,49 @@ export default function Dashboard() {
         </nav>
 
         {/* Right Controls: 90-Sec Demo Flow, Live Refresh & UTC Clock */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           {/* Manual Live Refresh Button */}
           <button
             onClick={() => fetchLiveTelemetry(false)}
             disabled={isLoadingLive || isLiveRefreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#0f766e] font-mono text-[11px] font-bold hover:bg-[#FFFDF8] hover:border-[#0d9488] hover:text-[#0d9488] transition-all cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#0f766e] font-mono text-[11px] font-bold hover:bg-[#FFFDF8] hover:border-[#0d9488] hover:text-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
             title="Force immediate live data refresh from NOAA and Open-Meteo"
           >
             <RefreshCw className={`w-3 h-3 text-[#0d9488] ${isLiveRefreshing || isLoadingLive ? 'animate-spin' : ''}`} />
-            <span>{isLiveRefreshing || isLoadingLive ? 'Syncing...' : 'Refresh Live'}</span>
+            <span className="hidden sm:inline">{isLiveRefreshing || isLoadingLive ? 'Syncing...' : 'Refresh Live'}</span>
           </button>
 
           {/* Citizen Phone Alert Simulator Trigger */}
           <button
             onClick={() => setIsCitizenAlertModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FFE4E6] hover:bg-[#FECDD3] border border-[#FECDD3] text-[#be123c] font-mono text-xs font-bold shadow-sm hover:scale-105 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFE4E6] hover:bg-[#FECDD3] border border-[#FECDD3] text-[#be123c] font-mono text-xs font-bold shadow-sm hover:scale-105 transition-all cursor-pointer whitespace-nowrap shrink-0"
             title="Launch Citizen Phone Alert SMS & WEA Simulator"
           >
             <Smartphone className="w-3.5 h-3.5 text-[#e11d48]" />
-            <span>📱 Citizen Alert (SMS)</span>
+            <span>Citizen Alert</span>
           </button>
 
-          {/* 90-Sec Pitch Flow */}
+          {/* 90-Sec Interactive Autopilot Pitch Tour */}
           <button
-            onClick={triggerDemoFlow}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0d9488] hover:bg-[#0f766e] text-white border border-[#0d9488] font-mono text-xs font-bold shadow-sm hover:scale-105 transition-all cursor-pointer"
-            title="Launch the 90-second judge presentation demo flow"
+            onClick={() => {
+              if (isDemoRunning) {
+                setIsDemoPaused(!isDemoPaused);
+              } else {
+                startDemoTour();
+              }
+            }}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-mono text-xs font-bold shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+              isDemoRunning
+                ? 'bg-[#E8F5EF] text-[#0f766e] border-2 border-[#0d9488] ring-2 ring-[#0d9488]/30 animate-pulse'
+                : 'bg-[#0d9488] hover:bg-[#0f766e] text-white border border-[#0d9488] hover:scale-105'
+            }`}
+            title="Launch the automated 90-second judge presentation demo flow"
           >
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-            <span>⚡ 90-Sec Demo</span>
+            <Sparkles className={`w-3.5 h-3.5 ${isDemoRunning ? 'text-[#0d9488] animate-spin' : 'text-white'}`} />
+            <span>{isDemoRunning ? (isDemoPaused ? '▶️ Resume Tour' : `⏸️ Step ${demoStep + 1}/5`) : '⚡ 90-Sec Demo'}</span>
           </button>
 
-          <div className="hidden xl:flex items-center gap-1.5 font-mono text-[10px] text-[#263238] bg-[#FAF8F2] px-3 py-1.5 rounded-full border border-[#DDD5C7]">
+          <div className="hidden 2xl:flex items-center gap-1.5 font-mono text-[10px] text-[#263238] bg-[#FAF8F2] px-3 py-1.5 rounded-full border border-[#DDD5C7] whitespace-nowrap shrink-0">
             <Clock className="w-3 h-3 text-[#0d9488]" />
             <span>{currentTime || 'LIVE TELEMETRY'}</span>
           </div>
@@ -1423,6 +1573,89 @@ export default function Dashboard() {
       )}
 
 
+
+      {/* ========================================================================= */}
+      {/* 7. FLOATING 90-SECOND AUTOPILOT TOUR CONTROLLER HUD                       */}
+      {/* ========================================================================= */}
+      {isDemoRunning && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9990] w-[92%] max-w-2xl bg-[#FAF8F2] border-2 border-[#0d9488] p-4 rounded-3xl shadow-2xl animate-in slide-in-from-bottom duration-300 font-mono text-xs select-auto">
+          {/* Progress bar across top */}
+          <div className="w-full bg-[#EEE8DC] h-1.5 rounded-full overflow-hidden mb-3">
+            <div 
+              className="bg-gradient-to-r from-[#0d9488] to-[#00e5a3] h-full transition-all duration-1000 ease-linear rounded-full"
+              style={{
+                width: `${Math.min(100, Math.round(((demoTick) / (DEMO_STEPS[demoStep]?.duration || 15)) * 100))}%`
+              }}
+            />
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex-1 pr-2">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0] px-2.5 py-0.5 rounded-full font-bold text-[10px] tracking-wider uppercase flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#0d9488] animate-ping" />
+                  {DEMO_STEPS[demoStep].badge}
+                </span>
+                <span className="text-[#263238] font-bold text-sm font-sans">
+                  {DEMO_STEPS[demoStep].title}
+                </span>
+                <span className="text-[#6B6F6B] text-[10px] font-bold">
+                  ({DEMO_STEPS[demoStep].duration - demoTick}s remaining)
+                </span>
+              </div>
+              <p className="text-[11px] text-[#6B6F6B] font-sans leading-snug">
+                {DEMO_STEPS[demoStep].desc}
+              </p>
+            </div>
+
+            {/* Control Buttons */}
+            <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0">
+              <button
+                onClick={prevDemoStep}
+                disabled={demoStep === 0}
+                className="p-2 rounded-xl bg-[#FFFDF8] hover:bg-[#EEE8DC] border border-[#DDD5C7] text-[#263238] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-sm"
+                title="Previous Step"
+              >
+                <SkipBack className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={() => setIsDemoPaused(!isDemoPaused)}
+                className="px-3 py-2 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm text-xs"
+                title={isDemoPaused ? 'Resume Tour' : 'Pause Tour'}
+              >
+                {isDemoPaused ? (
+                  <>
+                    <Play className="w-3.5 h-3.5 fill-white" />
+                    <span>Resume</span>
+                  </>
+                ) : (
+                  <>
+                    <Pause className="w-3.5 h-3.5 fill-white" />
+                    <span>Pause</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={nextDemoStep}
+                className="p-2 rounded-xl bg-[#FFFDF8] hover:bg-[#EEE8DC] border border-[#DDD5C7] text-[#263238] transition-colors cursor-pointer shadow-sm"
+                title="Next Step"
+              >
+                <SkipForward className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={stopDemoTour}
+                className="p-2 rounded-xl bg-[#FFE4E6] hover:bg-[#FECDD3] text-[#be123c] border border-[#FECDD3] transition-colors cursor-pointer shadow-sm ml-1"
+                title="Exit Tour"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Citizen Emergency Phone Alert Simulator Modal */}
       <CitizenAlertModal
