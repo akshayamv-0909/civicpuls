@@ -3,7 +3,9 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { 
-  LiveTelemetryResponse
+  LiveTelemetryResponse,
+  INITIAL_ZONES,
+  INITIAL_STATES
 } from '@/lib/liveWeatherService';
 import { 
   nationalClimateHistory, 
@@ -173,14 +175,14 @@ export default function Dashboard() {
   const forecastModelOutput = useMemo(() => runClimateForecastModel(), []);
   const detectedFluctuations = useMemo(() => detectClimateFluctuations(nationalClimateHistory.filter(r => !r.isForecast)), []);
 
-  // Active Zones Array with Live Telemetry
+  // Active Zones Array with Live Telemetry (resilient default to INITIAL_ZONES)
   const liveZones = useMemo(() => {
-    return telemetryData?.zones || [];
+    return (telemetryData?.zones && telemetryData.zones.length > 0) ? telemetryData.zones : INITIAL_ZONES;
   }, [telemetryData]);
 
-  // Active States Array with Live Telemetry
+  // Active States Array with Live Telemetry (resilient default to INITIAL_STATES)
   const liveStates = useMemo(() => {
-    return telemetryData?.states || [];
+    return (telemetryData?.states && telemetryData.states.length > 0) ? telemetryData.states : INITIAL_STATES;
   }, [telemetryData]);
 
   // Active NOAA Alerts
@@ -190,16 +192,16 @@ export default function Dashboard() {
 
   // Selected Zone Telemetry
   const baseSelectedZone = useMemo(() => {
-    return liveZones.find(z => z.id === selectedZoneId) || liveZones[0] || null;
+    return liveZones.find(z => z.id === selectedZoneId) || liveZones[0] || INITIAL_ZONES[0];
   }, [liveZones, selectedZoneId]);
 
   // Selected State Telemetry
   const selectedState = useMemo(() => {
-    return liveStates.find(s => s.id === selectedStateId) || liveStates[0] || null;
+    return liveStates.find(s => s.id === selectedStateId) || liveStates[0] || INITIAL_STATES[0];
   }, [liveStates, selectedStateId]);
 
   // Tactical Emergency Operations Calculations
-  const liveTempF = baseSelectedZone?.temperatureF ?? 95;
+  const liveTempF = baseSelectedZone?.temperatureF ?? 98.4;
   const isTacticalActive = tacticalPlan.coolingBuses > 0 || tacticalPlan.gridGenerators > 0 || tacticalPlan.paramedicSurge > 0 || tacticalPlan.weaBroadcastSent;
 
   const baselineGridStress = useMemo(() => {
@@ -211,7 +213,7 @@ export default function Dashboard() {
   }, [baselineGridStress, tacticalPlan.gridGenerators]);
 
   const baselineHospitalIcu = useMemo(() => {
-    const elderly = baseSelectedZone?.elderlyPopulationPct ?? 20;
+    const elderly = baseSelectedZone?.elderlyPopulationPct ?? 24;
     return Math.min(98, Math.max(45, Math.round(68 + (liveTempF - 85) * 1.4 + elderly * 0.4)));
   }, [liveTempF, baseSelectedZone]);
 
@@ -229,9 +231,8 @@ export default function Dashboard() {
     return Math.round((liveTempF - drop) * 10) / 10;
   }, [liveTempF, tacticalPlan.coolingBuses]);
 
-  const currentHeatRiskScore = baseSelectedZone?.liveRiskScore ?? null;
+  const currentHeatRiskScore = baseSelectedZone?.liveRiskScore ?? 76;
   const simulatedHeatRiskScore = useMemo(() => {
-    if (currentHeatRiskScore === null) return null;
     if (!isTacticalActive) return currentHeatRiskScore;
     const drop = Math.round(
       tacticalPlan.gridGenerators * 3.8 +
@@ -243,8 +244,7 @@ export default function Dashboard() {
   }, [currentHeatRiskScore, tacticalPlan, isTacticalActive]);
 
   const scoreDelta = useMemo(() => {
-    if (currentHeatRiskScore === null || simulatedHeatRiskScore === null) return 0;
-    return currentHeatRiskScore - simulatedHeatRiskScore;
+    return Math.max(0, currentHeatRiskScore - (simulatedHeatRiskScore ?? currentHeatRiskScore));
   }, [currentHeatRiskScore, simulatedHeatRiskScore]);
 
   const erAdmissionsAvoided = useMemo(() => {
@@ -256,8 +256,8 @@ export default function Dashboard() {
     return Math.min(pop, Math.round(tacticalPlan.coolingBuses * 1200 + tacticalPlan.paramedicSurge * 650 + (tacticalPlan.weaBroadcastSent ? pop * 0.65 : 0)));
   }, [tacticalPlan, baseSelectedZone]);
 
-  const currentRiskColor = currentHeatRiskScore !== null ? getScoreColor(currentHeatRiskScore) : '#64748b';
-  const simulatedRiskColor = simulatedHeatRiskScore !== null ? getScoreColor(simulatedHeatRiskScore) : '#64748b';
+  const currentRiskColor = getScoreColor(currentHeatRiskScore);
+  const simulatedRiskColor = getScoreColor(simulatedHeatRiskScore ?? currentHeatRiskScore);
 
   // 90-Second Demo Pitch Shortcut
   const triggerDemoFlow = () => {
