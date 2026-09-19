@@ -327,7 +327,7 @@ export default function Dashboard() {
     } else if (stepIdx === 2) {
       setIsCitizenAlertModalOpen(false);
       setActiveTab('MULTI_HAZARD_ATLAS');
-      setSelectedStateId('state-ca');
+      setSelectedStateId('CA');
       setActiveHazardLayer('wildfire');
     } else if (stepIdx === 3) {
       setIsCitizenAlertModalOpen(false);
@@ -387,10 +387,10 @@ export default function Dashboard() {
         // Sub-step dynamic animations during Step 2 (Atlas)
         if (demoStep === 2) {
           if (nextTick === 5) {
-            setSelectedStateId('state-fl');
+            setSelectedStateId('FL');
             setActiveHazardLayer('flood');
           } else if (nextTick === 10) {
-            setSelectedStateId('state-tx');
+            setSelectedStateId('TX');
             setActiveHazardLayer('heat');
           }
         }
@@ -1116,17 +1116,17 @@ export default function Dashboard() {
                         <span className="text-[9px] uppercase tracking-widest text-[#6B6F6B] block mb-0.5">Composite Risk Tier</span>
                         <span 
                           className="text-[10px] font-bold uppercase tracking-wider text-white px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 shadow-sm"
-                          style={{ backgroundColor: getScoreColor(selectedState.overallRisk) }}
+                          style={{ backgroundColor: getScoreColor(selectedState.overallRisk ?? Math.round((selectedState.floodRisk * 0.3) + (selectedState.wildfireRisk * 0.25) + (selectedState.droughtRisk * 0.25) + ((selectedState.heatRisk ?? 40) * 0.2))) }}
                         >
                           <ShieldAlert className="w-3.5 h-3.5" />
-                          {getRiskTier(selectedState.overallRisk ?? 88)} RISK
+                          {getRiskTier(selectedState.overallRisk ?? Math.round((selectedState.floodRisk * 0.3) + (selectedState.wildfireRisk * 0.25) + (selectedState.droughtRisk * 0.25) + ((selectedState.heatRisk ?? 40) * 0.2)))} RISK
                         </span>
                       </div>
 
                       <div className="text-right">
                         <span className="text-[9px] uppercase tracking-widest text-[#6B6F6B] block mb-0.5">Live Climate Score</span>
-                        <span className="text-3xl font-bold tabular-nums leading-none" style={{ color: getScoreColor(selectedState.overallRisk ?? 88) }}>
-                          {selectedState.overallRisk ?? 88}
+                        <span className="text-3xl font-bold tabular-nums leading-none" style={{ color: getScoreColor(selectedState.overallRisk ?? Math.round((selectedState.floodRisk * 0.3) + (selectedState.wildfireRisk * 0.25) + (selectedState.droughtRisk * 0.25) + ((selectedState.heatRisk ?? 40) * 0.2))) }}>
+                          {selectedState.overallRisk ?? Math.round((selectedState.floodRisk * 0.3) + (selectedState.wildfireRisk * 0.25) + (selectedState.droughtRisk * 0.25) + ((selectedState.heatRisk ?? 40) * 0.2))}
                           <span className="text-xs text-[#6B6F6B] font-normal">/100</span>
                         </span>
                       </div>
