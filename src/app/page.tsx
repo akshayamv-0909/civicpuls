@@ -553,54 +553,54 @@ export default function Dashboard() {
         >
           <button
             onClick={() => setActiveTab('HEATWAVE_SIMULATOR')}
-            className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap text-[10.5px] ${
+            className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap text-[11px] ${
               activeTab === 'HEATWAVE_SIMULATOR'
-                ? 'bg-[#FFFDF8] text-[#0f766e] border border-[#C3988E] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#0f766e] border border-[#C3988E] shadow-sm font-extrabold'
                 : 'text-[#5A4D49] hover:text-[#263238]'
             }`}
           >
-            <Flame className="w-3 h-3 text-[#0d9488]" />
-            <span>1. Heatwave</span>
+            <Flame className="w-3.5 h-3.5 text-[#0d9488]" />
+            <span>1. Urban Risk Simulator</span>
           </button>
 
           <button
             onClick={() => setActiveTab('MULTI_HAZARD_ATLAS')}
-            className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap text-[10.5px] ${
+            className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap text-[11px] ${
               activeTab === 'MULTI_HAZARD_ATLAS'
-                ? 'bg-[#FFFDF8] text-[#0369a1] border border-[#C3988E] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#0369a1] border border-[#C3988E] shadow-sm font-extrabold'
                 : 'text-[#5A4D49] hover:text-[#263238]'
             }`}
           >
-            <Globe className="w-3 h-3 text-[#0284c7]" />
-            <span>2. Hazard Atlas</span>
+            <Globe className="w-3.5 h-3.5 text-[#0284c7]" />
+            <span>2. Multi-Hazard Atlas</span>
           </button>
 
           <button
             onClick={() => setActiveTab('CLIMATE_ANALYTICS')}
-            className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap text-[10.5px] ${
+            className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap text-[11px] ${
               activeTab === 'CLIMATE_ANALYTICS'
-                ? 'bg-[#FFFDF8] text-[#4338ca] border border-[#C3988E] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#4338ca] border border-[#C3988E] shadow-sm font-extrabold'
                 : 'text-[#5A4D49] hover:text-[#263238]'
             }`}
           >
-            <BarChart3 className="w-3 h-3 text-[#4f46e5]" />
-            <span>3. ML Forecasts</span>
+            <BarChart3 className="w-3.5 h-3.5 text-[#4f46e5]" />
+            <span>3. NOAA & ML Forecasts</span>
           </button>
 
           <button
             onClick={() => setActiveTab('EOC_DISPATCH')}
-            className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap text-[10.5px] ${
+            className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap text-[11px] ${
               activeTab === 'EOC_DISPATCH'
-                ? 'bg-[#FFFDF8] text-[#be123c] border border-[#C3988E] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#be123c] border border-[#C3988E] shadow-sm font-extrabold'
                 : 'text-[#5A4D49] hover:text-[#263238]'
             }`}
           >
-            <Siren className="w-3 h-3 text-[#e11d48]" />
-            <span>4. EOC Dispatch</span>
+            <Siren className="w-3.5 h-3.5 text-[#e11d48]" />
+            <span>4. Federal EOC Dispatch</span>
             {liveAlerts.length > 0 && (
               <span 
                 style={{ backgroundColor: '#DC2626' }}
-                className="text-[8px] text-white font-bold px-1 py-0.2 rounded-full"
+                className="text-[8px] text-white font-bold px-1.5 py-0.2 rounded-full ml-0.5"
               >
                 {liveAlerts.length}
               </span>
