@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import QRCode from 'qrcode';
 import { LiveZoneTelemetry } from '@/lib/liveWeatherService';
 import { 
   X, 
@@ -37,6 +38,23 @@ export default function CitizenAlertModal({
   const [copied, setCopied] = useState(false);
   const [isBroadcasting, setIsBroadcasting] = useState(false);
   const [broadcastSent, setBroadcastSent] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+
+  const targetUrl = 'https://civicpuls.onrender.com/citizen';
+
+  // Generate 100% real, valid, scannable QR Code Data URL on mount
+  useEffect(() => {
+    QRCode.toDataURL(targetUrl, {
+      width: 320,
+      margin: 1.5,
+      color: {
+        dark: '#0f766e',
+        light: '#ffffff'
+      }
+    })
+      .then((url) => setQrDataUrl(url))
+      .catch((err) => console.error('QR code generation error:', err));
+  }, [targetUrl]);
 
   if (!isOpen || !zone) return null;
 
@@ -152,7 +170,7 @@ Permanezca en interiores, beba agua y revise a sus familiares mayores.
             }`}
           >
             <QrCode className="w-3.5 h-3.5" />
-            <span>1. Scan QR on Real Phone (Judges Demo)</span>
+            <span>1. Real Scannable Phone QR (Judges Demo)</span>
           </button>
 
           <button
@@ -171,38 +189,22 @@ Permanezca en interiores, beba agua y revise a sus familiares mayores.
         {/* Main Content Area */}
         <div className="p-5 flex-1 overflow-y-auto">
           
-          {/* TAB 1: SCAN QR CODE TO OPEN ON REAL PHONE */}
+          {/* TAB 1: SCAN REAL QR CODE TO OPEN ON REAL PHONE */}
           {activeTab === 'SCAN_QR' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
-              {/* QR Box */}
+              {/* Real Scannable QR Code Box */}
               <div className="bg-[#FFFDF8] border-2 border-[#0f766e] rounded-2xl p-4 text-center space-y-3 shadow-md flex flex-col items-center">
                 <span className="text-[10px] font-mono font-bold text-[#0f766e] uppercase tracking-wider bg-[#E8F5EF] px-2.5 py-1 rounded-full border border-[#A7F3D0]">
-                  📱 POINT PHONE CAMERA HERE
+                  📷 SCAN WITH ANY PHONE CAMERA
                 </span>
 
-                {/* High-Contrast Crisp QR Visual Pattern */}
-                <div className="w-44 h-44 bg-white p-2.5 rounded-xl border border-[#DDD5C7] shadow-inner flex flex-col items-center justify-center relative">
-                  <div className="grid grid-cols-7 gap-1 p-1 w-full h-full">
-                    {Array.from({ length: 49 }).map((_, i) => (
-                      <div 
-                        key={i} 
-                        className={`rounded-xs ${
-                          // Corner positioning squares
-                          (i < 3 || (i >= 7 && i < 10) || (i >= 14 && i < 17)) ||
-                          (i % 7 >= 4 && i < 21) ||
-                          (i >= 28 && i % 7 < 3) ||
-                          (i % 3 === 0 || i % 5 === 0)
-                            ? 'bg-[#0f766e]'
-                            : 'bg-transparent'
-                        }`} 
-                      />
-                    ))}
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-8 h-8 rounded-lg bg-white border border-[#0f766e] flex items-center justify-center shadow-md">
-                      <Smartphone className="w-4 h-4 text-[#0f766e]" />
-                    </div>
-                  </div>
+                {/* 100% Real High-Contrast Scannable QR Code */}
+                <div className="w-52 h-52 bg-white p-2.5 rounded-2xl border-2 border-[#0f766e]/30 shadow-lg flex items-center justify-center">
+                  <img 
+                    src={qrDataUrl || `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(targetUrl)}`}
+                    alt="Scan to open CivicPulse Citizen Lifeline on your phone"
+                    className="w-full h-full object-contain rounded-xl"
+                  />
                 </div>
 
                 <div className="font-mono text-[10px] text-[#263238] font-bold">
@@ -212,35 +214,35 @@ Permanezca en interiores, beba agua y revise a sus familiares mayores.
                 <Link
                   href="/citizen"
                   target="_blank"
-                  className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl text-xs font-mono font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                  className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2.5 rounded-xl text-xs font-mono font-bold flex items-center justify-center gap-1.5 shadow-md hover:scale-[1.02] transition-all"
                 >
-                  <span>Open Citizen App in New Tab</span>
+                  <span>🌐 Open Citizen App in New Browser Tab</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
               {/* Pitch Explanation for Judges */}
               <div className="space-y-3 text-xs text-[#263238]">
-                <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3.5 rounded-xl space-y-2">
+                <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3.5 rounded-xl space-y-2 shadow-sm">
                   <h4 className="font-bold text-[#0f766e] font-mono flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-[#0d9488]" />
-                    <span>Live Two-Way Handset System</span>
+                    <span>Real-Time Citizen Companion App</span>
                   </h4>
                   <p className="text-[#6B6F6B] leading-relaxed font-sans text-[11px]">
-                    During your presentation, invite jury members to scan this QR code on their own phones. They will instantly access the **Citizen Lifeline Web App** with:
+                    This QR code is <strong>100% active and scannable</strong> by any iPhone or Android camera right now. Point your camera at the screen to open the companion app with:
                   </p>
                   <ul className="space-y-1 text-[11px] font-sans">
                     <li className="flex items-start gap-1.5">
                       <span className="text-[#0d9488] font-bold">&bull;</span>
-                      <span><strong>Pre-Hazard 3-Hr Countdown:</strong> Pre-disaster cooling checklist.</span>
+                      <span><strong>⏱️ Pre-Hazard Countdown:</strong> T-Minus clock with cooling prep steps.</span>
                     </li>
                     <li className="flex items-start gap-1.5">
                       <span className="text-[#0d9488] font-bold">&bull;</span>
-                      <span><strong>Shelter & Transit Pass:</strong> 1-tap Free Fare transit pass to cooling hubs.</span>
+                      <span><strong>🎟️ Free Transit Pass:</strong> 1-tap Valley Metro bus & rail emergency pass.</span>
                     </li>
                     <li className="flex items-start gap-1.5">
                       <span className="text-[#0d9488] font-bold">&bull;</span>
-                      <span><strong>2-Way SOS & Check-in:</strong> Tap &ldquo;I am Safe&rdquo; on the phone to update your EOC laptop map in real time!</span>
+                      <span><strong>🔄 2-Way Check-in:</strong> Tap &ldquo;I am Safe&rdquo; on the phone to update the EOC dashboard in real time!</span>
                     </li>
                   </ul>
                 </div>

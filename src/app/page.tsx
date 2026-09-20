@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { 
   LiveTelemetryResponse,
@@ -43,6 +44,7 @@ import {
   ShieldCheck,
   RefreshCw,
   Smartphone,
+  QrCode,
   Play,
   Pause,
   SkipForward,
@@ -472,13 +474,19 @@ export default function Dashboard() {
     <div className="flex h-screen bg-[#F5F1E8] text-[#263238] flex-col overflow-hidden font-sans select-none antialiased bg-tactical-grid">
       
       {/* ========================================================================= */}
-      {/* 1. TOP HEADER & MAIN NAVIGATION BAR                                       */}
+      {/* 1. TOP HEADER & MAIN NAVIGATION BAR (Cream-Reddish Aesthetic)             */}
       {/* ========================================================================= */}
-      <header className="flex h-14 items-center justify-between px-5 bg-[#F5ECE8] text-[#263238] shrink-0 z-50 border-b border-[#DDD0CB] shadow-sm">
+      <header 
+        style={{ backgroundColor: '#F4E5E0', borderColor: '#E0C5BD' }}
+        className="flex h-14 items-center justify-between px-5 text-[#263238] shrink-0 z-50 border-b shadow-sm"
+      >
         
         {/* Left Brand Identity */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#FAF8F2] border border-[#DDD0CB] flex items-center justify-center rounded-xl shrink-0 shadow-sm">
+          <div 
+            style={{ backgroundColor: '#FFFDF8', borderColor: '#E0C5BD' }}
+            className="w-8 h-8 border flex items-center justify-center rounded-xl shrink-0 shadow-sm"
+          >
             <Activity className="h-4 w-4 text-[#0f766e]" strokeWidth={2.5} />
           </div>
           <div className="flex flex-col justify-center">
@@ -494,12 +502,15 @@ export default function Dashboard() {
         </div>
 
         {/* Center: Dedicated 4-Page Navigation Tabs */}
-        <nav className="flex items-center bg-[#EBDDD8] p-1 rounded-2xl border border-[#DDD0CB] shadow-inner">
+        <nav 
+          style={{ backgroundColor: '#E8CFC7', borderColor: '#D6B4AB' }}
+          className="flex items-center p-1 rounded-2xl border shadow-inner"
+        >
           <button
             onClick={() => setActiveTab('HEATWAVE_SIMULATOR')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'HEATWAVE_SIMULATOR'
-                ? 'bg-[#FFFDF8] text-[#0f766e] border border-[#DDD0CB] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#0f766e] border border-[#D6B4AB] shadow-sm'
                 : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
@@ -511,7 +522,7 @@ export default function Dashboard() {
             onClick={() => setActiveTab('MULTI_HAZARD_ATLAS')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'MULTI_HAZARD_ATLAS'
-                ? 'bg-[#FFFDF8] text-[#0369a1] border border-[#DDD0CB] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#0369a1] border border-[#D6B4AB] shadow-sm'
                 : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
@@ -523,7 +534,7 @@ export default function Dashboard() {
             onClick={() => setActiveTab('CLIMATE_ANALYTICS')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'CLIMATE_ANALYTICS'
-                ? 'bg-[#FFFDF8] text-[#4338ca] border border-[#DDD0CB] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#4338ca] border border-[#D6B4AB] shadow-sm'
                 : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
@@ -535,14 +546,17 @@ export default function Dashboard() {
             onClick={() => setActiveTab('EOC_DISPATCH')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'EOC_DISPATCH'
-                ? 'bg-[#FFFDF8] text-[#be123c] border border-[#DDD0CB] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#be123c] border border-[#D6B4AB] shadow-sm'
                 : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
             <Siren className="w-3.5 h-3.5 text-[#e11d48]" />
             <span>4. Federal EOC Dispatch</span>
             {liveAlerts.length > 0 && (
-              <span className="text-[9px] bg-[#dc2626] text-white font-bold px-1.5 py-0.2 rounded-full">
+              <span 
+                style={{ backgroundColor: '#DC2626' }}
+                className="text-[9px] text-white font-bold px-1.5 py-0.2 rounded-full"
+              >
                 {liveAlerts.length}
               </span>
             )}
@@ -555,18 +569,32 @@ export default function Dashboard() {
           <button
             onClick={() => fetchLiveTelemetry(false)}
             disabled={isLoadingLive || isLiveRefreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF8F2] border border-[#DDD0CB] text-[#0f766e] font-mono text-[11px] font-bold hover:bg-[#FFFDF8] hover:border-[#0d9488] hover:text-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
+            style={{ backgroundColor: '#FFFDF8', borderColor: '#E0C5BD' }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[#0f766e] font-mono text-[11px] font-bold hover:border-[#0d9488] hover:text-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
             title="Force immediate live data refresh from NOAA and Open-Meteo"
           >
             <RefreshCw className={`w-3 h-3 text-[#0d9488] ${isLiveRefreshing || isLoadingLive ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">{isLiveRefreshing || isLoadingLive ? 'Syncing...' : 'Refresh Live'}</span>
           </button>
 
+          {/* Direct 1-Click Launch Citizen Companion App (New Tab) */}
+          <Link
+            href="/citizen"
+            target="_blank"
+            style={{ backgroundColor: '#FFFDF8', borderColor: '#E0C5BD' }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[#0f766e] font-mono text-xs font-bold hover:bg-[#FAF8F2] hover:border-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
+            title="Open Citizen Lifeline Web App in a new tab for demonstration"
+          >
+            <QrCode className="w-3.5 h-3.5 text-[#0d9488]" />
+            <span className="hidden md:inline">Citizen App ↗</span>
+          </Link>
+
           {/* Citizen Phone Alert Trigger (Solid Pitch Red - Clean, No Glow) */}
           <button
             onClick={() => setIsCitizenAlertModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#dc2626] hover:bg-[#b91c1c] text-white border border-[#b91c1c] font-mono text-xs font-bold shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0"
-            title="Launch Citizen Phone Alert SMS & WEA Simulator"
+            style={{ backgroundColor: '#DC2626', borderColor: '#991B1B', color: '#FFFFFF' }}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border font-mono text-xs font-extrabold shadow-sm hover:brightness-110 transition-all cursor-pointer whitespace-nowrap shrink-0"
+            title="Launch Citizen Phone Alert SMS, QR & WEA Simulator"
           >
             <Smartphone className="w-3.5 h-3.5 text-white" />
             <span>Citizen Alert</span>
@@ -592,7 +620,10 @@ export default function Dashboard() {
             <span>{isDemoRunning ? (isDemoPaused ? '▶️ Resume Tour' : `⏸️ Step ${demoStep + 1}/5`) : '⚡ 90-Sec Demo'}</span>
           </button>
 
-          <div className="hidden 2xl:flex items-center gap-1.5 font-mono text-[10px] text-[#263238] bg-[#FAF8F2] px-3 py-1.5 rounded-full border border-[#DDD0CB] whitespace-nowrap shrink-0">
+          <div 
+            style={{ backgroundColor: '#FFFDF8', borderColor: '#E0C5BD' }}
+            className="hidden 2xl:flex items-center gap-1.5 font-mono text-[10px] text-[#263238] px-3 py-1.5 rounded-full border whitespace-nowrap shrink-0"
+          >
             <Clock className="w-3 h-3 text-[#0d9488]" />
             <span>{currentTime || 'LIVE TELEMETRY'}</span>
           </div>
@@ -602,7 +633,10 @@ export default function Dashboard() {
       {/* ========================================================================= */}
       {/* 2. REAL-TIME DATA PROVENANCE & AUTO-REFRESH SUB-BAR                       */}
       {/* ========================================================================= */}
-      <div className="bg-[#EFE3DF] border-b border-[#DDD0CB] px-5 py-1.5 flex items-center justify-between text-[10px] font-mono shrink-0">
+      <div 
+        style={{ backgroundColor: '#EFE1DC', borderColor: '#E0C5BD' }}
+        className="border-b px-5 py-1.5 flex items-center justify-between text-[10px] font-mono shrink-0"
+      >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-[#0f766e] font-bold">
             <span className="w-2 h-2 rounded-full bg-[#0d9488] inline-block animate-pulse" />
