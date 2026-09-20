@@ -465,8 +465,23 @@ export default function CitizenLifelinePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex justify-center items-center sm:p-4 text-slate-800 font-sans antialiased selection:bg-blue-900 selection:text-white relative">
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center sm:py-4 px-0 sm:px-4 text-slate-800 font-sans antialiased selection:bg-blue-900 selection:text-white relative">
       
+      {/* Desktop Companion Top Navigation Bar */}
+      <div className="hidden sm:flex items-center justify-between max-w-[440px] w-full mb-2.5 px-2 text-slate-300 text-xs font-mono">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-extrabold text-white tracking-wider">CIVICPULSE CITIZEN HUB</span>
+        </div>
+        <a 
+          href="/" 
+          className="px-2.5 py-1 rounded-lg bg-blue-900/90 hover:bg-blue-800 text-cyan-200 border border-blue-500/50 font-bold text-[10.5px] flex items-center gap-1.5 transition shadow-sm"
+        >
+          <span>🏛️ CivicPulse EOC Dashboard</span>
+          <span>↗</span>
+        </a>
+      </div>
+
       {/* Visual Strobe Overlay for Night Signaling */}
       <div 
         id="strobe-overlay" 
@@ -487,7 +502,7 @@ export default function CitizenLifelinePage() {
           </div>
         </div>
 
-        {/* 2. OFFICIAL GOVERNMENT HEADER (Emblem + Title + Role Toggle) */}
+        {/* 2. OFFICIAL CIVICPULSE GOVERNMENT HEADER (Emblem + Title + Role Toggle + EOC Link) */}
         <header className="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white px-3.5 py-2.5 shadow-md z-40 sticky top-0 border-b-2 border-orange-500 shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -496,14 +511,23 @@ export default function CitizenLifelinePage() {
               </div>
               <div>
                 <div className="flex items-center space-x-1.5">
-                  <span className="font-black text-sm tracking-tight text-white">RakshaCast</span>
-                  <span className="text-[8px] bg-orange-500 text-white font-bold px-1.5 py-0.2 rounded uppercase">MoES / IMD</span>
+                  <span className="font-black text-sm tracking-tight text-white">CivicPulse</span>
+                  <span className="text-[8px] bg-orange-500 text-white font-bold px-1.5 py-0.2 rounded uppercase">MoES / NDMA</span>
                 </div>
-                <p className="text-[8.5px] text-blue-200 font-medium">National Disaster Early Warning Network</p>
+                <p className="text-[8.5px] text-blue-200 font-medium">National Disaster & Climate Early Warning</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-1.5">
+              <a
+                href="/"
+                title="Open Main CivicPulse EOC Command Portal"
+                className="px-2 py-1 rounded-lg text-[9.5px] font-bold bg-blue-950/80 text-cyan-200 hover:bg-blue-800 transition border border-blue-500/40 flex items-center space-x-0.5 cursor-pointer"
+              >
+                <span>🏛️</span>
+                <span className="hidden xs:inline">EOC</span>
+              </a>
+
               <button 
                 onClick={() => {
                   setActiveTab('DEMO');
@@ -519,7 +543,7 @@ export default function CitizenLifelinePage() {
                 className="px-2 py-1 rounded-lg text-[9.5px] font-extrabold bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 transition shadow flex items-center space-x-1 border border-amber-400 cursor-pointer active:scale-95"
               >
                 <span>🎬</span>
-                <span>SIH Demo</span>
+                <span>Demo</span>
               </button>
 
               <button 
@@ -534,7 +558,7 @@ export default function CitizenLifelinePage() {
                     : 'bg-blue-800 text-blue-100 border-blue-600 hover:bg-blue-700'
                 }`}
               >
-                {isOfficerMode ? '🚨 Officer View' : '👤 Citizen View'}
+                {isOfficerMode ? '🚨 Officer' : '👤 Citizen'}
               </button>
             </div>
           </div>
@@ -1271,7 +1295,7 @@ export default function CitizenLifelinePage() {
                     </div>
                     <div>
                       <h3 className="text-xs font-black text-slate-900">{isOfficerMode ? 'Commander Vikram Rathore' : 'Aarav Sharma'}</h3>
-                      <p className="text-[9.5px] text-slate-500">{isOfficerMode ? '10th NDRF Battalion • Joint Director' : 'Citizen ID: RAKSHA-IN-9842 • Sector 4'}</p>
+                      <p className="text-[9.5px] text-slate-500">{isOfficerMode ? '10th NDRF Battalion • Joint Director' : 'Citizen ID: CIVICPULSE-IN-9842 • Sector 4'}</p>
                     </div>
                   </div>
                   <button
@@ -1586,7 +1610,7 @@ export default function CitizenLifelinePage() {
 
         </div>
 
-        {/* 4. FLOATING SOS EMERGENCY BUTTON (Like in RakshaCast Photo 1, 2, 3, 4) */}
+        {/* 4. FLOATING SOS EMERGENCY BUTTON (CivicPulse Mobile Layout) */}
         {activeTab !== 'SOS' && (
           <div className="absolute bottom-18 right-3.5 z-40">
             <button
@@ -1669,7 +1693,7 @@ export default function CitizenLifelinePage() {
                 <span className="px-2 py-0.5 rounded-full bg-indigo-200 text-indigo-900 text-[9px] font-mono">38ms Inference</span>
               </div>
               <p className="text-[10.5px] leading-relaxed">
-                Traditional physics-based NWP models require 6–12 hour simulation runs. RakshaCast deep learning transformers extract multivariate precursors in <b>38 milliseconds</b>, delivering actionable <b>2 to 6-hour lead time</b>.
+                Traditional physics-based NWP models require 6–12 hour simulation runs. CivicPulse deep learning transformers extract multivariate precursors in <b>38 milliseconds</b>, delivering actionable <b>2 to 6-hour lead time</b>.
               </p>
             </div>
 
@@ -1784,7 +1808,7 @@ export default function CitizenLifelinePage() {
                     />
                   ))}
                 </div>
-                <span className="text-[8.5px] text-slate-500 font-mono mt-0.5">#RAKSHA-2026-RELIEF-AUTH</span>
+                <span className="text-[8.5px] text-slate-500 font-mono mt-0.5">#CIVICPULSE-2026-RELIEF-AUTH</span>
               </div>
 
               <div className="text-[11px] text-slate-700">
@@ -1906,7 +1930,7 @@ export default function CitizenLifelinePage() {
             <div className="p-3 bg-blue-50 border border-blue-200 rounded-2xl text-xs space-y-1.5">
               <div className="font-bold text-blue-950">Precautionary Recommendation:</div>
               <p className="text-[11px] text-slate-700">
-                Maintain charged battery reserves, avoid waterlogged lowlands, and monitor official RakshaCast disaster advisories.
+                Maintain charged battery reserves, avoid waterlogged lowlands, and monitor official CivicPulse disaster advisories.
               </p>
             </div>
 

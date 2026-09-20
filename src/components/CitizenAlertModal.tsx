@@ -39,12 +39,14 @@ export default function CitizenAlertModal({
   const [isBroadcasting, setIsBroadcasting] = useState(false);
   const [broadcastSent, setBroadcastSent] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
-
-  const targetUrl = 'https://civicpuls.onrender.com/citizen';
+  const [targetUrl, setTargetUrl] = useState<string>('https://civicpuls.onrender.com/citizen');
 
   // Generate 100% real, valid, scannable QR Code Data URL on mount
   useEffect(() => {
-    QRCode.toDataURL(targetUrl, {
+    const url = typeof window !== 'undefined' ? `${window.location.origin}/citizen` : 'https://civicpuls.onrender.com/citizen';
+    setTargetUrl(url);
+
+    QRCode.toDataURL(url, {
       width: 320,
       margin: 1.5,
       color: {
@@ -52,9 +54,9 @@ export default function CitizenAlertModal({
         light: '#ffffff'
       }
     })
-      .then((url) => setQrDataUrl(url))
+      .then((dataUrl) => setQrDataUrl(dataUrl))
       .catch((err) => console.error('QR code generation error:', err));
-  }, [targetUrl]);
+  }, []);
 
   if (!isOpen || !zone) return null;
 

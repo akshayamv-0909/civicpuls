@@ -628,6 +628,18 @@ export default function Dashboard() {
             <span>Scan Phone QR</span>
           </button>
 
+          {/* 📱 Open Citizen App Link */}
+          <a
+            href="/citizen"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[10.5px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm border border-blue-500 hover:scale-105 transition-all cursor-pointer whitespace-nowrap shrink-0"
+            title="Launch CivicPulse Citizen Companion Mobile App (/citizen)"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-white animate-pulse" />
+            <span>📱 Citizen App</span>
+          </a>
+
           {/* 🚨 Citizen Alert Button (Pitch Red) */}
           <button
             onClick={() => setIsCitizenAlertModalOpen(true)}
