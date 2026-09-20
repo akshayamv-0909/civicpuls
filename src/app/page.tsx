@@ -474,12 +474,12 @@ export default function Dashboard() {
       {/* ========================================================================= */}
       {/* 1. TOP HEADER & MAIN NAVIGATION BAR                                       */}
       {/* ========================================================================= */}
-      <header className="flex h-14 items-center justify-between px-5 bg-[#FAF8F2] text-[#263238] shrink-0 z-50 border-b border-[#DDD5C7] shadow-sm">
+      <header className="flex h-14 items-center justify-between px-5 bg-[#F5ECE8] text-[#263238] shrink-0 z-50 border-b border-[#DDD0CB] shadow-sm">
         
         {/* Left Brand Identity */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#E8F5EF] border border-[#0d9488]/40 flex items-center justify-center rounded-xl shrink-0 shadow-sm">
-            <Activity className="h-4 w-4 text-[#0d9488]" strokeWidth={2.5} />
+          <div className="w-8 h-8 bg-[#FAF8F2] border border-[#DDD0CB] flex items-center justify-center rounded-xl shrink-0 shadow-sm">
+            <Activity className="h-4 w-4 text-[#0f766e]" strokeWidth={2.5} />
           </div>
           <div className="flex flex-col justify-center">
             <div className="flex items-baseline gap-2">
@@ -494,12 +494,12 @@ export default function Dashboard() {
         </div>
 
         {/* Center: Dedicated 4-Page Navigation Tabs */}
-        <nav className="flex items-center bg-[#EEE8DC] p-1 rounded-2xl border border-[#DDD5C7] shadow-inner">
+        <nav className="flex items-center bg-[#EBDDD8] p-1 rounded-2xl border border-[#DDD0CB] shadow-inner">
           <button
             onClick={() => setActiveTab('HEATWAVE_SIMULATOR')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'HEATWAVE_SIMULATOR'
-                ? 'bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#0f766e] border border-[#DDD0CB] shadow-sm'
                 : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
@@ -511,7 +511,7 @@ export default function Dashboard() {
             onClick={() => setActiveTab('MULTI_HAZARD_ATLAS')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'MULTI_HAZARD_ATLAS'
-                ? 'bg-[#E0F2FE] text-[#0369a1] border border-[#BAE6FD] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#0369a1] border border-[#DDD0CB] shadow-sm'
                 : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
@@ -523,7 +523,7 @@ export default function Dashboard() {
             onClick={() => setActiveTab('CLIMATE_ANALYTICS')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'CLIMATE_ANALYTICS'
-                ? 'bg-[#EEF2FF] text-[#4338ca] border border-[#C7D2FE] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#4338ca] border border-[#DDD0CB] shadow-sm'
                 : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
@@ -535,40 +535,40 @@ export default function Dashboard() {
             onClick={() => setActiveTab('EOC_DISPATCH')}
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'EOC_DISPATCH'
-                ? 'bg-[#FFE4E6] text-[#be123c] border border-[#FECDD3] shadow-sm'
+                ? 'bg-[#FFFDF8] text-[#be123c] border border-[#DDD0CB] shadow-sm'
                 : 'text-[#6B6F6B] hover:text-[#263238]'
             }`}
           >
             <Siren className="w-3.5 h-3.5 text-[#e11d48]" />
             <span>4. Federal EOC Dispatch</span>
             {liveAlerts.length > 0 && (
-              <span className="text-[9px] bg-[#e11d48] text-white font-bold px-1.5 py-0.2 rounded-full">
+              <span className="text-[9px] bg-[#dc2626] text-white font-bold px-1.5 py-0.2 rounded-full">
                 {liveAlerts.length}
               </span>
             )}
           </button>
         </nav>
 
-        {/* Right Controls: 90-Sec Demo Flow, Live Refresh & UTC Clock */}
+        {/* Right Controls: Citizen Mobile App, Live Refresh & 90-Sec Autopilot */}
         <div className="flex items-center gap-2">
           {/* Manual Live Refresh Button */}
           <button
             onClick={() => fetchLiveTelemetry(false)}
             disabled={isLoadingLive || isLiveRefreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#0f766e] font-mono text-[11px] font-bold hover:bg-[#FFFDF8] hover:border-[#0d9488] hover:text-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF8F2] border border-[#DDD0CB] text-[#0f766e] font-mono text-[11px] font-bold hover:bg-[#FFFDF8] hover:border-[#0d9488] hover:text-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
             title="Force immediate live data refresh from NOAA and Open-Meteo"
           >
             <RefreshCw className={`w-3 h-3 text-[#0d9488] ${isLiveRefreshing || isLoadingLive ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">{isLiveRefreshing || isLoadingLive ? 'Syncing...' : 'Refresh Live'}</span>
           </button>
 
-          {/* Citizen Phone Alert Simulator Trigger */}
+          {/* Citizen Phone Alert Trigger (Solid Pitch Red - Clean, No Glow) */}
           <button
             onClick={() => setIsCitizenAlertModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFE4E6] hover:bg-[#FECDD3] border border-[#FECDD3] text-[#be123c] font-mono text-xs font-bold shadow-sm hover:scale-105 transition-all cursor-pointer whitespace-nowrap shrink-0"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#dc2626] hover:bg-[#b91c1c] text-white border border-[#b91c1c] font-mono text-xs font-bold shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0"
             title="Launch Citizen Phone Alert SMS & WEA Simulator"
           >
-            <Smartphone className="w-3.5 h-3.5 text-[#e11d48]" />
+            <Smartphone className="w-3.5 h-3.5 text-white" />
             <span>Citizen Alert</span>
           </button>
 
@@ -592,7 +592,7 @@ export default function Dashboard() {
             <span>{isDemoRunning ? (isDemoPaused ? '▶️ Resume Tour' : `⏸️ Step ${demoStep + 1}/5`) : '⚡ 90-Sec Demo'}</span>
           </button>
 
-          <div className="hidden 2xl:flex items-center gap-1.5 font-mono text-[10px] text-[#263238] bg-[#FAF8F2] px-3 py-1.5 rounded-full border border-[#DDD5C7] whitespace-nowrap shrink-0">
+          <div className="hidden 2xl:flex items-center gap-1.5 font-mono text-[10px] text-[#263238] bg-[#FAF8F2] px-3 py-1.5 rounded-full border border-[#DDD0CB] whitespace-nowrap shrink-0">
             <Clock className="w-3 h-3 text-[#0d9488]" />
             <span>{currentTime || 'LIVE TELEMETRY'}</span>
           </div>
@@ -602,7 +602,7 @@ export default function Dashboard() {
       {/* ========================================================================= */}
       {/* 2. REAL-TIME DATA PROVENANCE & AUTO-REFRESH SUB-BAR                       */}
       {/* ========================================================================= */}
-      <div className="bg-[#EEE8DC] border-b border-[#DDD5C7] px-5 py-1.5 flex items-center justify-between text-[10px] font-mono shrink-0">
+      <div className="bg-[#EFE3DF] border-b border-[#DDD0CB] px-5 py-1.5 flex items-center justify-between text-[10px] font-mono shrink-0">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-[#0f766e] font-bold">
             <span className="w-2 h-2 rounded-full bg-[#0d9488] inline-block animate-pulse" />
@@ -859,7 +859,7 @@ export default function Dashboard() {
                     </div>
 
                     <p className="text-[10px] text-[#6B6F6B] font-sans leading-tight">
-                      Simulate immediate municipal disaster assets (cooling buses, power grid generators, and paramedic triage) to observe live quantified relief across the power grid, hospital ICU load, and citizen safety.
+                      Simulate real-world municipal emergency operations (industrial grid peak-shaving, transit fare-waivers to cooling hubs, and senior tele-checkin swarms) to observe live quantified relief.
                     </p>
 
                     {/* Quick 1-Click Preset Buttons */}
@@ -874,27 +874,27 @@ export default function Dashboard() {
                         onClick={() => setTacticalPlan({ coolingBuses: 15, gridGenerators: 2, paramedicSurge: 4, weaBroadcastSent: false })}
                         className="p-1.5 rounded-lg bg-[#E0F2FE] hover:bg-[#BAE6FD] border border-[#BAE6FD] text-[#0369a1] font-bold transition-all text-center cursor-pointer shadow-sm"
                       >
-                        ❄️ 15 Cooling Buses
+                        🚌 Free Transit to Hubs
                       </button>
                       <button
                         onClick={() => setTacticalPlan({ coolingBuses: 4, gridGenerators: 8, paramedicSurge: 2, weaBroadcastSent: false })}
                         className="p-1.5 rounded-lg bg-[#FEF3C7] hover:bg-[#FDE68A] border border-[#FDE68A] text-[#b45309] font-bold transition-all text-center cursor-pointer shadow-sm"
                       >
-                        ⚡ Grid Defense First
+                        ⚡ Grid Peak-Shaving
                       </button>
                     </div>
 
                     {/* Interactive Tactical Sliders */}
                     <div className="space-y-2.5 bg-[#FAF8F2] p-3 rounded-xl border border-[#DDD5C7]">
-                      {/* Slider 1: Mobile Cooling Buses */}
+                      {/* Slider 1: Public Transit Fare-Waiver & Shuttles */}
                       <div>
                         <div className="flex justify-between items-center text-[10px] mb-1">
                           <span className="text-[#263238] font-bold flex items-center gap-1.5">
-                            <span>❄️</span>
-                            <span>Deploy Mobile AC Cooling Buses:</span>
+                            <span>🚌</span>
+                            <span>Transit Fare-Waiver & Cooling Hub Shuttles:</span>
                           </span>
                           <span className="text-[#0f766e] font-bold bg-[#E8F5EF] px-2 py-0.5 rounded border border-[#A7F3D0]">
-                            {tacticalPlan.coolingBuses} Buses Active ({shelterWalkingCoverage}% Walk Radius)
+                            {tacticalPlan.coolingBuses} Routes Active ({shelterWalkingCoverage}% Transit Reach)
                           </span>
                         </div>
                         <input
@@ -908,15 +908,15 @@ export default function Dashboard() {
                         />
                       </div>
 
-                      {/* Slider 2: Substation Grid Relief Generators */}
+                      {/* Slider 2: Industrial Grid Peak-Shaving & Demand Response */}
                       <div>
                         <div className="flex justify-between items-center text-[10px] mb-1">
                           <span className="text-[#263238] font-bold flex items-center gap-1.5">
                             <span>⚡</span>
-                            <span>Power Substation Mega-Generators:</span>
+                            <span>Grid Peak-Shaving & Demand Curtailment:</span>
                           </span>
                           <span className="text-[#b45309] font-bold bg-[#FEF3C7] px-2 py-0.5 rounded border border-[#FDE68A]">
-                            {tacticalPlan.gridGenerators} Units (+{tacticalPlan.gridGenerators * 10} MW | {simulatedGridStress}% Load)
+                            {tacticalPlan.gridGenerators} Stages (+{tacticalPlan.gridGenerators * 12} MW | {simulatedGridStress}% Load)
                           </span>
                         </div>
                         <input
@@ -930,15 +930,15 @@ export default function Dashboard() {
                         />
                       </div>
 
-                      {/* Slider 3: Paramedic Field Triage Surge */}
+                      {/* Slider 3: Paramedic Staging & Senior Tele-Checkins */}
                       <div>
                         <div className="flex justify-between items-center text-[10px] mb-1">
                           <span className="text-[#263238] font-bold flex items-center gap-1.5">
                             <span>🚑</span>
-                            <span>Paramedic Field Triage Units:</span>
+                            <span>Paramedic Staging & Senior Tele-Checkins:</span>
                           </span>
                           <span className="text-[#be123c] font-bold bg-[#FFE4E6] px-2 py-0.5 rounded border border-[#FECDD3]">
-                            {tacticalPlan.paramedicSurge} Units ({simulatedHospitalIcu}% ICU | {erAdmissionsAvoided} ER Avoided)
+                            {tacticalPlan.paramedicSurge} Units ({simulatedHospitalIcu}% ICU | {erAdmissionsAvoided} ER Diverted)
                           </span>
                         </div>
                         <input

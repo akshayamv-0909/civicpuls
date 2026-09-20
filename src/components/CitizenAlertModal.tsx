@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { LiveZoneTelemetry } from '@/lib/liveWeatherService';
 import { 
-  Radio, 
   X, 
   Copy, 
   Check, 
-  ShieldAlert, 
-  MapPin, 
-  PhoneCall, 
-  Send
+  Send,
+  QrCode,
+  Smartphone,
+  ExternalLink,
+  Sparkles
 } from 'lucide-react';
 
 interface CitizenAlertModalProps {
@@ -31,6 +32,7 @@ export default function CitizenAlertModal({
   zone,
   tacticalPlan = { coolingBuses: 8, gridGenerators: 4, paramedicSurge: 6 }
 }: CitizenAlertModalProps) {
+  const [activeTab, setActiveTab] = useState<'PHONE_SIMULATOR' | 'SCAN_QR'>('SCAN_QR');
   const [language, setLanguage] = useState<'en' | 'es'>('en');
   const [copied, setCopied] = useState(false);
   const [isBroadcasting, setIsBroadcasting] = useState(false);
@@ -40,15 +42,14 @@ export default function CitizenAlertModal({
 
   const tempF = zone.temperatureF !== null ? `${zone.temperatureF}°F` : '95°F';
   const tempC = zone.temperatureC !== null ? `${zone.temperatureC}°C` : '35°C';
-  const elderlyCount = Math.round(zone.population * (zone.elderlyPopulationPct / 100)).toLocaleString();
 
   // Dynamic tactical action text
   const buses = tacticalPlan.coolingBuses;
   const medics = tacticalPlan.paramedicSurge;
   const generators = tacticalPlan.gridGenerators;
 
-  const actionEnglish = `${buses > 0 ? `❄️ ${buses} Mobile AC Cooling Buses deployed at transit hubs & parks. ` : ''}${medics > 0 ? `🚑 ${medics} Paramedic Street Triage teams active with free cold hydration & ice baths. ` : ''}${generators > 0 ? `⚡ ${generators} Backup Generators active to prevent neighborhood blackouts.` : ''}`;
-  const actionSpanish = `${buses > 0 ? `❄️ ${buses} Autobuses con aire acondicionado desplegados en paradas y parques. ` : ''}${medics > 0 ? `🚑 ${medics} Equipos paramédicos activos con hidratación y baños fríos gratuitos. ` : ''}${generators > 0 ? `⚡ ${generators} Generadores de respaldo activos para proteger la red eléctrica.` : ''}`;
+  const actionEnglish = `${buses > 0 ? `⚡ Grid Demand Response & Free Transit to Cooling Hubs active. ` : ''}${medics > 0 ? `🚑 Paramedic Street Triage & Senior Tele-checkin swarm active. ` : ''}${generators > 0 ? `🏢 Municipal Civic Centers open 24/7 with backup power.` : ''}`;
+  const actionSpanish = `${buses > 0 ? `⚡ Respuesta a la demanda eléctrica y transporte gratuito activos. ` : ''}${medics > 0 ? `🚑 Equipos paramédicos y llamadas a adultos mayores activos. ` : ''}${generators > 0 ? `🏢 Centros cívicos abiertos 24/7 con energía de respaldo.` : ''}`;
 
   const alertEnglish = `🚨 CIVICPULSE EMERGENCY CITIZEN ALERT
 Location: ${zone.name}, ${zone.metro}
@@ -58,9 +59,9 @@ Status: Thermal Stress Level CRITICAL
 ${actionEnglish}
 
 Stay indoors, drink plenty of water, and check on elderly neighbors.
-• Nearest Shelter: Central Civic Hub & Public Library
-• Free City Assistance: Call 311 or 911 in medical emergency.
-Broadcast Protocol: FEMA IPAWS / Wireless Emergency Alerts (WEA)`;
+• Nearest Shelter: Burton Barr Central Library
+• Free City Transit: Show digital pass on civicpuls.onrender.com/citizen
+• Broadcast Protocol: FEMA IPAWS / Wireless Emergency Alerts (WEA)`;
 
   const alertSpanish = `🚨 ALERTA DE EMERGENCIA CIVICPULSE
 Ubicación: ${zone.name}, ${zone.metro}
@@ -70,9 +71,9 @@ Estado: Nivel de Estrés Térmico CRÍTICO
 ${actionSpanish}
 
 Permanezca en interiores, beba agua y revise a sus familiares mayores.
-• Refugio más cercano: Centro Cívico Central y Biblioteca
-• Asistencia gratuita de la ciudad: Llame al 311 o al 911 en emergencias.
-Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
+• Refugio más cercano: Biblioteca Central Burton Barr
+• Transporte gratuito: Muestre pase digital en civicpuls.onrender.com/citizen
+• Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
 
   const currentAlertText = language === 'en' ? alertEnglish : alertSpanish;
 
@@ -82,219 +83,286 @@ Protocolo: FEMA IPAWS / Alertas Móviles de Emergencia`;
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleTriggerBroadcast = () => {
+  const handleTriggerBroadcast = async () => {
     setIsBroadcasting(true);
+    try {
+      await fetch('/api/citizen-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'UPDATE_BROADCAST',
+          broadcastUpdate: {
+            isCodeRedActive: true,
+            transitWaiverActive: true,
+            targetedMetro: zone.metro
+          }
+        })
+      });
+    } catch (e) {
+      console.error(e);
+    }
     setTimeout(() => {
       setIsBroadcasting(false);
       setBroadcastSent(true);
       setTimeout(() => setBroadcastSent(false), 4000);
-    }, 1200);
+    }, 1000);
   };
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col font-sans">
+      <div className="bg-[#FAF8F2] border border-[#DDD5C7] rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col font-sans">
         
         {/* Modal Header */}
         <div className="px-5 py-3.5 bg-[#FFFDF8] border-b border-[#DDD5C7] flex items-center justify-between font-mono">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#FFF1F2] border border-[#FECDD3] flex items-center justify-center text-[#be123c]">
-              <Radio className="w-4 h-4 animate-pulse" />
+            <div className="w-8 h-8 rounded-xl bg-[#dc2626] flex items-center justify-center text-white shadow-sm">
+              <Smartphone className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold text-[#263238] uppercase tracking-wide">
-                  Citizen Emergency Mobile Broadcast Simulator
+                  Citizen Mobile Lifeline & Alert Gateway
                 </span>
-                <span className="text-[9px] bg-[#FFF1F2] text-[#be123c] border border-[#FECDD3] px-1.5 py-0.5 rounded-full font-bold">
-                  FEMA WEA 3.0
+                <span className="text-[9px] bg-[#FFF1F2] text-[#dc2626] border border-[#FECDD3] px-2 py-0.5 rounded-full font-bold">
+                  LIVE HANDSET PORTAL
                 </span>
               </div>
               <p className="text-[10px] text-[#6B6F6B]">
-                Direct wireless push & SMS notification sent to every resident in {zone.name}
+                Push geotargeted alerts & open interactive companion app on real smartphones
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#6B6F6B] hover:text-[#263238] hover:bg-[#EEE8DC] transition-colors cursor-pointer"
-            title="Close Alert Simulator"
+            className="w-7 h-7 rounded-lg bg-[#FAF8F2] hover:bg-[#EEE8DC] border border-[#DDD5C7] text-[#6B6F6B] hover:text-[#263238] flex items-center justify-center transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Modal Body: 2-Column (Phone Mockup + Broadcast Controls) */}
-        <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+        {/* View Switcher Tabs */}
+        <div className="flex border-b border-[#DDD5C7] bg-[#FAF8F2] px-5 pt-2 gap-2 font-mono text-xs">
+          <button
+            onClick={() => setActiveTab('SCAN_QR')}
+            className={`pb-2 px-3 font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'SCAN_QR'
+                ? 'border-[#0f766e] text-[#0f766e]'
+                : 'border-transparent text-[#6B6F6B] hover:text-[#263238]'
+            }`}
+          >
+            <QrCode className="w-3.5 h-3.5" />
+            <span>1. Scan QR on Real Phone (Judges Demo)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('PHONE_SIMULATOR')}
+            className={`pb-2 px-3 font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'PHONE_SIMULATOR'
+                ? 'border-[#0f766e] text-[#0f766e]'
+                : 'border-transparent text-[#6B6F6B] hover:text-[#263238]'
+            }`}
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>2. FEMA WEA Lockscreen Simulator</span>
+          </button>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="p-5 flex-1 overflow-y-auto">
           
-          {/* Left: Realistic Smartphone Push Notification Screen */}
-          <div className="flex justify-center">
-            <div className="w-[280px] bg-slate-950 border-4 border-slate-800 rounded-[36px] p-3 shadow-xl relative overflow-hidden font-sans">
-              
-              {/* Phone Speaker Notch */}
-              <div className="w-24 h-4 bg-slate-800 rounded-full mx-auto mb-3 flex items-center justify-center">
-                <div className="w-3 h-3 rounded-full bg-slate-900 mr-2" />
-                <div className="w-10 h-1 bg-slate-700 rounded-full" />
-              </div>
-
-              {/* Status Bar */}
-              <div className="flex justify-between items-center text-[10px] font-mono text-slate-400 px-2 mb-3">
-                <span>12:15 PM</span>
-                <div className="flex items-center gap-1.5">
-                  <span>5G</span>
-                  <span className="w-3 h-2 bg-slate-400 rounded-sm inline-block" />
-                </div>
-              </div>
-
-              {/* Emergency Lockscreen Notification Card */}
-              <div className="bg-[#180a0e]/95 border-2 border-rose-500/80 rounded-2xl p-3 shadow-xl space-y-2 relative overflow-hidden animate-pulse">
-                
-                {/* Emergency Header */}
-                <div className="flex items-center justify-between border-b border-rose-900/60 pb-1.5">
-                  <div className="flex items-center gap-1.5 text-rose-400 font-bold text-[10px] font-mono">
-                    <ShieldAlert className="w-3.5 h-3.5" />
-                    <span>EMERGENCY ALERT</span>
-                  </div>
-                  <span className="text-[8.5px] text-slate-400 font-mono">NOW</span>
-                </div>
-
-                {/* Body Text */}
-                <div className="space-y-1">
-                  <h4 className="text-[11px] font-bold text-white leading-tight">
-                    {language === 'en' ? 'EXTREME HEAT WARNING' : 'ADVERTENCIA DE CALOR EXTREMO'}
-                  </h4>
-                  <p className="text-[9.5px] text-slate-200 leading-relaxed font-sans">
-                    {language === 'en' ? (
-                      <>
-                        <strong>{tempF} ({tempC})</strong> in {zone.name}. {actionEnglish} Call <strong>311</strong> for free transit to cooled centers.
-                      </>
-                    ) : (
-                      <>
-                        <strong>{tempF} ({tempC})</strong> en {zone.name}. {actionSpanish} Llame al <strong>311</strong> para transporte gratuito.
-                      </>
-                    )}
-                  </p>
-                </div>
-
-                {/* Quick Action Buttons inside Notification */}
-                <div className="pt-1.5 border-t border-rose-900/40 grid grid-cols-2 gap-1 text-[9px] font-mono">
-                  <button className="bg-rose-950/80 hover:bg-rose-900 border border-rose-700/60 text-rose-200 py-1 rounded text-center font-semibold flex items-center justify-center gap-1">
-                    <MapPin className="w-2.5 h-2.5 text-rose-400" />
-                    <span>{language === 'en' ? 'Cooling Map' : 'Ver Mapa'}</span>
-                  </button>
-                  <button className="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 py-1 rounded text-center font-semibold flex items-center justify-center gap-1">
-                    <PhoneCall className="w-2.5 h-2.5 text-[#00e5a3]" />
-                    <span>{language === 'en' ? 'Call 311' : 'Llamar 311'}</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Home Bar */}
-              <div className="w-28 h-1 bg-slate-700 rounded-full mx-auto mt-6" />
-            </div>
-          </div>
-
-          {/* Right: Broadcast Control Console & Target Analytics */}
-          <div className="space-y-4 font-mono text-xs">
-            
-            {/* Language Selector */}
-            <div className="bg-[#FFFDF8] p-3 rounded-2xl border border-[#DDD5C7] space-y-2 shadow-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wider text-[#6B6F6B] font-bold">
-                  Broadcast Language:
+          {/* TAB 1: SCAN QR CODE TO OPEN ON REAL PHONE */}
+          {activeTab === 'SCAN_QR' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+              {/* QR Box */}
+              <div className="bg-[#FFFDF8] border-2 border-[#0f766e] rounded-2xl p-4 text-center space-y-3 shadow-md flex flex-col items-center">
+                <span className="text-[10px] font-mono font-bold text-[#0f766e] uppercase tracking-wider bg-[#E8F5EF] px-2.5 py-1 rounded-full border border-[#A7F3D0]">
+                  📱 POINT PHONE CAMERA HERE
                 </span>
-                <div className="flex items-center bg-[#EEE8DC] p-0.5 rounded-xl border border-[#DDD5C7]">
+
+                {/* High-Contrast Crisp QR Visual Pattern */}
+                <div className="w-44 h-44 bg-white p-2.5 rounded-xl border border-[#DDD5C7] shadow-inner flex flex-col items-center justify-center relative">
+                  <div className="grid grid-cols-7 gap-1 p-1 w-full h-full">
+                    {Array.from({ length: 49 }).map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`rounded-xs ${
+                          // Corner positioning squares
+                          (i < 3 || (i >= 7 && i < 10) || (i >= 14 && i < 17)) ||
+                          (i % 7 >= 4 && i < 21) ||
+                          (i >= 28 && i % 7 < 3) ||
+                          (i % 3 === 0 || i % 5 === 0)
+                            ? 'bg-[#0f766e]'
+                            : 'bg-transparent'
+                        }`} 
+                      />
+                    ))}
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-[#0f766e] flex items-center justify-center shadow-md">
+                      <Smartphone className="w-4 h-4 text-[#0f766e]" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="font-mono text-[10px] text-[#263238] font-bold">
+                  civicpuls.onrender.com/citizen
+                </div>
+
+                <Link
+                  href="/citizen"
+                  target="_blank"
+                  className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl text-xs font-mono font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                >
+                  <span>Open Citizen App in New Tab</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              {/* Pitch Explanation for Judges */}
+              <div className="space-y-3 text-xs text-[#263238]">
+                <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3.5 rounded-xl space-y-2">
+                  <h4 className="font-bold text-[#0f766e] font-mono flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-[#0d9488]" />
+                    <span>Live Two-Way Handset System</span>
+                  </h4>
+                  <p className="text-[#6B6F6B] leading-relaxed font-sans text-[11px]">
+                    During your presentation, invite jury members to scan this QR code on their own phones. They will instantly access the **Citizen Lifeline Web App** with:
+                  </p>
+                  <ul className="space-y-1 text-[11px] font-sans">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-[#0d9488] font-bold">&bull;</span>
+                      <span><strong>Pre-Hazard 3-Hr Countdown:</strong> Pre-disaster cooling checklist.</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-[#0d9488] font-bold">&bull;</span>
+                      <span><strong>Shelter & Transit Pass:</strong> 1-tap Free Fare transit pass to cooling hubs.</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-[#0d9488] font-bold">&bull;</span>
+                      <span><strong>2-Way SOS & Check-in:</strong> Tap &ldquo;I am Safe&rdquo; on the phone to update your EOC laptop map in real time!</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Direct Trigger Broadcast */}
+                <button
+                  onClick={handleTriggerBroadcast}
+                  disabled={isBroadcasting}
+                  className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white py-2.5 rounded-xl font-mono text-xs font-bold shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{isBroadcasting ? 'Broadcasting to Citizen Handsets...' : broadcastSent ? '✓ Broadcast Delivered to Handsets' : '⚡ Broadcast Level-3 Emergency Push'}</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: FEMA WEA LOCKSCREEN SIMULATOR */}
+          {activeTab === 'PHONE_SIMULATOR' && (
+            <div className="flex flex-col md:flex-row gap-5 items-center justify-center">
+              {/* Smartphone Frame */}
+              <div className="w-[280px] bg-slate-900 border-[6px] border-slate-700 rounded-[36px] p-3 shadow-2xl relative text-white font-sans overflow-hidden shrink-0">
+                {/* Speaker Notch */}
+                <div className="w-24 h-4 bg-slate-800 rounded-full mx-auto mb-3 flex items-center justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-700 mr-1.5" />
+                  <div className="w-8 h-1 bg-slate-700 rounded-full" />
+                </div>
+
+                {/* Clock on lockscreen */}
+                <div className="text-center mb-4">
+                  <div className="text-3xl font-light tracking-tight">02:15</div>
+                  <div className="text-[10px] text-slate-400 font-mono">Sunday, September 20</div>
+                </div>
+
+                {/* WEA Emergency Alert Push Notification */}
+                <div className="bg-white/95 backdrop-blur-md rounded-2xl p-3 text-slate-900 shadow-xl space-y-2 border border-slate-200 animate-in slide-in-from-top-4 duration-300">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-4 h-4 bg-rose-600 rounded flex items-center justify-center text-white text-[8px] font-bold">!</div>
+                      <span className="text-[10px] font-extrabold tracking-wider uppercase text-rose-700 font-mono">EMERGENCY ALERT</span>
+                    </div>
+                    <span className="text-[9px] text-slate-400 font-mono">NOW</span>
+                  </div>
+
+                  <div className="text-[11px] font-bold text-slate-900 leading-tight">
+                    Extreme Thermal Surge: {zone.name} ({tempF})
+                  </div>
+
+                  <p className="text-[9.5px] text-slate-700 leading-relaxed font-sans max-h-28 overflow-y-auto">
+                    {language === 'en' ? actionEnglish : actionSpanish} Free cooling center at Burton Barr Library. Free transit active.
+                  </p>
+
+                  <div className="pt-1 flex items-center justify-between text-[9px] text-rose-600 font-mono font-bold">
+                    <span>FEMA WEA 3.0 &bull; Phoenix EOC</span>
+                    <span>TAP FOR MAP</span>
+                  </div>
+                </div>
+
+                {/* Lockscreen footer icons */}
+                <div className="flex justify-between items-center px-4 mt-6 text-slate-400">
+                  <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px]">🔦</div>
+                  <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px]">📷</div>
+                </div>
+              </div>
+
+              {/* Side Controls */}
+              <div className="flex-1 space-y-3 text-xs">
+                <div className="flex gap-2">
                   <button
                     onClick={() => setLanguage('en')}
-                    className={`text-[10px] font-bold px-3 py-1 rounded-lg transition-colors cursor-pointer ${
-                      language === 'en' ? 'bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0] shadow-sm' : 'text-[#6B6F6B] hover:text-[#263238]'
+                    className={`flex-1 py-1.5 rounded-xl font-mono font-bold text-xs border ${
+                      language === 'en'
+                        ? 'bg-[#0f766e] text-white border-[#0f766e]'
+                        : 'bg-[#FFFDF8] text-[#6B6F6B] border-[#DDD5C7]'
                     }`}
                   >
-                    🇺🇸 English
+                    🇺🇸 English (WEA)
                   </button>
                   <button
                     onClick={() => setLanguage('es')}
-                    className={`text-[10px] font-bold px-3 py-1 rounded-lg transition-colors cursor-pointer ${
-                      language === 'es' ? 'bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0] shadow-sm' : 'text-[#6B6F6B] hover:text-[#263238]'
+                    className={`flex-1 py-1.5 rounded-xl font-mono font-bold text-xs border ${
+                      language === 'es'
+                        ? 'bg-[#0f766e] text-white border-[#0f766e]'
+                        : 'bg-[#FFFDF8] text-[#6B6F6B] border-[#DDD5C7]'
                     }`}
                   >
-                    🇪🇸 Español
+                    🇲🇽 Español (WEA)
                   </button>
                 </div>
-              </div>
 
-              <div className="text-[10.5px] text-[#6B6F6B] font-sans leading-relaxed bg-[#FAF8F2] p-2.5 rounded-xl border border-[#DDD5C7]">
-                Multi-lingual Wireless Emergency Alerts automatically route to all mobile carriers (Verizon, AT&T, T-Mobile) based on handset preferred language.
-              </div>
-            </div>
-
-            {/* Target Audience Reach Stats */}
-            <div className="bg-[#FFFDF8] p-3 rounded-2xl border border-[#DDD5C7] space-y-2 shadow-sm">
-              <span className="text-[10px] uppercase tracking-wider text-[#6B6F6B] font-bold block">
-                Target Zone Wireless Delivery Reach:
-              </span>
-              
-              <div className="grid grid-cols-2 gap-2 text-[10px]">
-                <div className="bg-[#FAF8F2] p-2.5 rounded-xl border border-[#DDD5C7]">
-                  <span className="text-[#6B6F6B] block text-[8.5px]">TOTAL RESIDENT REACH</span>
-                  <strong className="text-[#263238] text-sm">{zone.population.toLocaleString()}</strong>
-                  <span className="text-[8px] text-[#0f766e] block mt-0.5 font-bold">● 4 Cell Towers Locked</span>
-                </div>
-
-                <div className="bg-[#FAF8F2] p-2.5 rounded-xl border border-[#DDD5C7]">
-                  <span className="text-[#6B6F6B] block text-[8.5px]">SENIORS PRIORITIZED (ACS)</span>
-                  <strong className="text-[#0f766e] text-sm font-bold">{elderlyCount}</strong>
-                  <span className="text-[8px] text-[#0369a1] block mt-0.5 font-bold">({zone.elderlyPopulationPct}% of Pop)</span>
+                <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3 rounded-xl space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-bold text-[#6B6F6B] font-mono">WEA BROADCAST PAYLOAD</span>
+                    <button
+                      onClick={handleCopy}
+                      className="text-[10px] text-[#0f766e] hover:underline flex items-center gap-1 font-mono font-bold"
+                    >
+                      {copied ? <Check className="w-3 h-3 text-[#0d9488]" /> : <Copy className="w-3 h-3" />}
+                      <span>{copied ? 'Copied' : 'Copy Text'}</span>
+                    </button>
+                  </div>
+                  <pre className="text-[10px] bg-[#FAF8F2] p-2.5 rounded-lg border border-[#DDD5C7] text-[#263238] whitespace-pre-wrap font-mono max-h-36 overflow-y-auto">
+                    {currentAlertText}
+                  </pre>
                 </div>
               </div>
             </div>
+          )}
 
-            {/* Action Buttons */}
-            <div className="space-y-2 pt-1">
-              <button
-                onClick={handleTriggerBroadcast}
-                disabled={isBroadcasting}
-                className={`w-full py-2.5 rounded-xl font-bold font-mono text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer ${
-                  broadcastSent
-                    ? 'bg-emerald-600 text-white border border-emerald-500'
-                    : 'bg-[#be123c] hover:bg-[#9f1239] text-white border border-[#be123c]'
-                }`}
-              >
-                {isBroadcasting ? (
-                  <>
-                    <Radio className="w-4 h-4 animate-spin text-white" />
-                    <span>Broadcasting to Cell Towers...</span>
-                  </>
-                ) : broadcastSent ? (
-                  <>
-                    <Check className="w-4 h-4 text-white" />
-                    <span>✓ Broadcast Sent to {zone.population.toLocaleString()} Citizens!</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4 text-white" />
-                    <span>📢 Dispatch Neighborhood Wireless Alert</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                onClick={handleCopy}
-                className="w-full py-2 rounded-xl bg-[#FFFDF8] hover:bg-[#EEE8DC] border border-[#DDD5C7] text-[#263238] font-mono text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
-              >
-                {copied ? <Check className="w-3 h-3 text-[#0f766e]" /> : <Copy className="w-3 h-3 text-[#6B6F6B]" />}
-                <span>{copied ? 'Copied to Clipboard!' : 'Copy Alert Text for Press Release'}</span>
-              </button>
-            </div>
-
-          </div>
         </div>
 
-        {/* Footer info */}
-        <div className="px-5 py-2.5 bg-[#EEE8DC]/60 border-t border-[#DDD5C7] flex items-center justify-between text-[9px] font-mono text-[#6B6F6B]">
-          <span>FEDERAL PROTOCOL: FCC & FEMA Integrated Public Alert and Warning System (IPAWS)</span>
-          <span className="text-[#0f766e] font-bold">ACTIVE WIRELESS CELL BROADCAST READY</span>
+        {/* Modal Footer */}
+        <div className="px-5 py-3 bg-[#FFFDF8] border-t border-[#DDD5C7] flex justify-between items-center font-mono text-xs">
+          <span className="text-[10px] text-[#6B6F6B]">
+            Compliant with FCC Part 10 & FEMA IPAWS Protocols
+          </span>
+          <button
+            onClick={onClose}
+            className="px-4 py-1.5 rounded-xl bg-[#FAF8F2] hover:bg-[#EEE8DC] border border-[#DDD5C7] text-[#263238] font-bold cursor-pointer"
+          >
+            Close Simulator
+          </button>
         </div>
 
       </div>
