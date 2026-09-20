@@ -120,6 +120,9 @@ export default function CitizenLifelinePage() {
   const [language, setLanguage] = useState<'EN' | 'ES'>('EN');
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
+  // Clock & Device Status
+  const [clockTime, setClockTime] = useState<string>('11:45 AM');
+
   // Modals
   const [isTransitPassOpen, setIsTransitPassOpen] = useState(false);
   const [isXaiModalOpen, setIsXaiModalOpen] = useState(false);
@@ -321,6 +324,17 @@ export default function CitizenLifelinePage() {
     }
   }, []);
 
+  // Live Android Clock effect
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      setClockTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    };
+    updateClock();
+    const timer = setInterval(updateClock, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   // Countdown timer effect
   useEffect(() => {
     const timer = setInterval(() => {
@@ -493,7 +507,7 @@ export default function CitizenLifelinePage() {
   const kitPercentage = Math.round((completedKitCount / evacKit.length) * 100);
 
   return (
-    <div className="min-h-screen bg-[#F5F1E8] text-[#263238] font-sans antialiased selection:bg-[#0f766e] selection:text-white flex justify-center pb-16 relative">
+    <div className="min-h-screen bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0A0F1D] flex justify-center items-center sm:p-4 text-[#263238] font-sans antialiased selection:bg-[#0f766e] selection:text-white relative">
       
       {/* Visual Strobe Overlay for Night Signaling */}
       <div 
@@ -501,9 +515,19 @@ export default function CitizenLifelinePage() {
         className="fixed inset-0 bg-white z-[999] pointer-events-none transition-opacity duration-75 opacity-0"
       />
 
-      {/* Mobile Frame Container */}
-      <div className="w-full max-w-md bg-[#FFFDF8] border-x border-[#DDD5C7] min-h-screen shadow-2xl flex flex-col relative">
+      {/* Clean Mobile Phone Shell (Phone Grid Length & Frame) */}
+      <div className="w-full max-w-[440px] h-[100dvh] sm:h-[890px] sm:max-h-[94vh] sm:my-auto bg-[#FFFDF8] sm:rounded-[40px] sm:border-[10px] sm:border-[#1E293B] sm:shadow-[0_25px_60px_rgba(0,0,0,0.6)] flex flex-col relative overflow-hidden">
         
+        {/* Android / Device Status Bar */}
+        <div className="h-7 bg-[#0F172A] text-white px-4 flex items-center justify-between text-[11px] font-mono font-bold shrink-0 z-50">
+          <span>{clockTime}</span>
+          <div className="w-16 h-3 bg-black/60 rounded-full mx-auto" />
+          <div className="flex items-center gap-1.5">
+            <span className="text-[8.5px] px-1.5 py-0.2 rounded bg-emerald-600 text-white font-bold">5G GPS</span>
+            <span className="text-[10px] text-emerald-400 font-bold">88% ⚡</span>
+          </div>
+        </div>
+
         {/* Top Header & Navigation */}
         <header className="sticky top-0 z-40 bg-[#E5CDC6] border-b border-[#C3988E] px-3.5 py-2 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
@@ -1495,11 +1519,85 @@ export default function CitizenLifelinePage() {
           </main>
         )}
 
-        {/* Footer */}
-        <footer className="p-3 text-center border-t border-[#DDD5C7] bg-[#FAF8F2] font-mono text-[9px] text-[#6B6F6B] space-y-0.5">
-          <div>CIVICPULSE CITIZEN LIFELINE &bull; MUNICIPAL RESILIENCE PLATFORM</div>
-          <div>Direct 2-Way Sync with NOAA NWS &bull; FEMA IPAWS WEA &bull; City EOC</div>
-        </footer>
+        {/* Floating Quick SOS Trigger */}
+        {activeTab !== 'SOS' && (
+          <div className="absolute bottom-16 right-3.5 z-40">
+            <button
+              onClick={() => setActiveTab('SOS')}
+              className="w-12 h-12 rounded-full bg-[#DC2626] text-white flex flex-col items-center justify-center shadow-xl border-2 border-white active:scale-95 transition-transform hover:bg-[#B91C1C] cursor-pointer"
+              title="Quick SOS Emergency Trigger"
+            >
+              <Siren className="w-4 h-4 animate-bounce" />
+              <span className="text-[7.5px] font-mono font-black uppercase tracking-wider">SOS</span>
+            </button>
+          </div>
+        )}
+
+        {/* Android Clean Bottom Tab Navigation Bar */}
+        <nav className="bg-[#FFFDF8] border-t border-[#DDD5C7] px-2 py-1.5 flex items-center justify-around z-40 shrink-0 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] min-h-[58px]">
+          <button
+            onClick={() => setActiveTab('WEATHER')}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all cursor-pointer ${
+              activeTab === 'WEATHER'
+                ? 'text-[#0f766e] font-extrabold'
+                : 'text-[#6B6F6B] hover:text-[#263238]'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-colors ${activeTab === 'WEATHER' ? 'bg-[#E8F5EF] text-[#0f766e]' : ''}`}>
+              <Sun className="w-4 h-4" />
+            </div>
+            <span className="text-[9px] font-mono mt-0.5">Nowcast</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('SOS')}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all cursor-pointer ${
+              activeTab === 'SOS'
+                ? 'text-[#DC2626] font-extrabold'
+                : 'text-[#881337] hover:text-[#be123c]'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-colors ${activeTab === 'SOS' ? 'bg-[#FEE2E2] text-[#dc2626]' : ''}`}>
+              <Siren className="w-4 h-4 animate-pulse" />
+            </div>
+            <span className="text-[9px] font-mono mt-0.5">SOS Rescue</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('EVACUATION')}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all cursor-pointer ${
+              activeTab === 'EVACUATION'
+                ? 'text-[#0369a1] font-extrabold'
+                : 'text-[#6B6F6B] hover:text-[#263238]'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-colors ${activeTab === 'EVACUATION' ? 'bg-[#E0F2FE] text-[#0369a1]' : ''}`}>
+              <Navigation className="w-4 h-4" />
+            </div>
+            <span className="text-[9px] font-mono mt-0.5">Evac & Kit</span>
+          </button>
+
+          <button
+            onClick={() => {
+              if (isOfficerMode) {
+                setActiveTab('OFFICER');
+              } else {
+                setIsOfficerMode(true);
+                setActiveTab('OFFICER');
+              }
+            }}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all cursor-pointer ${
+              activeTab === 'OFFICER'
+                ? 'text-[#991B1B] font-extrabold'
+                : 'text-[#6B6F6B] hover:text-[#263238]'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-colors ${activeTab === 'OFFICER' ? 'bg-[#FEE2E2] text-[#991B1B]' : ''}`}>
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <span className="text-[9px] font-mono mt-0.5">{isOfficerMode ? 'Officer' : 'Triage'}</span>
+          </button>
+        </nav>
 
       </div>
 
