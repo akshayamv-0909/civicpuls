@@ -2096,40 +2096,67 @@ export default function CitizenLifelinePage() {
                     </div>
                   </div>
 
-                  {/* Siren Sound, Sonar & Strobe controls */}
-                  <div className="grid grid-cols-3 gap-1.5 pt-1 border-t border-[#DDD5C7] text-[10.5px]">
+                  {/* STANDALONE PROMINENT 880Hz ACOUSTIC SEARCH BEACON BUTTON */}
+                  <div className="pt-2 border-t border-[#DDD5C7] space-y-2">
                     <button
-                      onClick={() => {
-                        if (isSirenPlaying) stopEmergencySirenSound();
-                        else startEmergencySirenSound();
-                      }}
-                      className={`p-2 rounded-xl border font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
-                        isSirenPlaying ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#DC2626] hover:bg-[#E5CDC6]'
-                      }`}
-                    >
-                      <Volume2 className="w-3.5 h-3.5" />
-                      <span>{isSirenPlaying ? 'Stop Siren' : 'Test Siren'}</span>
-                    </button>
-
-                    <button
+                      type="button"
                       onClick={toggleAcousticBeacon}
-                      className={`p-2 rounded-xl border font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
-                        acousticActive ? 'bg-[#0f766e] text-white animate-pulse' : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6]'
+                      className={`w-full p-3 rounded-2xl border-2 font-bold flex items-center justify-between transition-all cursor-pointer shadow-sm active:scale-98 ${
+                        acousticActive 
+                          ? 'bg-[#0f766e] text-white border-[#0d9488] shadow-md ring-2 ring-[#0d9488]' 
+                          : 'bg-[#FFFDF8] hover:bg-[#FAF8F2] border-[#0f766e] text-[#0f766e]'
                       }`}
                     >
-                      <Radio className="w-3.5 h-3.5" />
-                      <span>{acousticActive ? 'Sonar On' : '880Hz Sonar'}</span>
+                      <div className="flex items-center gap-2.5 text-left">
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${
+                          acousticActive ? 'bg-white/20 border-white text-white' : 'bg-[#E8F5EF] border-[#0d9488]/40 text-[#0f766e]'
+                        }`}>
+                          <Radio className={`w-5 h-5 ${acousticActive ? 'animate-ping' : 'animate-pulse'}`} />
+                        </div>
+                        <div>
+                          <div className="text-xs font-black uppercase tracking-tight flex items-center gap-1.5 font-mono">
+                            <span>880Hz Acoustic Search Beacon</span>
+                            {acousticActive && <span className="text-[8px] bg-white text-[#0f766e] px-1.5 py-0.2 rounded-full font-black font-mono">PULSING</span>}
+                          </div>
+                          <p className={`text-[9.5px] font-sans font-normal leading-tight mt-0.5 ${acousticActive ? 'text-white/90' : 'text-[#5A4D49]'}`}>
+                            {acousticActive ? 'Transmitting 880Hz audio pings for rescue teams & K9 units' : 'Tap to emit loud 880Hz audio pings for rescue search teams'}
+                          </p>
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-mono font-bold px-2.5 py-1.5 rounded-xl shrink-0 ${
+                        acousticActive ? 'bg-white text-[#0f766e]' : 'bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40'
+                      }`}>
+                        {acousticActive ? 'STOP SONAR' : 'START SONAR'}
+                      </span>
                     </button>
 
-                    <button
-                      onClick={() => setStrobeActive(!strobeActive)}
-                      className={`p-2 rounded-xl border font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
-                        strobeActive ? 'bg-[#D97706] text-white animate-pulse' : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6]'
-                      }`}
-                    >
-                      <Zap className="w-3.5 h-3.5" />
-                      <span>{strobeActive ? 'Strobe On' : 'Morse Strobe'}</span>
-                    </button>
+                    {/* Secondary Controls: Siren Test & Optical SOS Strobe (2 Columns) */}
+                    <div className="grid grid-cols-2 gap-2 text-[10.5px]">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isSirenPlaying) stopEmergencySirenSound();
+                          else startEmergencySirenSound();
+                        }}
+                        className={`p-2.5 rounded-xl border font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                          isSirenPlaying ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#DC2626] hover:bg-[#E5CDC6]'
+                        }`}
+                      >
+                        <Volume2 className="w-3.5 h-3.5" />
+                        <span>{isSirenPlaying ? 'Stop Siren' : 'Test Siren (90dB)'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setStrobeActive(!strobeActive)}
+                        className={`p-2.5 rounded-xl border font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                          strobeActive ? 'bg-[#D97706] text-white animate-pulse' : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6]'
+                        }`}
+                      >
+                        <Zap className="w-3.5 h-3.5" />
+                        <span>{strobeActive ? 'Strobe Flash On' : 'Optical SOS Strobe'}</span>
+                      </button>
+                    </div>
                   </div>
 
                   <button
@@ -2167,6 +2194,39 @@ export default function CitizenLifelinePage() {
                       <span className="text-[8.5px] font-normal tracking-normal opacity-90">SEND RESCUE</span>
                     </button>
                   </div>
+
+                  {/* STANDALONE 880Hz ACOUSTIC SEARCH BEACON QUICK TOOL */}
+                  <button
+                    type="button"
+                    onClick={toggleAcousticBeacon}
+                    className={`w-full p-3 rounded-2xl border-2 font-bold flex items-center justify-between transition-all cursor-pointer shadow-sm active:scale-98 ${
+                      acousticActive 
+                        ? 'bg-[#0f766e] text-white border-[#0d9488] shadow-md ring-2 ring-[#0d9488]' 
+                        : 'bg-[#FAF8F2] hover:bg-[#E8F5EF] border-[#0d9488]/40 text-[#0f766e]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 text-left">
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${
+                        acousticActive ? 'bg-white/20 border-white text-white' : 'bg-[#E8F5EF] border-[#0d9488]/40 text-[#0f766e]'
+                      }`}>
+                        <Radio className={`w-4 h-4 ${acousticActive ? 'animate-ping' : 'animate-pulse'}`} />
+                      </div>
+                      <div>
+                        <div className="text-xs font-black uppercase tracking-tight flex items-center gap-1 font-mono">
+                          <span>880Hz Acoustic Search Beacon</span>
+                          {acousticActive && <span className="text-[8px] bg-white text-[#0f766e] px-1.5 py-0.2 rounded-full font-black">ACTIVE</span>}
+                        </div>
+                        <p className={`text-[9.5px] font-sans font-normal leading-tight mt-0.5 ${acousticActive ? 'text-white/90' : 'text-[#5A4D49]'}`}>
+                          {acousticActive ? 'Transmitting 880Hz audio pulses for K9 & SAR units' : 'Standalone emergency audio sonar for search & rescue'}
+                        </p>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-mono font-bold px-2.5 py-1.5 rounded-xl shrink-0 ${
+                      acousticActive ? 'bg-white text-[#0f766e]' : 'bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40'
+                    }`}>
+                      {acousticActive ? 'STOP' : 'ACTIVATE'}
+                    </span>
+                  </button>
 
                   {/* 4 Emergency Categories */}
                   <div className="grid grid-cols-2 gap-2 text-xs">
