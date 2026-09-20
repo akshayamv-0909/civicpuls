@@ -474,88 +474,88 @@ export default function Dashboard() {
     <div className="flex h-screen bg-[#F5F1E8] text-[#263238] flex-col overflow-hidden font-sans select-none antialiased bg-tactical-grid">
       
       {/* ========================================================================= */}
-      {/* 1. TOP HEADER & MAIN NAVIGATION BAR (Cream-Reddish Aesthetic)             */}
+      {/* 1. TOP HEADER & MAIN NAVIGATION BAR (Darker Cream-Reddish Aesthetic)       */}
       {/* ========================================================================= */}
       <header 
-        style={{ backgroundColor: '#F4E5E0', borderColor: '#E0C5BD' }}
-        className="flex h-14 items-center justify-between px-5 text-[#263238] shrink-0 z-50 border-b shadow-sm"
+        style={{ backgroundColor: '#E5CDC6', borderColor: '#CCA298' }}
+        className="flex h-14 items-center justify-between px-4 text-[#263238] shrink-0 z-50 border-b shadow-sm w-full gap-2 overflow-x-auto"
       >
         
         {/* Left Brand Identity */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 shrink-0">
           <div 
-            style={{ backgroundColor: '#FFFDF8', borderColor: '#E0C5BD' }}
+            style={{ backgroundColor: '#FFFDF8', borderColor: '#CCA298' }}
             className="w-8 h-8 border flex items-center justify-center rounded-xl shrink-0 shadow-sm"
           >
             <Activity className="h-4 w-4 text-[#0f766e]" strokeWidth={2.5} />
           </div>
           <div className="flex flex-col justify-center">
             <div className="flex items-baseline gap-2">
-              <span className="text-base font-bold tracking-wider uppercase text-[#263238] font-mono">
+              <span className="text-sm font-extrabold tracking-wider uppercase text-[#263238] font-mono">
                 CIVICPULSE
               </span>
             </div>
-            <div className="text-[9px] text-[#6B6F6B] uppercase font-mono tracking-wider">
+            <div className="text-[8.5px] text-[#6B6F6B] uppercase font-mono tracking-wider">
               AI-Powered Urban Risk Intelligence & Response Simulator
             </div>
           </div>
         </div>
 
-        {/* Center: Dedicated 4-Page Navigation Tabs */}
+        {/* Center: Dedicated 4-Page Navigation Tabs (Compact Single-Row - No Overlap) */}
         <nav 
-          style={{ backgroundColor: '#E8CFC7', borderColor: '#D6B4AB' }}
-          className="flex items-center p-1 rounded-2xl border shadow-inner"
+          style={{ backgroundColor: '#D8B6AD', borderColor: '#C3988E' }}
+          className="flex items-center p-0.5 rounded-xl border shadow-inner shrink-0"
         >
           <button
             onClick={() => setActiveTab('HEATWAVE_SIMULATOR')}
-            className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
+            className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'HEATWAVE_SIMULATOR'
-                ? 'bg-[#FFFDF8] text-[#0f766e] border border-[#D6B4AB] shadow-sm'
-                : 'text-[#6B6F6B] hover:text-[#263238]'
+                ? 'bg-[#FFFDF8] text-[#0f766e] border border-[#C3988E] shadow-sm'
+                : 'text-[#5A4D49] hover:text-[#263238]'
             }`}
           >
-            <Flame className="w-3.5 h-3.5 text-[#0d9488]" />
+            <Flame className="w-3 h-3 text-[#0d9488]" />
             <span>1. Urban Heat Simulator</span>
           </button>
 
           <button
             onClick={() => setActiveTab('MULTI_HAZARD_ATLAS')}
-            className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
+            className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'MULTI_HAZARD_ATLAS'
-                ? 'bg-[#FFFDF8] text-[#0369a1] border border-[#D6B4AB] shadow-sm'
-                : 'text-[#6B6F6B] hover:text-[#263238]'
+                ? 'bg-[#FFFDF8] text-[#0369a1] border border-[#C3988E] shadow-sm'
+                : 'text-[#5A4D49] hover:text-[#263238]'
             }`}
           >
-            <Globe className="w-3.5 h-3.5 text-[#0284c7]" />
+            <Globe className="w-3 h-3 text-[#0284c7]" />
             <span>2. National Hazard Atlas</span>
           </button>
 
           <button
             onClick={() => setActiveTab('CLIMATE_ANALYTICS')}
-            className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
+            className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'CLIMATE_ANALYTICS'
-                ? 'bg-[#FFFDF8] text-[#4338ca] border border-[#D6B4AB] shadow-sm'
-                : 'text-[#6B6F6B] hover:text-[#263238]'
+                ? 'bg-[#FFFDF8] text-[#4338ca] border border-[#C3988E] shadow-sm'
+                : 'text-[#5A4D49] hover:text-[#263238]'
             }`}
           >
-            <BarChart3 className="w-3.5 h-3.5 text-[#4f46e5]" />
+            <BarChart3 className="w-3 h-3 text-[#4f46e5]" />
             <span>3. NOAA & ML Forecasts</span>
           </button>
 
           <button
             onClick={() => setActiveTab('EOC_DISPATCH')}
-            className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
+            className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'EOC_DISPATCH'
-                ? 'bg-[#FFFDF8] text-[#be123c] border border-[#D6B4AB] shadow-sm'
-                : 'text-[#6B6F6B] hover:text-[#263238]'
+                ? 'bg-[#FFFDF8] text-[#be123c] border border-[#C3988E] shadow-sm'
+                : 'text-[#5A4D49] hover:text-[#263238]'
             }`}
           >
-            <Siren className="w-3.5 h-3.5 text-[#e11d48]" />
+            <Siren className="w-3 h-3 text-[#e11d48]" />
             <span>4. Federal EOC Dispatch</span>
             {liveAlerts.length > 0 && (
               <span 
                 style={{ backgroundColor: '#DC2626' }}
-                className="text-[9px] text-white font-bold px-1.5 py-0.2 rounded-full"
+                className="text-[8.5px] text-white font-bold px-1.5 py-0.2 rounded-full"
               >
                 {liveAlerts.length}
               </span>
@@ -564,39 +564,39 @@ export default function Dashboard() {
         </nav>
 
         {/* Right Controls: Citizen Mobile App, Live Refresh & 90-Sec Autopilot */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0">
           {/* Manual Live Refresh Button */}
           <button
             onClick={() => fetchLiveTelemetry(false)}
             disabled={isLoadingLive || isLiveRefreshing}
-            style={{ backgroundColor: '#FFFDF8', borderColor: '#E0C5BD' }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[#0f766e] font-mono text-[11px] font-bold hover:border-[#0d9488] hover:text-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
+            style={{ backgroundColor: '#FFFDF8', borderColor: '#CCA298' }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full border text-[#0f766e] font-mono text-[10.5px] font-bold hover:border-[#0d9488] hover:text-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
             title="Force immediate live data refresh from NOAA and Open-Meteo"
           >
             <RefreshCw className={`w-3 h-3 text-[#0d9488] ${isLiveRefreshing || isLoadingLive ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">{isLiveRefreshing || isLoadingLive ? 'Syncing...' : 'Refresh Live'}</span>
+            <span className="hidden xl:inline">{isLiveRefreshing || isLoadingLive ? 'Syncing...' : 'Refresh Live'}</span>
           </button>
 
           {/* Direct 1-Click Launch Citizen Companion App (New Tab) */}
           <Link
             href="/citizen"
             target="_blank"
-            style={{ backgroundColor: '#FFFDF8', borderColor: '#E0C5BD' }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[#0f766e] font-mono text-xs font-bold hover:bg-[#FAF8F2] hover:border-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
+            style={{ backgroundColor: '#FFFDF8', borderColor: '#CCA298' }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full border text-[#0f766e] font-mono text-[11px] font-bold hover:bg-[#FAF8F2] hover:border-[#0d9488] transition-all cursor-pointer shadow-sm whitespace-nowrap shrink-0"
             title="Open Citizen Lifeline Web App in a new tab for demonstration"
           >
-            <QrCode className="w-3.5 h-3.5 text-[#0d9488]" />
-            <span className="hidden md:inline">Citizen App ↗</span>
+            <QrCode className="w-3 h-3 text-[#0d9488]" />
+            <span>Citizen App ↗</span>
           </Link>
 
           {/* Citizen Phone Alert Trigger (Solid Pitch Red - Clean, No Glow) */}
           <button
             onClick={() => setIsCitizenAlertModalOpen(true)}
             style={{ backgroundColor: '#DC2626', borderColor: '#991B1B', color: '#FFFFFF' }}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border font-mono text-xs font-extrabold shadow-sm hover:brightness-110 transition-all cursor-pointer whitespace-nowrap shrink-0"
+            className="flex items-center gap-1 px-3 py-1 rounded-full border font-mono text-[11px] font-extrabold shadow-sm hover:brightness-110 transition-all cursor-pointer whitespace-nowrap shrink-0"
             title="Launch Citizen Phone Alert SMS, QR & WEA Simulator"
           >
-            <Smartphone className="w-3.5 h-3.5 text-white" />
+            <Smartphone className="w-3 h-3 text-white" />
             <span>Citizen Alert</span>
           </button>
 
@@ -609,20 +609,20 @@ export default function Dashboard() {
                 startDemoTour();
               }
             }}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-mono text-xs font-bold shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+            className={`flex items-center gap-1 px-3 py-1 rounded-full font-mono text-[11px] font-bold shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               isDemoRunning
                 ? 'bg-[#E8F5EF] text-[#0f766e] border-2 border-[#0d9488] ring-2 ring-[#0d9488]/30 animate-pulse'
                 : 'bg-[#0d9488] hover:bg-[#0f766e] text-white border border-[#0d9488] hover:scale-105'
             }`}
             title="Launch the automated 90-second judge presentation demo flow"
           >
-            <Sparkles className={`w-3.5 h-3.5 ${isDemoRunning ? 'text-[#0d9488] animate-spin' : 'text-white'}`} />
-            <span>{isDemoRunning ? (isDemoPaused ? '▶️ Resume Tour' : `⏸️ Step ${demoStep + 1}/5`) : '⚡ 90-Sec Demo'}</span>
+            <Sparkles className={`w-3 h-3 ${isDemoRunning ? 'text-[#0d9488] animate-spin' : 'text-white'}`} />
+            <span>{isDemoRunning ? (isDemoPaused ? '▶️ Resume' : `⏸️ Step ${demoStep + 1}/5`) : '⚡ 90-Sec Demo'}</span>
           </button>
 
           <div 
-            style={{ backgroundColor: '#FFFDF8', borderColor: '#E0C5BD' }}
-            className="hidden 2xl:flex items-center gap-1.5 font-mono text-[10px] text-[#263238] px-3 py-1.5 rounded-full border whitespace-nowrap shrink-0"
+            style={{ backgroundColor: '#FFFDF8', borderColor: '#CCA298' }}
+            className="hidden 2xl:flex items-center gap-1 font-mono text-[9.5px] text-[#263238] px-2.5 py-1 rounded-full border whitespace-nowrap shrink-0"
           >
             <Clock className="w-3 h-3 text-[#0d9488]" />
             <span>{currentTime || 'LIVE TELEMETRY'}</span>
@@ -634,7 +634,7 @@ export default function Dashboard() {
       {/* 2. REAL-TIME DATA PROVENANCE & AUTO-REFRESH SUB-BAR                       */}
       {/* ========================================================================= */}
       <div 
-        style={{ backgroundColor: '#EFE1DC', borderColor: '#E0C5BD' }}
+        style={{ backgroundColor: '#DEC2BA', borderColor: '#CCA298' }}
         className="border-b px-5 py-1.5 flex items-center justify-between text-[10px] font-mono shrink-0"
       >
         <div className="flex items-center gap-3">
@@ -642,8 +642,8 @@ export default function Dashboard() {
             <span className="w-2 h-2 rounded-full bg-[#0d9488] inline-block animate-pulse" />
             <span>LAST UPDATED: {telemetryData?.lastUpdatedUtc || 'CONNECTING TO NOAA...'}</span>
           </div>
-          <span className="text-[#DDD5C7]">|</span>
-          <div className="flex items-center gap-1.5 text-[#6B6F6B]">
+          <span className="text-[#C3988E]">|</span>
+          <div className="flex items-center gap-1.5 text-[#5A4D49]">
             <Clock className="w-3 h-3 text-[#0d9488]" />
             <span>AUTO-REFRESH: <strong className="text-[#0f766e]">{formatCountdown(nextRefreshSeconds)}</strong> (1-Hr Cycle)</span>
           </div>
@@ -652,15 +652,6 @@ export default function Dashboard() {
               ⚠ {fetchError}
             </span>
           )}
-        </div>
-
-        <div className="flex items-center gap-3 text-[#6B6F6B]">
-          <span className="hidden lg:inline text-[#6B6F6B]/80 font-bold">OFFICIAL SOURCES:</span>
-          <span className="text-[#0f766e] font-semibold">NOAA NWS (`api.weather.gov`)</span>
-          <span className="text-[#DDD5C7]">&bull;</span>
-          <span className="text-[#0f766e] font-semibold">Open-Meteo NOAA HRRR/GFS</span>
-          <span className="text-[#DDD5C7]">&bull;</span>
-          <span className="text-[#263238] font-semibold">US Census Bureau 5-Yr ACS</span>
         </div>
       </div>
 
