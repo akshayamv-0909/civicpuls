@@ -662,12 +662,12 @@ export default function Dashboard() {
         <div className="flex flex-col flex-1 overflow-hidden">
           
           {/* Tactical Sub-Bar */}
-          <div className="flex items-center justify-between bg-[#FAF8F2] border-b border-[#DDD5C7] px-5 py-2 shrink-0 text-xs font-mono">
+          <div className="flex flex-wrap items-center justify-between gap-2.5 bg-[#FAF8F2] border-b border-[#DDD5C7] px-4 py-1.5 shrink-0 text-xs font-mono">
             {/* Target Dropdown */}
-            <div className="flex items-center gap-2.5">
-              <label htmlFor="focus-target-select" className="text-[10px] text-[#6B6F6B] uppercase tracking-wider font-bold flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-2">
+              <label htmlFor="focus-target-select" className="text-[10px] text-[#6B6F6B] uppercase tracking-wider font-bold flex items-center gap-1 shrink-0">
                 <MapPin className="w-3.5 h-3.5 text-[#0d9488]" />
-                <span>FOCUS MUNICIPAL TARGET:</span>
+                <span className="hidden sm:inline">TARGET:</span>
               </label>
               <div className="relative flex items-center">
                 <select
@@ -675,7 +675,7 @@ export default function Dashboard() {
                   aria-label="Select Target Zone"
                   value={selectedZoneId}
                   onChange={(e) => setSelectedZoneId(e.target.value)}
-                  className="bg-[#FFFDF8] text-[#0f766e] border border-[#DDD5C7] hover:border-[#0d9488] focus:border-[#0d9488] text-xs font-mono font-bold pl-3 pr-8 py-1.5 rounded-xl outline-none shadow-sm cursor-pointer transition-all appearance-none min-w-[340px]"
+                  className="bg-[#FFFDF8] text-[#0f766e] border border-[#DDD5C7] hover:border-[#0d9488] focus:border-[#0d9488] text-xs font-mono font-bold pl-3 pr-7 py-1 rounded-xl outline-none shadow-sm cursor-pointer transition-all appearance-none max-w-[260px] sm:max-w-[320px] md:max-w-[380px] truncate"
                 >
                   {liveZones.map((z) => (
                     <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans">
@@ -683,18 +683,15 @@ export default function Dashboard() {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-[#0d9488] absolute right-2.5 pointer-events-none" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#0d9488] absolute right-2 pointer-events-none" />
               </div>
             </div>
 
             {/* Live Data Status & Reset Action */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 text-xs text-[#6B6F6B]">
-                <span className="text-[10px] uppercase font-bold text-[#6B6F6B]">SOURCE:</span>
-                <span className="text-[11px] bg-[#FFFDF8] px-2.5 py-0.5 rounded-full border border-[#DDD5C7] text-[#0f766e] font-semibold shadow-sm">
-                  Live Atmospheric Telemetry (NOAA HRRR / Open-Meteo)
-                </span>
-              </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-[10.5px] bg-[#FFFDF8] px-2.5 py-0.5 rounded-full border border-[#DDD5C7] text-[#0f766e] font-semibold shadow-sm whitespace-nowrap">
+                NOAA HRRR Live Telemetry
+              </span>
 
               {isTacticalActive && (
                 <button
@@ -703,7 +700,7 @@ export default function Dashboard() {
                   title="Reset to Live Baseline (Clear simulation)"
                 >
                   <RotateCcw className="w-3 h-3 text-[#0d9488]" />
-                  <span>Reset Action</span>
+                  <span>Reset</span>
                 </button>
               )}
             </div>
@@ -1043,12 +1040,12 @@ export default function Dashboard() {
       {activeTab === 'MULTI_HAZARD_ATLAS' && (
         <div className="flex flex-col flex-1 overflow-hidden">
           {/* Sub-Bar */}
-          <div className="flex items-center justify-between bg-[#FAF8F2] border-b border-[#DDD5C7] px-5 py-2 shrink-0 text-xs font-mono">
+          <div className="flex flex-wrap items-center justify-between gap-2.5 bg-[#FAF8F2] border-b border-[#DDD5C7] px-4 py-1.5 shrink-0 text-xs font-mono">
             {/* State Target Dropdown */}
-            <div className="flex items-center gap-2.5">
-              <label htmlFor="state-target-select" className="text-[10px] text-[#6B6F6B] uppercase tracking-wider font-bold flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-2">
+              <label htmlFor="state-target-select" className="text-[10px] text-[#6B6F6B] uppercase tracking-wider font-bold flex items-center gap-1 shrink-0">
                 <Globe className="w-3.5 h-3.5 text-[#0369a1]" />
-                <span>STATE FOCUS:</span>
+                <span className="hidden sm:inline">STATE:</span>
               </label>
               <div className="relative flex items-center">
                 <select
@@ -1056,7 +1053,7 @@ export default function Dashboard() {
                   aria-label="Select Target State"
                   value={selectedStateId}
                   onChange={(e) => setSelectedStateId(e.target.value)}
-                  className="bg-[#FFFDF8] text-[#263238] border border-[#DDD5C7] hover:border-[#0369a1] focus:border-[#0369a1] text-xs font-mono font-bold pl-3 pr-8 py-1.5 rounded-xl outline-none shadow-sm cursor-pointer transition-all appearance-none min-w-[340px]"
+                  className="bg-[#FFFDF8] text-[#263238] border border-[#DDD5C7] hover:border-[#0369a1] focus:border-[#0369a1] text-xs font-mono font-bold pl-3 pr-7 py-1 rounded-xl outline-none shadow-sm cursor-pointer transition-all appearance-none max-w-[260px] sm:max-w-[320px] md:max-w-[380px] truncate"
                 >
                   {liveStates.map((st) => (
                     <option key={st.id} value={st.id} className="bg-[#FFFDF8] text-[#263238] font-sans">
@@ -1064,19 +1061,19 @@ export default function Dashboard() {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-[#0369a1] absolute right-2.5 pointer-events-none" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#0369a1] absolute right-2 pointer-events-none" />
               </div>
             </div>
 
             {/* Hazard Layer Filter */}
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-[#6B6F6B] uppercase font-bold">HAZARD LAYER:</span>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-[10px] text-[#6B6F6B] uppercase font-bold hidden md:inline">HAZARD LAYER:</span>
               <div className="flex items-center bg-[#EEE8DC] p-0.5 rounded-xl border border-[#DDD5C7]">
                 {(['overall', 'heat', 'flood', 'wildfire', 'drought'] as ClimateHazardType[]).map((layer) => (
                   <button
                     key={layer}
                     onClick={() => setActiveHazardLayer(layer)}
-                    className={`text-[10px] font-bold px-3 py-1 rounded-lg capitalize transition-all cursor-pointer ${
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-lg capitalize transition-all cursor-pointer whitespace-nowrap ${
                       activeHazardLayer === layer
                         ? 'bg-[#E0F2FE] text-[#0369a1] border border-[#BAE6FD] shadow-sm'
                         : 'text-[#6B6F6B] hover:text-[#263238]'
