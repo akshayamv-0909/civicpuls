@@ -19,6 +19,7 @@ interface MapProps {
   simulatedScore?: number | null;
   sosPings?: CitizenPing[];
   onDispatchRescue?: (pingId: string) => void;
+  focusedCoords?: { lat: number; lng: number } | null;
 }
 
 const mapTileConfigs: Record<SatelliteViewType, {
@@ -86,20 +87,24 @@ function getThermalDomeColor(tempF: number | null): string {
 
 function MapController({ 
   selectedZone, 
-  userLocation 
+  userLocation,
+  focusedCoords 
 }: { 
   selectedZone: LiveZoneTelemetry | undefined;
   userLocation: { lat: number; lng: number } | null;
+  focusedCoords?: { lat: number; lng: number } | null;
 }) {
   const map = useMap();
   useEffect(() => {
-    if (userLocation) {
+    if (focusedCoords) {
+      map.flyTo([focusedCoords.lat, focusedCoords.lng], 13, { duration: 1.5 });
+    } else if (userLocation) {
       map.flyTo([userLocation.lat, userLocation.lng], 10, { duration: 1.5 });
     } else if (selectedZone) {
       // Calibrated zoom level 8.5 gives a full view of the 15-mile metropolitan heat dome footprint
       map.flyTo([selectedZone.lat, selectedZone.lng], 8.5, { duration: 1.2 });
     }
-  }, [selectedZone, userLocation, map]);
+  }, [selectedZone, userLocation, focusedCoords, map]);
   return null;
 }
 
@@ -112,7 +117,8 @@ export default function Map({
   paramedicSurgeDeployed = 0,
   simulatedScore = null,
   sosPings = [],
-  onDispatchRescue
+  onDispatchRescue,
+  focusedCoords
 }: MapProps) {
   const defaultCenter: [number, number] = [38.50, -96.50];
   const selectedZone = zones.find(z => z.id === selectedZoneId) || zones[0];
@@ -255,7 +261,7 @@ export default function Map({
           />
         )}
 
-        <MapController selectedZone={selectedZone} userLocation={userLocation} />
+        <MapController selectedZone={selectedZone} userLocation={userLocation} focusedCoords={focusedCoords} />
 
         {/* 1. METROPOLITAN THERMAL HEAT DOME (HEAT ISLAND PLUME OVERLAY) */}
         {selectedZone && (
@@ -440,55 +446,77 @@ export default function Map({
         {sosPings && sosPings.filter(p => p.type !== 'SAFE' && p.status !== 'RESOLVED').map((p) => {
           const isDispatched = p.status === 'DISPATCHED';
           return (
-            <CircleMarker
-              key={p.id}
-              center={[p.lat, p.lng]}
-              radius={14}
-              pathOptions={{
-                color: isDispatched ? '#059669' : '#dc2626',
-                weight: 3,
-                fillColor: isDispatched ? '#10b981' : '#ef4444',
-                fillOpacity: 0.95,
-              }}
-            >
-              <Popup autoPan={true} closeButton={false}>
-                <div className="p-3 min-w-[240px] bg-[#0e1626] text-slate-100 rounded-2xl border border-rose-500/80 font-mono text-xs shadow-2xl space-y-2">
-                  <div className="flex items-center justify-between border-b border-rose-500/40 pb-1.5">
-                    <span className="font-bold text-rose-400 text-xs flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping inline-block" />
-                      <span>🚨 CITIZEN SOS BEACON</span>
-                    </span>
-                    <span className={`text-[8.5px] px-1.5 py-0.2 rounded font-bold ${isDispatched ? 'bg-emerald-900 text-emerald-300' : 'bg-rose-900 text-rose-200'}`}>
-                      {p.status}
-                    </span>
-                  </div>
+            <div key={`sos-group-${p.id}`}>
+              {/* Outer Radar Ripple Wave */}
+              <Circle
+                key={`sos-ripple-${p.id}`}
+                center={[p.lat, p.lng]}
+                radius={isDispatched ? 800 : 2400}
+                pathOptions={{
+                  color: isDispatched ? '#059669' : '#dc2626',
+                  weight: 2.5,
+                  dashArray: '5,5',
+                  fillColor: isDispatched ? '#10b981' : '#ef4444',
+                  fillOpacity: isDispatched ? 0.12 : 0.25,
+                }}
+              />
 
-                  <div className="space-y-1 text-[10.5px]">
-                    <div><strong>Category:</strong> <span className="text-rose-300">{p.categoryName}</span></div>
-                    <div><strong>Location:</strong> <span className="text-slate-300">{p.address || `${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}`}</span></div>
-                    {p.notes && (
-                      <div className="p-1.5 bg-slate-900/90 rounded-lg text-[9.5px] text-slate-300 border border-slate-800">
-                        &quot;{p.notes}&quot;
-                      </div>
-                    )}
-                    <div className="text-[9px] text-slate-400">Timestamp: {p.timeFormatted}</div>
-                  </div>
-
-                  {isDispatched ? (
-                    <div className="p-1.5 bg-emerald-950/80 border border-emerald-500/40 rounded-lg text-[10px] text-emerald-300 font-bold">
-                      🚑 Unit: {p.assignedUnit} (ETA {p.etaMinutes || 5} min)
+              {/* Inner High-Visibility SOS Beacon Pin */}
+              <CircleMarker
+                key={`sos-core-${p.id}`}
+                center={[p.lat, p.lng]}
+                radius={isDispatched ? 12 : 16}
+                pathOptions={{
+                  color: '#ffffff',
+                  weight: 3.5,
+                  fillColor: isDispatched ? '#10b981' : '#dc2626',
+                  fillOpacity: 1,
+                }}
+              >
+                <Popup autoPan={true} closeButton={false}>
+                  <div className="p-3.5 min-w-[260px] bg-[#0e1626] text-slate-100 rounded-2xl border-2 border-rose-500 font-mono text-xs shadow-2xl space-y-2.5">
+                    <div className="flex items-center justify-between border-b border-rose-500/40 pb-1.5">
+                      <span className="font-extrabold text-rose-400 text-xs flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full bg-rose-500 animate-ping inline-block" />
+                        <span>🚨 LIVE CITIZEN SOS BEACON</span>
+                      </span>
+                      <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold ${isDispatched ? 'bg-emerald-900 text-emerald-300' : 'bg-rose-900 text-rose-100 border border-rose-500'}`}>
+                        {p.status}
+                      </span>
                     </div>
-                  ) : onDispatchRescue ? (
-                    <button
-                      onClick={() => onDispatchRescue(p.id)}
-                      className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white py-1.5 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                    >
-                      <span>🚨 Dispatch Rescue Team (EMS-04)</span>
-                    </button>
-                  ) : null}
-                </div>
-              </Popup>
-            </CircleMarker>
+
+                    <div className="space-y-1.5 text-[11px]">
+                      <div><strong>Distress:</strong> <span className="text-yellow-300 font-bold">{p.categoryName}</span></div>
+                      <div><strong>Location:</strong> <span className="text-cyan-300 font-bold">{p.address || p.metro}</span></div>
+                      <div className="text-[10px] text-slate-400 font-mono">
+                        <span>GPS Coordinates: </span>
+                        <strong className="text-white">{p.lat.toFixed(5)}°N, {p.lng.toFixed(5)}°W</strong>
+                      </div>
+                      {p.notes && (
+                        <div className="p-2 bg-slate-900/95 rounded-xl text-[10px] text-slate-200 border border-slate-700/80">
+                          &quot;{p.notes}&quot;
+                        </div>
+                      )}
+                      <div className="text-[9.5px] text-slate-400">Transmitted: {p.timeFormatted}</div>
+                    </div>
+
+                    {isDispatched ? (
+                      <div className="p-2 bg-emerald-950/90 border border-emerald-500/60 rounded-xl text-[10.5px] text-emerald-300 font-bold flex items-center gap-1.5">
+                        <span>🚑</span>
+                        <span>Unit: {p.assignedUnit} (ETA {p.etaMinutes || 4} min)</span>
+                      </div>
+                    ) : onDispatchRescue ? (
+                      <button
+                        onClick={() => onDispatchRescue(p.id)}
+                        className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white py-2 rounded-xl font-black text-xs shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-colors active:scale-95"
+                      >
+                        <span>🚨 Dispatch Rescue Team (EMS-04)</span>
+                      </button>
+                    ) : null}
+                  </div>
+                </Popup>
+              </CircleMarker>
+            </div>
           );
         })}
 

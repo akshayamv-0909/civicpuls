@@ -1231,7 +1231,7 @@ export default function CitizenLifelinePage() {
           action: 'SUBMIT_SOS',
           ping: {
             type: selectedSOSCategory,
-            zoneId: 'zone-phx-core',
+            zoneId: selectedZoneId,
             metro: locationName,
             lat: userCoords.lat,
             lng: userCoords.lng,
@@ -1268,7 +1268,7 @@ export default function CitizenLifelinePage() {
           action: 'SUBMIT_PING',
           ping: {
             type: 'SAFE',
-            zoneId: 'zone-phx-core',
+            zoneId: selectedZoneId,
             metro: locationName,
             lat: userCoords.lat,
             lng: userCoords.lng,
