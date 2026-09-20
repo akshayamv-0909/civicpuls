@@ -106,6 +106,7 @@ Permanezca en interiores, beba agua y revise a sus familiares mayores.
   const handleTriggerBroadcast = async () => {
     setIsBroadcasting(true);
     try {
+      // 1. Update global broadcast state parameters
       await fetch('/api/citizen-sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -115,6 +116,21 @@ Permanezca en interiores, beba agua y revise a sus familiares mayores.
             isCodeRedActive: true,
             transitWaiverActive: true,
             targetedMetro: zone.metro
+          }
+        })
+      });
+
+      // 2. Trigger audible emergency siren alert to all connected citizen handsets
+      await fetch('/api/citizen-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'BROADCAST_SIREN_ALERT',
+          sirenAlert: {
+            title: `🚨 FEMA WEA EMERGENCY BROADCAST: ${zone.name.toUpperCase()}`,
+            message: `CRITICAL THERMAL/HAZARD SURGE (${tempF}). Emergency cooling shelters and transit corridors active.`,
+            severity: 'CRITICAL',
+            sender: `FEMA IPAWS / ${zone.metro} Incident Command`
           }
         })
       });

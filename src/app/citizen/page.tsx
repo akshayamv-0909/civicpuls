@@ -113,6 +113,28 @@ export default function CitizenLifelinePage() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const beaconIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Emergency Siren Physical Audio Synthesizer (Web Audio API)
+  const [isSirenModalOpen, setIsSirenModalOpen] = useState(false);
+  const [isSirenPlaying, setIsSirenPlaying] = useState(false);
+  const [sirenEventData, setSirenEventData] = useState<{
+    title: string;
+    message: string;
+    assignedUnit?: string;
+    etaMinutes?: number;
+    acknowledgedBy?: string;
+    acknowledgedAt?: string;
+    isBroadcast?: boolean;
+  } | null>(null);
+
+  const sirenAudioCtxRef = useRef<AudioContext | null>(null);
+  const sirenOscRef = useRef<OscillatorNode | null>(null);
+  const sirenGainRef = useRef<GainNode | null>(null);
+  const sirenModulationTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Track handled alerts to prevent duplicate sound triggers
+  const lastHandledSosStatusRef = useRef<string | null>(null);
+  const lastHandledSirenAlertIdRef = useRef<string | null>(null);
+
   // CivicPulse Live System Telemetry
   const [monitoredZones, setMonitoredZones] = useState<LiveZoneTelemetry[]>(INITIAL_ZONES.map(z => ({
     ...z,
@@ -195,7 +217,73 @@ export default function CitizenLifelinePage() {
   }, []);
 
   // -------------------------------------------------------------
-  // 1. Acoustic Search Beacon Generator (880Hz / 440Hz Pulse)
+  // 1. Emergency Siren Physical Synthesizer (Web Audio API)
+  // -------------------------------------------------------------
+  const startEmergencySirenSound = useCallback(() => {
+    try {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+
+      if (sirenAudioCtxRef.current) {
+        try { sirenAudioCtxRef.current.close(); } catch {}
+      }
+
+      const ctx = new AudioCtx();
+      sirenAudioCtxRef.current = ctx;
+      if (ctx.state === 'suspended') ctx.resume();
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(650, ctx.currentTime);
+      gain.gain.setValueAtTime(0.35, ctx.currentTime);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+
+      sirenOscRef.current = osc;
+      sirenGainRef.current = gain;
+      setIsSirenPlaying(true);
+
+      let high = false;
+      sirenModulationTimerRef.current = setInterval(() => {
+        if (!ctx || ctx.state === 'closed') return;
+        high = !high;
+        const targetFreq = high ? 1150 : 650;
+        osc.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.22);
+      }, 450);
+
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate([400, 150, 400, 150, 600]);
+      }
+    } catch (e) {
+      console.warn('Web Audio Siren Error:', e);
+    }
+  }, []);
+
+  const stopEmergencySirenSound = useCallback(() => {
+    if (sirenModulationTimerRef.current) {
+      clearInterval(sirenModulationTimerRef.current);
+      sirenModulationTimerRef.current = null;
+    }
+    if (sirenOscRef.current) {
+      try { sirenOscRef.current.stop(); } catch {}
+      sirenOscRef.current = null;
+    }
+    if (sirenAudioCtxRef.current) {
+      sirenAudioCtxRef.current.close().catch(() => {});
+      sirenAudioCtxRef.current = null;
+    }
+    setIsSirenPlaying(false);
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate(0);
+    }
+  }, []);
+
+  // -------------------------------------------------------------
+  // 2. Acoustic Search Beacon Generator (880Hz / 440Hz Pulse)
   // -------------------------------------------------------------
   const startAcousticBeacon = useCallback(() => {
     try {
@@ -247,7 +335,7 @@ export default function CitizenLifelinePage() {
   };
 
   // -------------------------------------------------------------
-  // 2. Optical Strobe Light (SOS Flash Pattern)
+  // 3. Optical Strobe Light (SOS Flash Pattern)
   // -------------------------------------------------------------
   useEffect(() => {
     let strobeTimer: NodeJS.Timeout | null = null;
@@ -268,7 +356,7 @@ export default function CitizenLifelinePage() {
   }, [strobeActive]);
 
   // -------------------------------------------------------------
-  // 3. Sync with CivicPulse 2-Way Backend API
+  // 4. Sync with CivicPulse 2-Way Backend API & Siren Receiver
   // -------------------------------------------------------------
   const pollSync = useCallback(async () => {
     try {
@@ -281,23 +369,59 @@ export default function CitizenLifelinePage() {
             const updated = data.recentPings.find((p: CitizenPing) => p.id === activeSOSBeacon.id);
             if (updated) {
               setActiveSOSBeacon(updated);
+
+              // Check if SOS status was updated by EOC to ACKNOWLEDGED or DISPATCHED
+              if (
+                (updated.status === 'ACKNOWLEDGED' || updated.status === 'DISPATCHED') &&
+                lastHandledSosStatusRef.current !== updated.status
+              ) {
+                lastHandledSosStatusRef.current = updated.status;
+                setSirenEventData({
+                  title: updated.status === 'DISPATCHED' ? '🚨 SOS ACKNOWLEDGED & RESCUE DISPATCHED' : '🚨 SOS ACKNOWLEDGED BY FEMA EOC',
+                  message: updated.alertMessage || 'FEMA EOC Incident Command has locked your GPS coordinates and dispatched nearest response team.',
+                  assignedUnit: updated.assignedUnit || 'Phoenix Fire Rescue Unit #04 / EMS Medic-04',
+                  etaMinutes: updated.etaMinutes || 4,
+                  acknowledgedBy: updated.acknowledgedBy || 'Battalion Chief Marcus Vance • FEMA Task Force 1',
+                  acknowledgedAt: updated.acknowledgedAt || 'Just now',
+                  isBroadcast: false
+                });
+                setIsSirenModalOpen(true);
+                startEmergencySirenSound();
+              }
             }
+          }
+        }
+
+        // Check if there is an active broadcast siren from the EOC
+        if (data.broadcastState?.activeSirenAlert) {
+          const alert = data.broadcastState.activeSirenAlert;
+          if (alert.active && alert.id !== lastHandledSirenAlertIdRef.current) {
+            lastHandledSirenAlertIdRef.current = alert.id;
+            setSirenEventData({
+              title: alert.title,
+              message: alert.message,
+              acknowledgedBy: alert.sender,
+              acknowledgedAt: alert.timeFormatted,
+              isBroadcast: true
+            });
+            setIsSirenModalOpen(true);
+            startEmergencySirenSound();
           }
         }
       }
     } catch (e) {
       console.warn('Citizen sync poll failed:', e);
     }
-  }, [activeSOSBeacon]);
+  }, [activeSOSBeacon, startEmergencySirenSound]);
 
   useEffect(() => {
     pollSync();
-    const interval = setInterval(pollSync, 3000);
+    const interval = setInterval(pollSync, 2500);
     return () => clearInterval(interval);
   }, [pollSync]);
 
   // -------------------------------------------------------------
-  // 4. Fetch Live NOAA / Open-Meteo Data from CivicPulse Pipeline
+  // 5. Fetch Live NOAA / Open-Meteo Data from CivicPulse Pipeline
   // -------------------------------------------------------------
   const applyZoneTelemetry = useCallback((zone: LiveZoneTelemetry) => {
     setSelectedZoneId(zone.id);
@@ -379,7 +503,7 @@ export default function CitizenLifelinePage() {
   }, [fetchCivicPulseLiveData]);
 
   // -------------------------------------------------------------
-  // 5. Dynamic Location Search & Open-Meteo Fetch
+  // 6. Dynamic Location Search & Open-Meteo Fetch
   // -------------------------------------------------------------
   const handleLocationSearch = async (queryText: string) => {
     if (!queryText.trim()) return;
@@ -460,7 +584,7 @@ export default function CitizenLifelinePage() {
   };
 
   // -------------------------------------------------------------
-  // 6. Trigger SOS Distress
+  // 7. Trigger SOS Distress Signal
   // -------------------------------------------------------------
   const handleTriggerSOS = async () => {
     setIsSendingSOS(true);
@@ -486,6 +610,7 @@ export default function CitizenLifelinePage() {
         const data = await res.json();
         if (data.ping) {
           setActiveSOSBeacon(data.ping);
+          lastHandledSosStatusRef.current = 'PENDING';
           setActiveTab('SOS');
         }
       }
@@ -497,7 +622,7 @@ export default function CitizenLifelinePage() {
   };
 
   // -------------------------------------------------------------
-  // 7. Safe Check-in
+  // 8. Safe Check-in
   // -------------------------------------------------------------
   const handleCheckInSafe = async () => {
     try {
@@ -528,7 +653,7 @@ export default function CitizenLifelinePage() {
   };
 
   // -------------------------------------------------------------
-  // 8. Officer Dispatch
+  // 9. Officer Dispatch Handset Action
   // -------------------------------------------------------------
   const handleOfficerDispatch = async (pingId: string) => {
     try {
@@ -539,7 +664,8 @@ export default function CitizenLifelinePage() {
           action: 'DISPATCH_RESCUE',
           pingId,
           assignedUnit: 'Phoenix Fire Rescue Unit #04 / EMS Medic-04',
-          etaMinutes: 4
+          etaMinutes: 4,
+          acknowledgedBy: 'Battalion Chief Marcus Vance • Phoenix Fire & FEMA Task Force 1'
         })
       });
       if (res.ok) {
@@ -551,7 +677,7 @@ export default function CitizenLifelinePage() {
   };
 
   // -------------------------------------------------------------
-  // 9. Audio Broadcast
+  // 10. Audio Broadcast
   // -------------------------------------------------------------
   const toggleAudioAlert = () => {
     if (isPlayingAudio) {
@@ -1556,7 +1682,7 @@ export default function CitizenLifelinePage() {
                               className="w-full py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer flex items-center justify-center gap-1 transition"
                             >
                               <Siren className="w-3.5 h-3.5" />
-                              <span>Dispatch Phoenix Fire Unit (EMS-04)</span>
+                              <span>Acknowledge & Dispatch Phoenix Fire Unit (EMS-04)</span>
                             </button>
                           )}
                         </div>
@@ -1613,40 +1739,61 @@ export default function CitizenLifelinePage() {
                       </div>
                     </div>
                     <span className="text-[9px] bg-[#DC2626] text-white px-2 py-0.5 rounded-full font-bold">
-                      {activeSOSBeacon.status === 'DISPATCHED' ? 'RESCUE EN ROUTE' : 'PENDING TRIAGE'}
+                      {activeSOSBeacon.status === 'DISPATCHED' 
+                        ? 'RESCUE EN ROUTE' 
+                        : activeSOSBeacon.status === 'ACKNOWLEDGED' 
+                          ? 'EOC ACKNOWLEDGED' 
+                          : 'PENDING TRIAGE'}
                     </span>
                   </div>
 
                   {/* 3-Stage Progress */}
                   <div className="space-y-2 text-xs">
-                    <div className="flex items-center gap-2 text-[#0f766e] font-bold">
-                      <CheckCircle2 className="w-4 h-4 text-[#0d9488]" />
+                    {/* Stage 1 */}
+                    <div className="flex items-center gap-2 text-[#0f766e] font-bold bg-[#E8F5EF] p-2 rounded-xl border border-[#0d9488]/30">
+                      <CheckCircle2 className="w-4 h-4 text-[#0d9488] shrink-0" />
                       <span>1. Transmitted to FEMA IPAWS & Municipal EOC</span>
                       <span className="text-[9px] text-[#6B6F6B] ml-auto">{activeSOSBeacon.timeFormatted}</span>
                     </div>
 
-                    <div className={`flex items-center gap-2 font-bold ${
-                      activeSOSBeacon.status === 'DISPATCHED' ? 'text-[#0f766e]' : 'text-[#D97706] animate-pulse'
+                    {/* Stage 2: EOC Acknowledgment */}
+                    <div className={`flex items-start gap-2 font-bold p-2 rounded-xl border ${
+                      activeSOSBeacon.status === 'ACKNOWLEDGED' || activeSOSBeacon.status === 'DISPATCHED'
+                        ? 'bg-[#E8F5EF] border-[#0d9488]/40 text-[#0f766e]'
+                        : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#D97706] animate-pulse'
                     }`}>
-                      {activeSOSBeacon.status === 'DISPATCHED' ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#0d9488]" />
+                      {activeSOSBeacon.status === 'ACKNOWLEDGED' || activeSOSBeacon.status === 'DISPATCHED' ? (
+                        <CheckCircle2 className="w-4 h-4 text-[#0d9488] shrink-0 mt-0.5" />
                       ) : (
-                        <Radio className="w-4 h-4 text-[#D97706] animate-spin" />
+                        <Radio className="w-4 h-4 text-[#D97706] animate-spin shrink-0 mt-0.5" />
                       )}
-                      <span>2. Municipal 911 Command Desk Locked</span>
-                      <span className="text-[9px] text-[#6B6F6B] ml-auto">GPS Verified</span>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <span>2. ACKNOWLEDGED BY FEMA EOC COMMAND</span>
+                          {activeSOSBeacon.acknowledgedAt && <span className="text-[9px] text-[#6B6F6B]">{activeSOSBeacon.acknowledgedAt}</span>}
+                        </div>
+                        <div className="text-[10px] text-[#5A4D49] font-normal font-sans mt-0.5">
+                          {activeSOSBeacon.status === 'ACKNOWLEDGED' || activeSOSBeacon.status === 'DISPATCHED'
+                            ? `✓ Locked by ${activeSOSBeacon.acknowledgedBy || 'Battalion Chief Marcus Vance • FEMA Desk #1'}. Siren alarm triggered.`
+                            : 'Awaiting EOC Incident Command desk lock & triage acknowledgement...'}
+                        </div>
+                      </div>
                     </div>
 
-                    <div className={`flex items-center gap-2 font-bold p-2.5 rounded-2xl border ${
+                    {/* Stage 3: First Responder Dispatch */}
+                    <div className={`flex items-start gap-2 font-bold p-2.5 rounded-2xl border ${
                       activeSOSBeacon.status === 'DISPATCHED'
                         ? 'bg-[#E8F5EF] border-[#0d9488]/40 text-[#0f766e]'
                         : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#6B6F6B]'
                     }`}>
-                      <Siren className={`w-4 h-4 ${activeSOSBeacon.status === 'DISPATCHED' ? 'text-[#0d9488] animate-bounce' : 'text-[#6B6F6B]'}`} />
-                      <div>
-                        <div>3. Rescue Team Dispatched!</div>
+                      <Siren className={`w-4 h-4 shrink-0 mt-0.5 ${activeSOSBeacon.status === 'DISPATCHED' ? 'text-[#0d9488] animate-bounce' : 'text-[#6B6F6B]'}`} />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <span>3. Rescue Team Dispatched!</span>
+                          {activeSOSBeacon.status === 'DISPATCHED' && <span className="text-[9px] text-[#0f766e] font-bold">EN ROUTE</span>}
+                        </div>
                         {activeSOSBeacon.assignedUnit && (
-                          <div className="text-[10px] text-[#0f766e] font-normal">
+                          <div className="text-[10px] text-[#0f766e] font-normal font-sans mt-0.5">
                             Assigned: <b>{activeSOSBeacon.assignedUnit}</b> (ETA ~{activeSOSBeacon.etaMinutes || 4} min)
                           </div>
                         )}
@@ -1654,31 +1801,47 @@ export default function CitizenLifelinePage() {
                     </div>
                   </div>
 
-                  {/* Sonar & Strobe controls */}
-                  <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[#DDD5C7]">
+                  {/* Siren Sound, Sonar & Strobe controls */}
+                  <div className="grid grid-cols-3 gap-1.5 pt-1 border-t border-[#DDD5C7] text-[10.5px]">
                     <button
-                      onClick={toggleAcousticBeacon}
-                      className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
-                        acousticActive ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6]'
+                      onClick={() => {
+                        if (isSirenPlaying) stopEmergencySirenSound();
+                        else startEmergencySirenSound();
+                      }}
+                      className={`p-2 rounded-xl border font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
+                        isSirenPlaying ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#DC2626] hover:bg-[#E5CDC6]'
                       }`}
                     >
-                      <Volume2 className="w-4 h-4" />
-                      <span>{acousticActive ? 'Sonar Active' : 'Acoustic (880Hz)'}</span>
+                      <Volume2 className="w-3.5 h-3.5" />
+                      <span>{isSirenPlaying ? 'Stop Siren' : 'Test Siren'}</span>
+                    </button>
+
+                    <button
+                      onClick={toggleAcousticBeacon}
+                      className={`p-2 rounded-xl border font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
+                        acousticActive ? 'bg-[#0f766e] text-white animate-pulse' : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6]'
+                      }`}
+                    >
+                      <Radio className="w-3.5 h-3.5" />
+                      <span>{acousticActive ? 'Sonar On' : '880Hz Sonar'}</span>
                     </button>
 
                     <button
                       onClick={() => setStrobeActive(!strobeActive)}
-                      className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                      className={`p-2 rounded-xl border font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
                         strobeActive ? 'bg-[#D97706] text-white animate-pulse' : 'bg-[#FAF8F2] border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6]'
                       }`}
                     >
-                      <Zap className="w-4 h-4" />
-                      <span>{strobeActive ? 'Strobe Active' : 'Morse Strobe'}</span>
+                      <Zap className="w-3.5 h-3.5" />
+                      <span>{strobeActive ? 'Strobe On' : 'Morse Strobe'}</span>
                     </button>
                   </div>
 
                   <button
-                    onClick={() => setActiveSOSBeacon(null)}
+                    onClick={() => {
+                      stopEmergencySirenSound();
+                      setActiveSOSBeacon(null);
+                    }}
                     className="w-full py-2 bg-[#FAF8F2] border border-[#DDD5C7] hover:bg-[#E5CDC6] text-[#5A4D49] rounded-xl font-bold text-xs cursor-pointer transition"
                   >
                     Cancel Distress Beacon / I Am Safe
@@ -1874,6 +2037,71 @@ export default function CitizenLifelinePage() {
         </nav>
 
       </div>
+
+      {/* ========================================================================= */}
+      {/* 🚨 POPUP MODAL: EMERGENCY SIREN ALERT & EOC SOS ACKNOWLEDGEMENT           */}
+      {/* ========================================================================= */}
+      {isSirenModalOpen && sirenEventData && (
+        <div className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in zoom-in duration-200">
+          <div className="bg-[#FFFDF8] rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl border-4 border-[#DC2626] font-sans text-[#263238] relative overflow-hidden">
+            
+            {/* Top Siren Warning Banner */}
+            <div className="bg-[#DC2626] -m-5 mb-3 p-4 text-white text-center flex flex-col items-center justify-center space-y-1">
+              <div className="flex items-center gap-2">
+                <Siren className="w-7 h-7 animate-bounce text-white" />
+                <Volume2 className="w-6 h-6 animate-pulse text-[#FEF3C7]" />
+              </div>
+              <span className="text-[10px] font-mono font-black uppercase tracking-widest text-[#FEF3C7] block">
+                AUDIBLE EMERGENCY SIREN ACTIVE
+              </span>
+              <h3 className="text-sm font-black text-white leading-tight font-mono">
+                {sirenEventData.title}
+              </h3>
+            </div>
+
+            <div className="space-y-2.5 pt-2 text-xs">
+              <div className="p-3 bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl space-y-1.5 font-mono">
+                <div className="flex items-center justify-between text-[9px] font-bold">
+                  <span className="px-2 py-0.5 bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 rounded-full">
+                    ✓ EOC DESK ACKNOWLEDGED
+                  </span>
+                  <span className="text-[#6B6F6B]">{sirenEventData.acknowledgedAt || clockTime}</span>
+                </div>
+
+                <div className="text-[11px] font-bold text-[#263238] pt-1">
+                  👤 Commander: <span className="text-[#0f766e]">{sirenEventData.acknowledgedBy || 'Battalion Chief Marcus Vance • FEMA Task Force 1'}</span>
+                </div>
+
+                {sirenEventData.assignedUnit && (
+                  <div className="text-[11px] font-bold text-[#263238]">
+                    🚑 Assigned Unit: <span className="text-[#DC2626]">{sirenEventData.assignedUnit}</span> (ETA ~{sirenEventData.etaMinutes || 4} min)
+                  </div>
+                )}
+
+                <div className="text-[10.5px] text-[#5A4D49] font-sans leading-relaxed pt-1 border-t border-[#DDD5C7]">
+                  “{sirenEventData.message}”
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between px-2 text-[10px] text-[#6B6F6B] font-mono">
+                <span>📍 GPS: {userCoords.lat.toFixed(4)}, {userCoords.lng.toFixed(4)}</span>
+                <span className="text-[#0f766e] font-bold">● Beacon Locked</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                stopEmergencySirenSound();
+                setIsSirenModalOpen(false);
+              }}
+              className="w-full py-3 bg-[#DC2626] hover:bg-[#B91C1C] text-white font-mono font-black text-xs rounded-2xl shadow-lg cursor-pointer transition flex items-center justify-center gap-2 active:scale-95"
+            >
+              <Volume2 className="w-4 h-4" />
+              <span>🔕 Mute Siren / Acknowledge Receipt</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* 🧠 POPUP MODAL: EXPLAINABLE AI (XAI) MODEL DIAGNOSTICS                    */}

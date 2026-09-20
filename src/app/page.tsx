@@ -48,6 +48,8 @@ import {
   Pause,
   SkipForward,
   SkipBack,
+  Check,
+  Volume2,
   X
 } from 'lucide-react';
 import CitizenAlertModal from '@/components/CitizenAlertModal';
@@ -172,6 +174,33 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [fetchCitizenSync]);
 
+  const [sirenBroadcastSuccess, setSirenBroadcastSuccess] = useState<string | null>(null);
+
+  const handleAcknowledgeSOS = async (pingId: string) => {
+    setIsDispatchingRescue(true);
+    try {
+      const res = await fetch('/api/citizen-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'ACKNOWLEDGE_SOS',
+          pingId,
+          acknowledgedBy: 'Battalion Chief Marcus Vance • FEMA EOC Incident Command',
+          alertMessage: 'FEMA EOC Incident Command has locked your GPS beacon. Emergency triage desk active.'
+        })
+      });
+      if (res.ok) {
+        setSirenBroadcastSuccess('✓ SOS Acknowledged & Siren Alert Triggered on Citizen Handset!');
+        setTimeout(() => setSirenBroadcastSuccess(null), 4000);
+        await fetchCitizenSync();
+      }
+    } catch (e) {
+      console.error('Error acknowledging SOS:', e);
+    } finally {
+      setIsDispatchingRescue(false);
+    }
+  };
+
   const handleDispatchRescueTeam = async (pingId: string) => {
     setIsDispatchingRescue(true);
     try {
@@ -179,19 +208,47 @@ export default function Dashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'DISPATCH_RESCUE',
+          action: 'ACKNOWLEDGE_AND_DISPATCH',
           pingId,
-          assignedUnit: 'Paramedic Surge Unit Medic-04 / EMS-Rescue-12',
-          etaMinutes: 5
+          assignedUnit: 'Phoenix Fire Rescue Unit #04 / EMS Medic-04',
+          etaMinutes: 4,
+          acknowledgedBy: 'Battalion Chief Marcus Vance • Phoenix Fire & FEMA Task Force 1',
+          alertMessage: 'Phoenix Fire Rescue Unit #04 dispatched (ETA ~4 min). Paramedics locked onto your GPS coordinates.'
         })
       });
       if (res.ok) {
+        setSirenBroadcastSuccess('✓ Rescue Unit #04 Dispatched & Emergency Siren Sent to Handset!');
+        setTimeout(() => setSirenBroadcastSuccess(null), 4000);
         await fetchCitizenSync();
       }
     } catch (e) {
       console.error('Error dispatching rescue team:', e);
     } finally {
       setIsDispatchingRescue(false);
+    }
+  };
+
+  const handleBroadcastEmergencySiren = async () => {
+    try {
+      const res = await fetch('/api/citizen-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'BROADCAST_SIREN_ALERT',
+          sirenAlert: {
+            title: '🚨 FEMA WEA EMERGENCY BROADCAST: CRITICAL HEAT SURGE / FLOOD WARNING',
+            message: 'Emergency cooling shelters & evacuation corridors are open. Free municipal transit pass active.',
+            severity: 'CRITICAL',
+            sender: 'FEMA IPAWS / Phoenix Municipal EOC Incident Command'
+          }
+        })
+      });
+      if (res.ok) {
+        setSirenBroadcastSuccess('📢 Emergency Siren Broadcast transmitted to all connected citizen handsets (/citizen)!');
+        setTimeout(() => setSirenBroadcastSuccess(null), 5000);
+      }
+    } catch (e) {
+      console.error('Error broadcasting siren:', e);
     }
   };
 
@@ -640,10 +697,21 @@ export default function Dashboard() {
             <span>📱 Citizen App</span>
           </a>
 
+          {/* 📢 Broadcast Emergency Siren Button */}
+          <button
+            onClick={handleBroadcastEmergencySiren}
+            style={{ backgroundColor: '#DC2626', borderColor: '#991B1B', color: '#FFFFFF' }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full border font-mono text-[10.5px] font-extrabold shadow-sm hover:brightness-110 active:scale-95 transition-all cursor-pointer whitespace-nowrap shrink-0 animate-pulse"
+            title="Broadcast Physical Emergency Siren Alert to all connected citizen handsets (/citizen)"
+          >
+            <Siren className="w-3.5 h-3.5 text-white" />
+            <span>📢 Siren Alert</span>
+          </button>
+
           {/* 🚨 Citizen Alert Button (Pitch Red) */}
           <button
             onClick={() => setIsCitizenAlertModalOpen(true)}
-            style={{ backgroundColor: '#DC2626', borderColor: '#991B1B', color: '#FFFFFF' }}
+            style={{ backgroundColor: '#0f766e', borderColor: '#0d9488', color: '#FFFFFF' }}
             className="flex items-center gap-1 px-2.5 py-1 rounded-full border font-mono text-[10.5px] font-extrabold shadow-sm hover:brightness-110 transition-all cursor-pointer whitespace-nowrap shrink-0"
             title="Launch Citizen Phone Alert SMS, QR & WEA Simulator"
           >
@@ -683,6 +751,22 @@ export default function Dashboard() {
           </button>
         </div>
       </header>
+
+      {/* 📢 EOC COMMANDER BROADCAST TOAST BANNER */}
+      {sirenBroadcastSuccess && (
+        <div className="bg-[#0f766e] text-white px-5 py-2 flex items-center justify-between font-mono text-xs shadow-md border-b border-[#0d9488] animate-in slide-in-from-top duration-200 z-50">
+          <div className="flex items-center gap-2">
+            <Volume2 className="w-4 h-4 text-[#A7F3D0] animate-bounce" />
+            <span className="font-extrabold">{sirenBroadcastSuccess}</span>
+          </div>
+          <button 
+            onClick={() => setSirenBroadcastSuccess(null)}
+            className="text-white/80 hover:text-white text-xs cursor-pointer font-bold px-2 py-0.5 rounded bg-black/20"
+          >
+            ✕ Dismiss
+          </button>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* 2. REAL-TIME DATA PROVENANCE & AUTO-REFRESH SUB-BAR                       */}
@@ -729,17 +813,35 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* 1. Acknowledge SOS */}
+            <button
+              onClick={() => {
+                const target = urgentSosList.find(p => p.status === 'PENDING');
+                if (target) handleAcknowledgeSOS(target.id);
+              }}
+              disabled={isDispatchingRescue}
+              className="bg-[#FEF3C7] text-[#92400E] hover:bg-amber-200 px-3 py-1 rounded-lg font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
+              title="Acknowledge SOS & activate response siren on citizen phone"
+            >
+              <Check className="w-3.5 h-3.5 text-[#92400E]" />
+              <span>{isDispatchingRescue ? 'TRANSMITTING...' : 'ACKNOWLEDGE SOS'}</span>
+            </button>
+
+            {/* 2. Dispatch Rescue Unit #04 */}
             <button
               onClick={() => {
                 const target = urgentSosList.find(p => p.status === 'PENDING');
                 if (target) handleDispatchRescueTeam(target.id);
               }}
               disabled={isDispatchingRescue}
-              className="bg-white text-[#DC2626] hover:bg-rose-100 px-3 py-1 rounded-lg font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center gap-1.5"
+              className="bg-white text-[#DC2626] hover:bg-rose-100 px-3 py-1 rounded-lg font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
+              title="Dispatch EMS Rescue Unit #04 & activate physical siren on handset"
             >
               <Siren className="w-3.5 h-3.5 text-[#DC2626]" />
-              <span>{isDispatchingRescue ? 'DISPATCHING...' : 'DISPATCH RESCUE TEAM (EMS-04)'}</span>
+              <span>{isDispatchingRescue ? 'DISPATCHING...' : 'DISPATCH EMS-04'}</span>
             </button>
+
+            {/* 3. Go to Dispatch Tab */}
             <button
               onClick={() => setActiveTab('EOC_DISPATCH')}
               className="bg-[#991B1B] hover:bg-black/40 text-white px-2.5 py-1 rounded-lg font-bold text-xs border border-white/40 cursor-pointer"
@@ -1595,7 +1697,6 @@ export default function Dashboard() {
                 <tbody className="divide-y divide-[#EEE8DC]">
                   {citizenPings.filter(p => p.type !== 'SAFE').length > 0 ? (
                     citizenPings.filter(p => p.type !== 'SAFE').slice(0, 5).map((p) => {
-                      const isPending = p.status === 'PENDING';
                       return (
                         <tr key={p.id} className="hover:bg-[#FAF8F2] transition-colors">
                           <td className="py-2.5 px-3 font-bold text-[#be123c] whitespace-nowrap">{p.timeFormatted}</td>
@@ -1613,26 +1714,54 @@ export default function Dashboard() {
                           </td>
                           <td className="py-2.5 px-3 text-center">
                             <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase ${
-                              isPending
+                              p.status === 'PENDING'
                                 ? 'bg-[#FFF1F2] text-[#be123c] border border-[#FECDD3] animate-pulse'
+                                : p.status === 'ACKNOWLEDGED'
+                                ? 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]'
                                 : 'bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0]'
                             }`}>
                               {p.status}
                             </span>
                           </td>
                           <td className="py-2.5 px-3 text-right whitespace-nowrap">
-                            {isPending ? (
-                              <button
-                                onClick={() => handleDispatchRescueTeam(p.id)}
-                                disabled={isDispatchingRescue}
-                                className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-2.5 py-1 rounded-lg font-bold text-[10.5px] shadow-xs cursor-pointer inline-flex items-center gap-1"
-                              >
-                                <Siren className="w-3 h-3" />
-                                <span>Dispatch EMS-04</span>
-                              </button>
+                            {p.status === 'PENDING' ? (
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => handleAcknowledgeSOS(p.id)}
+                                  disabled={isDispatchingRescue}
+                                  className="bg-[#FEF3C7] hover:bg-amber-200 text-[#92400E] px-2 py-1 rounded-lg font-bold text-[10px] border border-[#FDE68A] cursor-pointer inline-flex items-center gap-1 shadow-xs active:scale-95"
+                                  title="Acknowledge SOS & trigger audible siren on citizen handset"
+                                >
+                                  <Check className="w-3 h-3" />
+                                  <span>Acknowledge</span>
+                                </button>
+                                <button
+                                  onClick={() => handleDispatchRescueTeam(p.id)}
+                                  disabled={isDispatchingRescue}
+                                  className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-2.5 py-1 rounded-lg font-bold text-[10.5px] shadow-xs cursor-pointer inline-flex items-center gap-1 active:scale-95"
+                                  title="Dispatch rescue unit & transmit siren alert"
+                                >
+                                  <Siren className="w-3 h-3" />
+                                  <span>Dispatch EMS-04</span>
+                                </button>
+                              </div>
+                            ) : p.status === 'ACKNOWLEDGED' ? (
+                              <div className="flex items-center justify-end gap-2">
+                                <span className="text-[10px] text-amber-800 font-bold bg-[#FEF3C7] px-2 py-0.5 rounded border border-[#FDE68A]">
+                                  ✓ Acknowledged (Siren Active)
+                                </span>
+                                <button
+                                  onClick={() => handleDispatchRescueTeam(p.id)}
+                                  disabled={isDispatchingRescue}
+                                  className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-2 py-0.5 rounded-lg font-bold text-[10px] shadow-xs cursor-pointer inline-flex items-center gap-1 active:scale-95"
+                                >
+                                  <Siren className="w-3 h-3" />
+                                  <span>Dispatch Unit</span>
+                                </button>
+                              </div>
                             ) : (
-                              <span className="text-[10px] text-emerald-700 font-bold">
-                                ✓ Unit: {p.assignedUnit || 'Medic-04'} (ETA {p.etaMinutes || 5}m)
+                              <span className="text-[10px] text-emerald-700 font-bold bg-[#E8F5EF] px-2 py-0.5 rounded border border-[#A7F3D0]">
+                                ✓ Unit: {p.assignedUnit || 'Medic-04'} (ETA {p.etaMinutes || 4}m)
                               </span>
                             )}
                           </td>
