@@ -159,7 +159,7 @@ const getSheltersForZone = (zoneId: string, locationName: string, metro: string)
         amenities: ['High Ridge MSL 22m', 'First Aid', 'Water Purification Station']
       }
     ];
-  } else if (zoneId.includes('vegas') || zoneId.includes('lv')) {
+  } else if (zoneId.includes('vegas') || zoneId.includes('lv') || zoneId.includes('las')) {
     return [
       {
         id: 'sh-lv-1',
@@ -263,6 +263,565 @@ const getSheltersForZone = (zoneId: string, locationName: string, metro: string)
   ];
 };
 
+interface CityTelemetryProfile {
+  tempF: number;
+  tempC: number;
+  feelsLikeC: number;
+  humidityPct: number;
+  windSpeedKm: number;
+  precipitationMm: number;
+  rainProb: number;
+  riskScore: number;
+  riskLevel: string;
+  actionWindowHours: number;
+  heroTitle: string;
+  heroDesc: string;
+  surgeDepthM: number;
+  weatherCondition: string;
+  thunderstormProb: number;
+  cloudburstProb: number;
+  flashFloodProb: number;
+}
+
+const CITY_TELEMETRY_MAP: Record<string, CityTelemetryProfile> = {
+  // Phoenix Metro Districts
+  'zone-phx-core': {
+    tempF: 104,
+    tempC: 40,
+    feelsLikeC: 41.7,
+    humidityPct: 18,
+    windSpeedKm: 13,
+    precipitationMm: 0,
+    rainProb: 15,
+    riskScore: 84,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 3.5,
+    heroTitle: 'CRITICAL: Extreme Urban Heat Surge Warning',
+    heroDesc: 'Ambient thermal peak 40°C (104°F) with high UV radiation. Municipal cooling shelters open 24/7.',
+    surgeDepthM: 0.2,
+    weatherCondition: 'Extreme Thermal Spike',
+    thunderstormProb: 24,
+    cloudburstProb: 12,
+    flashFloodProb: 88,
+  },
+  'zone-phx-east': {
+    tempF: 102,
+    tempC: 38.9,
+    feelsLikeC: 40.5,
+    humidityPct: 20,
+    windSpeedKm: 14,
+    precipitationMm: 0,
+    rainProb: 15,
+    riskScore: 78,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 4.0,
+    heroTitle: 'CRITICAL: Excessive Heat & High Ozone Alert',
+    heroDesc: 'Dangerous solar radiation and heat index 104°F. Stay indoors in air-conditioned areas.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Excessive Heat & Ozone',
+    thunderstormProb: 22,
+    cloudburstProb: 10,
+    flashFloodProb: 45,
+  },
+  'zone-phx-west': {
+    tempF: 103,
+    tempC: 39.4,
+    feelsLikeC: 41.1,
+    humidityPct: 19,
+    windSpeedKm: 11,
+    precipitationMm: 0,
+    rainProb: 15,
+    riskScore: 81,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 3.8,
+    heroTitle: 'CRITICAL: West Valley Thermal Inversion',
+    heroDesc: 'High heat index in urban core. Public cooling hydration centers activated.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Extreme Heat Hazard',
+    thunderstormProb: 20,
+    cloudburstProb: 8,
+    flashFloodProb: 40,
+  },
+  'zone-phx-north': {
+    tempF: 99,
+    tempC: 37.2,
+    feelsLikeC: 38.3,
+    humidityPct: 22,
+    windSpeedKm: 16,
+    precipitationMm: 0,
+    rainProb: 15,
+    riskScore: 68,
+    riskLevel: 'HIGH RISK INDEX',
+    actionWindowHours: 5.5,
+    heroTitle: 'HIGH RISK: North Valley Thermal Advisory',
+    heroDesc: 'Thermal index nearing 101°F. Hydration protocols in effect.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Elevated Desert Heat',
+    thunderstormProb: 18,
+    cloudburstProb: 6,
+    flashFloodProb: 25,
+  },
+
+  // Las Vegas Metro
+  'zone-las-core': {
+    tempF: 108,
+    tempC: 42.2,
+    feelsLikeC: 43.3,
+    humidityPct: 12,
+    windSpeedKm: 19,
+    precipitationMm: 0,
+    rainProb: 5,
+    riskScore: 92,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 2.5,
+    heroTitle: 'CRITICAL: Mojave Desert Hyperthermia Emergency',
+    heroDesc: 'Extreme surface temperatures exceeding 108°F (42°C). High risk of heat exhaustion and grid stress.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Severe Desert Heat Wave',
+    thunderstormProb: 18,
+    cloudburstProb: 5,
+    flashFloodProb: 20,
+  },
+  'zone-las-north': {
+    tempF: 109,
+    tempC: 42.8,
+    feelsLikeC: 43.9,
+    humidityPct: 11,
+    windSpeedKm: 24,
+    precipitationMm: 0,
+    rainProb: 5,
+    riskScore: 94,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 2.0,
+    heroTitle: 'CRITICAL: Industrial Basin Thermal Warning',
+    heroDesc: 'Intense urban heat retention and low humidity (11%). Hydration stations and backup generators on standby.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Industrial Heat Plume & High Winds',
+    thunderstormProb: 22,
+    cloudburstProb: 5,
+    flashFloodProb: 18,
+  },
+
+  // Houston Metro Districts
+  'zone-hou-core': {
+    tempF: 89,
+    tempC: 31.7,
+    feelsLikeC: 37.2,
+    humidityPct: 86,
+    windSpeedKm: 29,
+    precipitationMm: 24.5,
+    rainProb: 90,
+    riskScore: 88,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 3.0,
+    heroTitle: 'CRITICAL: Harris County Pluvial Flood Warning',
+    heroDesc: 'Torrential downpours (24.5 mm/h) causing rapid street inundation (+1.8m). Avoid low-lying underpasses.',
+    surgeDepthM: 1.8,
+    weatherCondition: 'Severe Thunderstorm & Pluvial Flood',
+    thunderstormProb: 88,
+    cloudburstProb: 75,
+    flashFloodProb: 94,
+  },
+  'zone-hou-port': {
+    tempF: 88,
+    tempC: 31.1,
+    feelsLikeC: 36.7,
+    humidityPct: 89,
+    windSpeedKm: 35,
+    precipitationMm: 32.0,
+    rainProb: 95,
+    riskScore: 91,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 2.2,
+    heroTitle: 'CRITICAL: Ship Channel Storm Surge & Inundation',
+    heroDesc: 'Severe coastal backflow and heavy precipitation. Low-ground evacuation routes designated.',
+    surgeDepthM: 2.4,
+    weatherCondition: 'Coastal Surge & Heavy Inundation',
+    thunderstormProb: 92,
+    cloudburstProb: 85,
+    flashFloodProb: 98,
+  },
+  'zone-hou-med': {
+    tempF: 90,
+    tempC: 32.2,
+    feelsLikeC: 38.3,
+    humidityPct: 82,
+    windSpeedKm: 22,
+    precipitationMm: 12.0,
+    rainProb: 80,
+    riskScore: 76,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 4.5,
+    heroTitle: 'HIGH RISK: TMC Medical Corridor Drainage Alert',
+    heroDesc: 'Sustained high heat index (101°F) coupled with localized flash downpours.',
+    surgeDepthM: 0.8,
+    weatherCondition: 'Humid Squalls & Localized Ponding',
+    thunderstormProb: 78,
+    cloudburstProb: 60,
+    flashFloodProb: 82,
+  },
+
+  // Los Angeles Metro
+  'zone-la-core': {
+    tempF: 82,
+    tempC: 27.8,
+    feelsLikeC: 28.9,
+    humidityPct: 58,
+    windSpeedKm: 14,
+    precipitationMm: 0,
+    rainProb: 10,
+    riskScore: 48,
+    riskLevel: 'HIGH RISK INDEX',
+    actionWindowHours: 8.0,
+    heroTitle: 'HIGH RISK: Basin Thermal Inversion & Ozone Watch',
+    heroDesc: 'Moderate heat (82°F) with elevated ozone in downtown basin. Air filtration shelters operational.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'High Smog & Warm Sun',
+    thunderstormProb: 12,
+    cloudburstProb: 5,
+    flashFloodProb: 15,
+  },
+  'zone-la-valley': {
+    tempF: 96,
+    tempC: 35.6,
+    feelsLikeC: 36.1,
+    humidityPct: 14,
+    windSpeedKm: 42,
+    precipitationMm: 0,
+    rainProb: 5,
+    riskScore: 86,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 3.0,
+    heroTitle: 'CRITICAL: Red Flag Fire Weather & High Gusts',
+    heroDesc: 'Severe fire weather conditions with 42 km/h dry gusts and high thermal load. Evacuation corridors on alert.',
+    surgeDepthM: 0.0,
+    weatherCondition: 'Red Flag Wildfire Warning',
+    thunderstormProb: 15,
+    cloudburstProb: 5,
+    flashFloodProb: 10,
+  },
+  'zone-la-coastal': {
+    tempF: 73,
+    tempC: 22.8,
+    feelsLikeC: 23.3,
+    humidityPct: 72,
+    windSpeedKm: 18,
+    precipitationMm: 0,
+    rainProb: 10,
+    riskScore: 28,
+    riskLevel: 'NORMAL RISK INDEX',
+    actionWindowHours: 18.0,
+    heroTitle: 'Atmospheric Baseline Stable',
+    heroDesc: 'Pleasant coastal atmospheric conditions (73°F). No immediate civil protection warnings.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Marine Layer / Mild Coastal Breeze',
+    thunderstormProb: 8,
+    cloudburstProb: 4,
+    flashFloodProb: 8,
+  },
+
+  // Miami Metro Districts
+  'zone-mia-core': {
+    tempF: 91,
+    tempC: 32.8,
+    feelsLikeC: 39.4,
+    humidityPct: 84,
+    windSpeedKm: 21,
+    precipitationMm: 18.2,
+    rainProb: 85,
+    riskScore: 83,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 3.8,
+    heroTitle: 'CRITICAL: Tropical Heat & Flash Inundation',
+    heroDesc: 'Heat index 103°F combined with tropical squalls. Tidal surge monitoring active.',
+    surgeDepthM: 0.9,
+    weatherCondition: 'Severe Tropical Convection',
+    thunderstormProb: 80,
+    cloudburstProb: 72,
+    flashFloodProb: 88,
+  },
+  'zone-mia-north': {
+    tempF: 92,
+    tempC: 33.3,
+    feelsLikeC: 40.6,
+    humidityPct: 82,
+    windSpeedKm: 19,
+    precipitationMm: 14.5,
+    rainProb: 80,
+    riskScore: 85,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 3.2,
+    heroTitle: 'CRITICAL: Urban Basin Flash Flood & Heat',
+    heroDesc: 'Elevated pluvial ponding and extreme apparent heat index.',
+    surgeDepthM: 1.1,
+    weatherCondition: 'Intense Humid Squalls',
+    thunderstormProb: 82,
+    cloudburstProb: 70,
+    flashFloodProb: 89,
+  },
+  'zone-mia-beach': {
+    tempF: 88,
+    tempC: 31.1,
+    feelsLikeC: 37.2,
+    humidityPct: 88,
+    windSpeedKm: 28,
+    precipitationMm: 8.0,
+    rainProb: 75,
+    riskScore: 77,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 4.2,
+    heroTitle: 'CRITICAL: Coastal Inundation & High Surf Warning',
+    heroDesc: 'King tide tidal surge (+1.5m) and localized coastal road washouts.',
+    surgeDepthM: 1.5,
+    weatherCondition: 'King Tide & Coastal Inundation',
+    thunderstormProb: 74,
+    cloudburstProb: 55,
+    flashFloodProb: 92,
+  },
+
+  // Washington DC Districts
+  'zone-dc-1': {
+    tempF: 87,
+    tempC: 30.6,
+    feelsLikeC: 33.9,
+    humidityPct: 65,
+    windSpeedKm: 16,
+    precipitationMm: 2.0,
+    rainProb: 45,
+    riskScore: 58,
+    riskLevel: 'HIGH RISK INDEX',
+    actionWindowHours: 7.0,
+    heroTitle: 'HIGH RISK: DC Metro Heat & Air Quality Advisory',
+    heroDesc: 'Elevated temperature (87°F) with high humidity. District cooling buses in service.',
+    surgeDepthM: 0.2,
+    weatherCondition: 'Humid Summer Haze',
+    thunderstormProb: 42,
+    cloudburstProb: 20,
+    flashFloodProb: 35,
+  },
+  'zone-dc-2': {
+    tempF: 89,
+    tempC: 31.7,
+    feelsLikeC: 35.0,
+    humidityPct: 62,
+    windSpeedKm: 14,
+    precipitationMm: 0,
+    rainProb: 30,
+    riskScore: 62,
+    riskLevel: 'HIGH RISK INDEX',
+    actionWindowHours: 6.5,
+    heroTitle: 'HIGH RISK: National Mall Thermal Advisory',
+    heroDesc: 'Thermal heat island retention over asphalt corridors. Shaded hydration points active.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Urban Heat Island Effect',
+    thunderstormProb: 36,
+    cloudburstProb: 15,
+    flashFloodProb: 25,
+  },
+  'zone-dc-3': {
+    tempF: 88,
+    tempC: 31.1,
+    feelsLikeC: 34.4,
+    humidityPct: 70,
+    windSpeedKm: 15,
+    precipitationMm: 6.5,
+    rainProb: 60,
+    riskScore: 67,
+    riskLevel: 'HIGH RISK INDEX',
+    actionWindowHours: 5.8,
+    heroTitle: 'HIGH RISK: Anacostia Basin Flood & Heat Watch',
+    heroDesc: 'River level rising with afternoon convective downpour.',
+    surgeDepthM: 0.7,
+    weatherCondition: 'Riverine Moisture & Squall',
+    thunderstormProb: 55,
+    cloudburstProb: 40,
+    flashFloodProb: 65,
+  },
+
+  // Chicago Metro
+  'zone-chi-south': {
+    tempF: 77,
+    tempC: 25.0,
+    feelsLikeC: 25.6,
+    humidityPct: 55,
+    windSpeedKm: 26,
+    precipitationMm: 0,
+    rainProb: 15,
+    riskScore: 34,
+    riskLevel: 'NORMAL RISK INDEX',
+    actionWindowHours: 14.0,
+    heroTitle: 'Atmospheric Baseline Stable',
+    heroDesc: 'Lake Michigan breeze maintaining comfortable 77°F (25°C). Normal activity safe.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Lakefront Breeze / Clear',
+    thunderstormProb: 20,
+    cloudburstProb: 10,
+    flashFloodProb: 15,
+  },
+  'zone-chi-west': {
+    tempF: 80,
+    tempC: 26.7,
+    feelsLikeC: 27.8,
+    humidityPct: 50,
+    windSpeedKm: 24,
+    precipitationMm: 0,
+    rainProb: 20,
+    riskScore: 42,
+    riskLevel: 'HIGH RISK INDEX',
+    actionWindowHours: 9.0,
+    heroTitle: 'HIGH RISK: West Corridor Wind & Heat Watch',
+    heroDesc: 'Moderate thermal load in high density areas.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Warm & Breezy',
+    thunderstormProb: 28,
+    cloudburstProb: 12,
+    flashFloodProb: 22,
+  },
+
+  // Seattle
+  'zone-sea-core': {
+    tempF: 68,
+    tempC: 20.0,
+    feelsLikeC: 19.4,
+    humidityPct: 78,
+    windSpeedKm: 16,
+    precipitationMm: 3.2,
+    rainProb: 65,
+    riskScore: 22,
+    riskLevel: 'NORMAL RISK INDEX',
+    actionWindowHours: 24.0,
+    heroTitle: 'Atmospheric Baseline Stable',
+    heroDesc: 'Cool ambient temperatures (68°F / 20°C) with light maritime precipitation.',
+    surgeDepthM: 0.1,
+    weatherCondition: 'Pacific Overcast & Light Rain',
+    thunderstormProb: 10,
+    cloudburstProb: 5,
+    flashFloodProb: 12,
+  },
+
+  // Atlanta
+  'zone-atl-core': {
+    tempF: 92,
+    tempC: 33.3,
+    feelsLikeC: 37.8,
+    humidityPct: 74,
+    windSpeedKm: 16,
+    precipitationMm: 4.5,
+    rainProb: 70,
+    riskScore: 79,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 4.0,
+    heroTitle: 'CRITICAL: Piedmont Plateau Severe Heat & Storms',
+    heroDesc: 'Heat index 100°F with fast-moving afternoon thunderstorm cells.',
+    surgeDepthM: 0.4,
+    weatherCondition: 'High Heat Index & Afternoon Storms',
+    thunderstormProb: 75,
+    cloudburstProb: 65,
+    flashFloodProb: 78,
+  },
+  'zone-atl-south': {
+    tempF: 90,
+    tempC: 32.2,
+    feelsLikeC: 36.7,
+    humidityPct: 78,
+    windSpeedKm: 23,
+    precipitationMm: 15.0,
+    rainProb: 85,
+    riskScore: 82,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 3.5,
+    heroTitle: 'CRITICAL: Hartsfield Corridor Severe Squall Warning',
+    heroDesc: 'Intense cloudburst and gusty downburst winds.',
+    surgeDepthM: 0.6,
+    weatherCondition: 'Severe Thunderstorm & Lightning',
+    thunderstormProb: 84,
+    cloudburstProb: 80,
+    flashFloodProb: 85,
+  },
+
+  // Fresno
+  'zone-fre-core': {
+    tempF: 106,
+    tempC: 41.1,
+    feelsLikeC: 42.2,
+    humidityPct: 15,
+    windSpeedKm: 14,
+    precipitationMm: 0,
+    rainProb: 5,
+    riskScore: 90,
+    riskLevel: 'CRITICAL RISK INDEX',
+    actionWindowHours: 2.8,
+    heroTitle: 'CRITICAL: San Joaquin Valley Extreme Heat Emergency',
+    heroDesc: 'Severe sustained heat 106°F (41°C). Farmworker hydration protocol active.',
+    surgeDepthM: 0.0,
+    weatherCondition: 'Extreme Agricultural Basin Heat',
+    thunderstormProb: 14,
+    cloudburstProb: 4,
+    flashFloodProb: 12,
+  },
+
+  // Philadelphia
+  'zone-phl-core': {
+    tempF: 86,
+    tempC: 30.0,
+    feelsLikeC: 32.8,
+    humidityPct: 68,
+    windSpeedKm: 18,
+    precipitationMm: 0,
+    rainProb: 25,
+    riskScore: 60,
+    riskLevel: 'HIGH RISK INDEX',
+    actionWindowHours: 6.5,
+    heroTitle: 'HIGH RISK: Delaware Valley Thermal Inversion',
+    heroDesc: 'High humidity and temperature (86°F). Cooling libraries and hydration stations open.',
+    surgeDepthM: 0.2,
+    weatherCondition: 'Humid & Hazy',
+    thunderstormProb: 40,
+    cloudburstProb: 18,
+    flashFloodProb: 30,
+  }
+};
+
+const getCityTelemetry = (zoneId: string, name?: string, metro?: string): CityTelemetryProfile => {
+  if (CITY_TELEMETRY_MAP[zoneId]) {
+    return CITY_TELEMETRY_MAP[zoneId];
+  }
+  
+  const lower = `${zoneId} ${name || ''} ${metro || ''}`.toLowerCase();
+  if (lower.includes('las') || lower.includes('vegas') || lower.includes('nv')) {
+    return CITY_TELEMETRY_MAP['zone-las-north'];
+  }
+  if (lower.includes('houston') || lower.includes('hou') || lower.includes('tx')) {
+    return CITY_TELEMETRY_MAP['zone-hou-core'];
+  }
+  if (lower.includes('miami') || lower.includes('mia') || lower.includes('fl')) {
+    return CITY_TELEMETRY_MAP['zone-mia-core'];
+  }
+  if (lower.includes('seattle') || lower.includes('sea') || lower.includes('wa')) {
+    return CITY_TELEMETRY_MAP['zone-sea-core'];
+  }
+  if (lower.includes('chicago') || lower.includes('chi') || lower.includes('il')) {
+    return CITY_TELEMETRY_MAP['zone-chi-south'];
+  }
+  if (lower.includes('atlanta') || lower.includes('atl') || lower.includes('ga')) {
+    return CITY_TELEMETRY_MAP['zone-atl-core'];
+  }
+  if (lower.includes('angeles') || lower.includes('la') || lower.includes('ca')) {
+    return CITY_TELEMETRY_MAP['zone-la-core'];
+  }
+  if (lower.includes('dc') || lower.includes('washington') || lower.includes('columbia')) {
+    return CITY_TELEMETRY_MAP['zone-dc-1'];
+  }
+  if (lower.includes('fresno')) {
+    return CITY_TELEMETRY_MAP['zone-fre-core'];
+  }
+  if (lower.includes('phila')) {
+    return CITY_TELEMETRY_MAP['zone-phl-core'];
+  }
+
+  return CITY_TELEMETRY_MAP['zone-phx-core'];
+};
+
 export default function CitizenLifelinePage() {
   // Navigation & Role
   const [activeTab, setActiveTab] = useState<CitizenTab>('NOWCAST');
@@ -308,25 +867,28 @@ export default function CitizenLifelinePage() {
   const lastHandledSirenAlertIdRef = useRef<string | null>(null);
 
   // CivicPulse Live System Telemetry
-  const [monitoredZones, setMonitoredZones] = useState<LiveZoneTelemetry[]>(INITIAL_ZONES.map(z => ({
-    ...z,
-    temperatureF: 104,
-    temperatureC: 40,
-    apparentTempF: 107,
-    humidityPct: 18,
-    precipitationIn: 0,
-    windSpeedMph: 8,
-    weatherCode: 0,
-    localObservationTime: '14:00',
-    isDaytime: true,
-    airQualityAqi: 52,
-    pm25: 12,
-    pm10: 24,
-    liveRiskScore: 84,
-    isLiveAvailable: true,
-    lastUpdatedUtc: new Date().toUTCString(),
-    dataSourceCitation: 'NOAA / Open-Meteo HRRR'
-  })));
+  const [monitoredZones, setMonitoredZones] = useState<LiveZoneTelemetry[]>(INITIAL_ZONES.map(z => {
+    const profile = getCityTelemetry(z.id, z.name, z.metro);
+    return {
+      ...z,
+      temperatureF: profile.tempF,
+      temperatureC: profile.tempC,
+      apparentTempF: Number((profile.tempF + 2.5).toFixed(1)),
+      humidityPct: profile.humidityPct,
+      precipitationIn: Number((profile.precipitationMm / 25.4).toFixed(2)),
+      windSpeedMph: Number((profile.windSpeedKm / 1.609).toFixed(1)),
+      weatherCode: profile.precipitationMm > 5 ? 63 : profile.tempF > 95 ? 0 : 1,
+      localObservationTime: '14:00',
+      isDaytime: true,
+      airQualityAqi: profile.riskScore > 75 ? 78 : profile.riskScore > 40 ? 52 : 35,
+      pm25: profile.riskScore > 75 ? 24 : 12,
+      pm10: profile.riskScore > 75 ? 38 : 20,
+      liveRiskScore: profile.riskScore,
+      isLiveAvailable: true,
+      lastUpdatedUtc: new Date().toUTCString(),
+      dataSourceCitation: 'NOAA / Open-Meteo HRRR'
+    };
+  }));
   const [selectedZoneId, setSelectedZoneId] = useState<string>('zone-phx-core');
 
   // Location & Weather Telemetry
@@ -598,13 +1160,15 @@ export default function CitizenLifelinePage() {
     setLocationName(`${zone.name}, ${zone.metro}`);
     setUserCoords({ lat: zone.lat, lng: zone.lng });
 
-    const tempF = zone.temperatureF ?? 104;
-    const tempC = zone.temperatureC ?? Math.round((tempF - 32) * 5 / 9);
-    const feelsC = zone.apparentTempF ? Math.round((zone.apparentTempF - 32) * 5 / 9) : tempC + 2;
-    const hum = zone.humidityPct ?? 18;
-    const wind = Math.round((zone.windSpeedMph ?? 8) * 1.609);
-    const rain = Math.round((zone.precipitationIn ?? 0) * 25.4 * 10) / 10;
-    const risk = zone.liveRiskScore ?? 84;
+    const profile = getCityTelemetry(zone.id, zone.name, zone.metro);
+
+    const tempF = zone.temperatureF !== null && zone.temperatureF !== undefined ? zone.temperatureF : profile.tempF;
+    const tempC = zone.temperatureC !== null && zone.temperatureC !== undefined ? zone.temperatureC : profile.tempC;
+    const feelsC = zone.apparentTempF !== null && zone.apparentTempF !== undefined ? Number(((zone.apparentTempF - 32) * 5 / 9).toFixed(1)) : profile.feelsLikeC;
+    const hum = zone.humidityPct !== null && zone.humidityPct !== undefined ? zone.humidityPct : profile.humidityPct;
+    const wind = zone.windSpeedMph !== null && zone.windSpeedMph !== undefined ? Math.round(zone.windSpeedMph * 1.609) : profile.windSpeedKm;
+    const rain = zone.precipitationIn !== null && zone.precipitationIn !== undefined ? Math.round(zone.precipitationIn * 25.4 * 10) / 10 : profile.precipitationMm;
+    const risk = zone.liveRiskScore !== null && zone.liveRiskScore !== undefined ? zone.liveRiskScore : profile.riskScore;
 
     setLiveTempC(tempC);
     setLiveTempF(tempF);
@@ -612,40 +1176,17 @@ export default function CitizenLifelinePage() {
     setLiveHumidity(hum);
     setLiveWindSpeedKm(wind);
     setLiveRainIntensity(rain);
-    setLiveRainProb(hum > 70 ? 85 : hum > 40 ? 45 : 15);
+    setLiveRainProb(profile.rainProb);
     setLiveRiskScore(risk);
-
-    if (risk >= 75) {
-      setLiveRiskLevel('CRITICAL RISK INDEX');
-      setActionWindowHours(3.5);
-      setHeroTitle(`CRITICAL: Extreme Urban Heat Surge Warning`);
-      setHeroDesc(`Ambient thermal peak ${tempC}°C (${tempF}°F) observed. Municipal cooling shelters open 24/7.`);
-      setSurgeDepthM(0.2);
-      setWeatherCondition('Extreme Thermal Spike');
-      setThunderstormProb(28);
-      setCloudburstProb(14);
-      setFlashFloodProb(92);
-    } else if (risk >= 40) {
-      setLiveRiskLevel('HIGH RISK INDEX');
-      setActionWindowHours(6.0);
-      setHeroTitle(`HIGH RISK: Elevated Atmospheric Thermal Load`);
-      setHeroDesc(`Elevated heat index ${tempF}°F. Stay hydrated and monitor cooling shelters.`);
-      setSurgeDepthM(0.3);
-      setWeatherCondition('Severe Thermal Stress');
-      setThunderstormProb(45);
-      setCloudburstProb(30);
-      setFlashFloodProb(55);
-    } else {
-      setLiveRiskLevel('NORMAL RISK INDEX');
-      setActionWindowHours(12.0);
-      setHeroTitle('Atmospheric Baseline Stable');
-      setHeroDesc(`Conditions stable at ${tempF}°F. Safe for outdoor activities.`);
-      setSurgeDepthM(0.1);
-      setWeatherCondition('Partly Sunny');
-      setThunderstormProb(15);
-      setCloudburstProb(8);
-      setFlashFloodProb(12);
-    }
+    setLiveRiskLevel(profile.riskLevel);
+    setActionWindowHours(profile.actionWindowHours);
+    setHeroTitle(profile.heroTitle);
+    setHeroDesc(profile.heroDesc);
+    setSurgeDepthM(profile.surgeDepthM);
+    setWeatherCondition(profile.weatherCondition);
+    setThunderstormProb(profile.thunderstormProb);
+    setCloudburstProb(profile.cloudburstProb);
+    setFlashFloodProb(profile.flashFloodProb);
   }, []);
 
   const fetchCivicPulseLiveData = useCallback(async () => {
@@ -986,16 +1527,12 @@ export default function CitizenLifelinePage() {
               </button>
             </div>
 
-            {/* Sub-bar with Live Provenance & Coordinates */}
+            {/* Sub-bar with Live Location */}
             <div className="flex items-center justify-between text-[9.5px] text-[#5A4D49] pt-1 border-t border-[#DDD5C7] font-mono">
-              <div className="flex items-center gap-1 truncate max-w-[230px]">
+              <div className="flex items-center gap-1 truncate max-w-full">
                 <span className="text-rose-600">●</span>
                 <span className="truncate">Active: <b>{locationName}</b></span>
               </div>
-              <span className="px-1.5 py-0.2 rounded bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 font-bold uppercase tracking-wider text-[8px] flex items-center gap-1 shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] inline-block animate-ping" />
-                <span>EOC LIVE FEED</span>
-              </span>
             </div>
 
           </div>
@@ -1190,12 +1727,12 @@ export default function CitizenLifelinePage() {
 
                 <div className="flex space-x-2 overflow-x-auto pb-1 scrollbar-thin text-center font-mono">
                   {[
-                    { time: 'Now', temp: 32, prob: '53%', badge: 'Moderate', badgeColor: 'bg-[#D97706] text-white', active: true },
-                    { time: '03:00 PM', temp: 32, prob: '68%', badge: 'Moderate', badgeColor: 'bg-[#D97706] text-white', active: false },
-                    { time: '04:00 PM', temp: 32, prob: '87%', badge: 'Critical', badgeColor: 'bg-[#DC2626] text-white', active: false },
-                    { time: '05:00 PM', temp: 29, prob: '98%', badge: 'Critical', badgeColor: 'bg-[#DC2626] text-white', active: false },
-                    { time: '06:00 PM', temp: 27, prob: '92%', badge: 'Critical', badgeColor: 'bg-[#DC2626] text-white', active: false },
-                    { time: '07:00 PM', temp: 26, prob: '85%', badge: 'Critical', badgeColor: 'bg-[#DC2626] text-white', active: false },
+                    { time: 'Now', temp: Math.round(liveTempC), prob: `${liveRainProb}%`, badge: liveRiskScore >= 75 ? 'Critical' : liveRiskScore >= 40 ? 'Moderate' : 'Advisory', badgeColor: liveRiskScore >= 75 ? 'bg-[#DC2626] text-white' : liveRiskScore >= 40 ? 'bg-[#D97706] text-white' : 'bg-[#0f766e] text-white', active: true },
+                    { time: '03:00 PM', temp: Math.round(liveTempC + 0.5), prob: `${Math.min(99, liveRainProb + 12)}%`, badge: liveRiskScore >= 75 ? 'Critical' : liveRiskScore >= 40 ? 'Moderate' : 'Advisory', badgeColor: liveRiskScore >= 75 ? 'bg-[#DC2626] text-white' : liveRiskScore >= 40 ? 'bg-[#D97706] text-white' : 'bg-[#0f766e] text-white', active: false },
+                    { time: '04:00 PM', temp: Math.round(liveTempC + 1.0), prob: `${Math.min(99, liveRainProb + 25)}%`, badge: liveRiskScore >= 75 ? 'Critical' : 'Moderate', badgeColor: liveRiskScore >= 75 ? 'bg-[#DC2626] text-white' : 'bg-[#D97706] text-white', active: false },
+                    { time: '05:00 PM', temp: Math.round(liveTempC - 1.0), prob: `${Math.max(5, liveRainProb - 5)}%`, badge: liveRiskScore >= 75 ? 'Critical' : 'Moderate', badgeColor: liveRiskScore >= 75 ? 'bg-[#DC2626] text-white' : 'bg-[#D97706] text-white', active: false },
+                    { time: '06:00 PM', temp: Math.round(liveTempC - 3.0), prob: `${Math.max(5, liveRainProb - 10)}%`, badge: liveRiskScore >= 75 ? 'Critical' : 'Advisory', badgeColor: liveRiskScore >= 75 ? 'bg-[#DC2626] text-white' : 'bg-[#0f766e] text-white', active: false },
+                    { time: '07:00 PM', temp: Math.round(liveTempC - 4.5), prob: `${Math.max(5, liveRainProb - 15)}%`, badge: 'Advisory', badgeColor: 'bg-[#0f766e] text-white', active: false },
                   ].map((h, i) => (
                     <div 
                       key={i} 
@@ -1275,13 +1812,13 @@ export default function CitizenLifelinePage() {
 
                 <div className="space-y-1.5">
                   {[
-                    { day: 'Today', date: 'Sep 20', condition: 'Thermal Peak ...', high: 40, low: 28, rainProb: '15% Rain', risk: 'Critical', riskColor: 'text-[#DC2626] font-bold' },
-                    { day: 'Tomorrow', date: 'Sep 21', condition: 'Severe Heat ...', high: 41, low: 29, rainProb: '10% Rain', risk: 'Critical', riskColor: 'text-[#DC2626] font-bold' },
-                    { day: 'Tue', date: 'Sep 22', condition: 'Convective Storm', high: 38, low: 27, rainProb: '65% Rain', risk: 'Critical', riskColor: 'text-[#DC2626] font-bold' },
-                    { day: 'Wed', date: 'Sep 23', condition: 'Thunderstorm ...', high: 34, low: 24, rainProb: '86% Rain', risk: 'Critical', riskColor: 'text-[#DC2626] font-bold' },
-                    { day: 'Thu', date: 'Sep 24', condition: 'Moderate Showers', high: 32, low: 23, rainProb: '70% Rain', risk: 'Caution', riskColor: 'text-[#D97706] font-bold' },
-                    { day: 'Fri', date: 'Sep 25', condition: 'Slight Showers', high: 33, low: 24, rainProb: '45% Rain', risk: 'Caution', riskColor: 'text-[#D97706] font-bold' },
-                    { day: 'Sat', date: 'Sep 26', condition: 'Partly Sunny', high: 35, low: 25, rainProb: '20% Rain', risk: 'Advisory', riskColor: 'text-[#0f766e] font-bold' }
+                    { day: 'Today', date: 'Sep 20', condition: weatherCondition, high: Math.round(liveTempC), low: Math.max(8, Math.round(liveTempC - (liveTempC > 35 ? 12 : 8))), rainProb: `${liveRainProb}% Rain`, risk: liveRiskScore >= 75 ? 'Critical' : liveRiskScore >= 40 ? 'Caution' : 'Advisory', riskColor: liveRiskScore >= 75 ? 'text-[#DC2626] font-bold' : liveRiskScore >= 40 ? 'text-[#D97706] font-bold' : 'text-[#0f766e] font-bold' },
+                    { day: 'Tomorrow', date: 'Sep 21', condition: liveRiskScore >= 75 ? (liveRainIntensity > 10 ? 'Heavy Tropical Storm' : 'Sustained Thermal Surge') : (liveRainIntensity > 5 ? 'Scattered Showers' : 'Partly Cloudy'), high: Math.round(liveTempC + 1), low: Math.max(8, Math.round(liveTempC - (liveTempC > 35 ? 11 : 7))), rainProb: `${Math.min(95, Math.max(5, liveRainProb - 5))}% Rain`, risk: liveRiskScore >= 75 ? 'Critical' : 'Advisory', riskColor: liveRiskScore >= 75 ? 'text-[#DC2626] font-bold' : 'text-[#0f766e] font-bold' },
+                    { day: 'Tue', date: 'Sep 22', condition: liveRainIntensity > 10 ? 'Convective Downpour' : (liveRiskScore >= 75 ? 'Excessive Heat Advisory' : 'Convective Squall Watch'), high: Math.round(liveTempC - 2), low: Math.max(8, Math.round(liveTempC - (liveTempC > 35 ? 13 : 9))), rainProb: `${Math.min(95, liveRainProb + 20)}% Rain`, risk: liveRiskScore >= 60 ? 'Critical' : 'Caution', riskColor: liveRiskScore >= 60 ? 'text-[#DC2626] font-bold' : 'text-[#D97706] font-bold' },
+                    { day: 'Wed', date: 'Sep 23', condition: 'Thunderstorm Front', high: Math.round(liveTempC - 4), low: Math.max(7, Math.round(liveTempC - (liveTempC > 35 ? 14 : 10))), rainProb: `${Math.min(95, liveRainProb + 30)}% Rain`, risk: 'Caution', riskColor: 'text-[#D97706] font-bold' },
+                    { day: 'Thu', date: 'Sep 24', condition: 'Moderate Showers', high: Math.round(liveTempC - 5), low: Math.max(7, Math.round(liveTempC - (liveTempC > 35 ? 15 : 11))), rainProb: '45% Rain', risk: 'Caution', riskColor: 'text-[#D97706] font-bold' },
+                    { day: 'Fri', date: 'Sep 25', condition: 'Clearing & Mild', high: Math.round(liveTempC - 3), low: Math.max(8, Math.round(liveTempC - (liveTempC > 35 ? 13 : 9))), rainProb: '25% Rain', risk: 'Advisory', riskColor: 'text-[#0f766e] font-bold' },
+                    { day: 'Sat', date: 'Sep 26', condition: 'Stable Baseline', high: Math.round(liveTempC - 1), low: Math.max(8, Math.round(liveTempC - (liveTempC > 35 ? 12 : 8))), rainProb: '10% Rain', risk: 'Advisory', riskColor: 'text-[#0f766e] font-bold' }
                   ].map((d, i) => (
                     <button
                       key={i}
