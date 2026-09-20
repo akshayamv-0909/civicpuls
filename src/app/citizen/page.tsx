@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   Activity,
-  MapPin, 
   Clock, 
   CheckCircle2, 
   Navigation, 
@@ -32,7 +31,8 @@ import {
   Wifi, 
   PlayCircle, 
   User, 
-  Shield
+  Shield,
+  ChevronDown
 } from 'lucide-react';
 import { SOSCategory, CitizenPing } from '@/app/api/citizen-sync/route';
 import { INITIAL_ZONES, LiveZoneTelemetry } from '@/lib/liveWeatherService';
@@ -158,10 +158,8 @@ export default function CitizenLifelinePage() {
   const [selectedZoneId, setSelectedZoneId] = useState<string>('zone-phx-core');
 
   // Location & Weather Telemetry
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [locationName, setLocationName] = useState<string>('Phoenix Core Urban, Phoenix, AZ');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number }>({ lat: 33.4484, lng: -112.0740 });
-  const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
 
   const [liveTempC, setLiveTempC] = useState<number>(40);
   const [liveTempF, setLiveTempF] = useState<number>(104);
@@ -480,7 +478,7 @@ export default function CitizenLifelinePage() {
 
   const fetchCivicPulseLiveData = useCallback(async () => {
     try {
-      const res = await fetch('/api/weather', { cache: 'no-store' });
+      const res = await fetch('/api/live-data', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (data.zones && data.zones.length > 0) {
@@ -503,85 +501,8 @@ export default function CitizenLifelinePage() {
   }, [fetchCivicPulseLiveData]);
 
   // -------------------------------------------------------------
-  // 6. Dynamic Location Search & Open-Meteo Fetch
+  // 6. Trigger SOS Distress Signal
   // -------------------------------------------------------------
-  const handleLocationSearch = async (queryText: string) => {
-    if (!queryText.trim()) return;
-    setIsSearchingLocation(true);
-    try {
-      const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(queryText)}&count=1&language=en&format=json`);
-      if (geoRes.ok) {
-        const geoData = await geoRes.json();
-        if (geoData.results && geoData.results.length > 0) {
-          const loc = geoData.results[0];
-          const newLat = loc.latitude;
-          const newLng = loc.longitude;
-          const fullName = [loc.name, loc.admin1, loc.country].filter(Boolean).join(', ');
-          
-          setUserCoords({ lat: newLat, lng: newLng });
-          setLocationName(fullName);
-
-          // Fetch Live Open-Meteo for Searched City
-          const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${newLat}&longitude=${newLng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,surface_pressure,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=auto`);
-          if (wRes.ok) {
-            const wData = await wRes.json();
-            if (wData.current) {
-              const tC = Math.round(wData.current.temperature_2m * 10) / 10;
-              const feelsC = Math.round((wData.current.apparent_temperature || wData.current.temperature_2m) * 10) / 10;
-              const hum = Math.round(wData.current.relative_humidity_2m);
-              const wind = Math.round(wData.current.wind_speed_10m * 10) / 10;
-              const rain = Math.round((wData.current.precipitation || wData.current.rain || 0) * 10) / 10;
-              const wCode = wData.current.weather_code || 0;
-
-              setLiveTempC(tC);
-              setLiveFeelsLikeC(feelsC);
-              setLiveHumidity(hum);
-              setLiveWindSpeedKm(wind);
-              setLiveRainIntensity(rain);
-              setLiveRainProb(hum > 80 ? 88 : hum > 50 ? 53 : 20);
-              setWeatherCondition(wCode >= 95 ? 'Severe Thunderstorm' : wCode >= 60 ? 'Active Rain' : hum > 70 ? 'Humid & Overcast' : 'Partly Cloudy');
-
-              if (rain >= 15 || wCode >= 95) {
-                setLiveRiskScore(88);
-                setLiveRiskLevel('CRITICAL RISK INDEX');
-                setActionWindowHours(2.5);
-                setHeroTitle('CRITICAL: Severe Inundation & Storm Warning');
-                setHeroDesc(`Heavy downpour (${rain} mm/h) observed. Flash flood surge expected.`);
-                setSurgeDepthM(2.8);
-                setThunderstormProb(92);
-                setCloudburstProb(84);
-                setFlashFloodProb(90);
-              } else if (rain >= 4 || hum >= 80) {
-                setLiveRiskScore(54);
-                setLiveRiskLevel('HIGH RISK INDEX');
-                setActionWindowHours(4.5);
-                setHeroTitle('HIGH RISK: Storm & Inundation Watch');
-                setHeroDesc(`Active rain showers underway. Avoid low-lying corridors.`);
-                setSurgeDepthM(1.4);
-                setThunderstormProb(78);
-                setCloudburstProb(56);
-                setFlashFloodProb(60);
-              } else {
-                setLiveRiskScore(15);
-                setLiveRiskLevel('NORMAL RISK INDEX');
-                setActionWindowHours(12);
-                setHeroTitle('Atmospheric Baseline Stable');
-                setHeroDesc(`Current conditions: Partly Cloudy at ${tC}°C. Safe for outdoor routines.`);
-                setSurgeDepthM(0.4);
-                setThunderstormProb(35);
-                setCloudburstProb(22);
-                setFlashFloodProb(18);
-              }
-            }
-          }
-        }
-      }
-    } catch (err) {
-      console.warn('Geocoding search failed:', err);
-    } finally {
-      setIsSearchingLocation(false);
-    }
-  };
 
   // -------------------------------------------------------------
   // 7. Trigger SOS Distress Signal
@@ -799,73 +720,97 @@ export default function CitizenLifelinePage() {
           {activeTab === 'NOWCAST' && (
             <div className="space-y-3.5">
               
-              {/* SECTION 1: CIVICPULSE ZONE SELECTOR & SEARCH BAR */}
-              <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3 rounded-2xl shadow-xs space-y-2">
-                <div className="flex items-center space-x-1.5">
-                  <MapPin className="w-4 h-4 text-[#0f766e] shrink-0" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleLocationSearch(searchQuery)}
-                    placeholder="Search City / Sector (e.g. Phoenix, Miami, Austin)..."
-                    className="w-full bg-[#FAF8F2] border border-[#DDD5C7] rounded-lg px-2.5 py-1 text-xs text-[#263238] placeholder:text-[#6B6F6B] focus:outline-none focus:ring-1 focus:ring-[#0d9488] focus:border-[#0d9488]"
-                  />
+              {/* SECTION 1: OFFICIAL US MUNICIPAL ZONE & NOAA METRO SELECTOR */}
+              <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-2xl shadow-xs space-y-2">
+                
+                {/* Clean Dropdown Row with GPS & Refresh Controls (Exact Match to Reference Photo) */}
+                <div className="flex items-center gap-1.5">
+                  {/* Styled US Locations Dropdown */}
+                  <div className="relative flex-1 flex items-center">
+                    <div className="absolute left-2.5 pointer-events-none text-rose-600 flex items-center text-xs">
+                      <span>📍</span>
+                    </div>
+                    
+                    <select
+                      aria-label="Select United States Location"
+                      value={selectedZoneId}
+                      onChange={(e) => {
+                        const targetId = e.target.value;
+                        setSelectedZoneId(targetId);
+                        const zone = monitoredZones.find(z => z.id === targetId);
+                        if (zone) {
+                          applyZoneTelemetry(zone);
+                        }
+                      }}
+                      className="w-full bg-[#FFFDF8] hover:bg-[#FAF8F2] text-[#0f766e] border border-[#0d9488]/60 focus:border-[#0d9488] text-[11px] font-mono font-bold pl-7 pr-7 py-2 rounded-xl outline-none shadow-xs cursor-pointer transition-all appearance-none truncate"
+                    >
+                      {monitoredZones.map((z) => {
+                        const tempStr = z.temperatureF !== null ? `(${z.temperatureF.toFixed(0)}°F)` : '';
+                        return (
+                          <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans font-medium py-1">
+                            📍 {z.name} — {z.metro} {tempStr}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    <ChevronDown className="w-4 h-4 text-[#0d9488] absolute right-2.5 pointer-events-none" />
+                  </div>
+
+                  {/* 📍 GPS MY LOCATION Button */}
                   <button
-                    onClick={() => handleLocationSearch(searchQuery)}
-                    disabled={isSearchingLocation}
-                    className="px-2.5 py-1 bg-[#0f766e] hover:bg-[#0d9488] text-white font-bold rounded-lg text-xs shrink-0 cursor-pointer shadow-xs transition"
-                  >
-                    {isSearchingLocation ? '...' : 'Search'}
-                  </button>
-                  <button
+                    type="button"
                     onClick={() => {
                       if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition((pos) => {
-                          setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-                          handleLocationSearch(`${pos.coords.latitude}, ${pos.coords.longitude}`);
+                          const lat = pos.coords.latitude;
+                          const lng = pos.coords.longitude;
+                          setUserCoords({ lat, lng });
+                          let closest = monitoredZones[0];
+                          let minDist = Infinity;
+                          monitoredZones.forEach(z => {
+                            const d = Math.hypot(z.lat - lat, z.lng - lng);
+                            if (d < minDist) {
+                              minDist = d;
+                              closest = z;
+                            }
+                          });
+                          if (closest) {
+                            applyZoneTelemetry(closest);
+                          }
                         });
                       }
                     }}
-                    title="Use GPS"
-                    className="p-1 bg-[#FAF8F2] border border-[#DDD5C7] text-[#0f766e] hover:bg-[#E5CDC6] rounded-lg shrink-0 cursor-pointer transition shadow-xs"
+                    title="Lock onto GPS Coordinates (My Location)"
+                    className="px-2.5 py-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl text-[10px] font-mono font-bold shrink-0 cursor-pointer transition shadow-xs flex items-center gap-1 active:scale-95"
                   >
-                    <Crosshair className="w-4 h-4" />
+                    <Crosshair className="w-3.5 h-3.5 text-[#0d9488]" />
+                    <span className="hidden xs:inline">GPS</span>
                   </button>
+
+                  {/* 🔄 Refresh Live Feeds */}
                   <button
+                    type="button"
                     onClick={() => fetchCivicPulseLiveData()}
                     title="Refresh Live NOAA & CivicPulse Feeds"
-                    className="p-1 bg-[#FAF8F2] border border-[#DDD5C7] text-[#0f766e] hover:bg-[#E5CDC6] rounded-lg shrink-0 cursor-pointer transition shadow-xs"
+                    className="p-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl shrink-0 cursor-pointer transition shadow-xs active:scale-95"
                   >
-                    <RotateCw className="w-4 h-4" />
+                    <RotateCw className="w-3.5 h-3.5 text-[#0d9488]" />
                   </button>
                 </div>
 
-                {/* Horizontal Scrolling CivicPulse Monitored Zone Pills */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none pt-0.5 border-t border-[#DDD5C7]">
-                  <span className="text-[8.5px] font-bold text-[#6B6F6B] uppercase tracking-wider shrink-0 font-mono">CivicPulse Zones:</span>
-                  {monitoredZones.slice(0, 10).map((z) => (
-                    <button
-                      key={z.id}
-                      onClick={() => applyZoneTelemetry(z)}
-                      className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold whitespace-nowrap transition cursor-pointer shrink-0 border ${
-                        selectedZoneId === z.id
-                          ? 'bg-[#0f766e] text-white border-[#0f766e] shadow-xs'
-                          : 'bg-[#FAF8F2] text-[#5A4D49] border-[#DDD5C7] hover:bg-[#E5CDC6]'
-                      }`}
-                    >
-                      📍 {z.name.split(' ')[0]} ({z.temperatureF !== null ? `${z.temperatureF}°F` : '95°F'})
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between text-[10px] text-[#5A4D49] pt-0.5 border-t border-[#DDD5C7] font-mono">
-                  <span className="truncate max-w-[220px]">📍 Active: <b>{locationName}</b></span>
+                {/* Sub-bar with Live Provenance & Coordinates */}
+                <div className="flex items-center justify-between text-[9.5px] text-[#5A4D49] pt-1 border-t border-[#DDD5C7] font-mono">
+                  <div className="flex items-center gap-1 truncate max-w-[230px]">
+                    <span className="text-rose-600">●</span>
+                    <span className="truncate">Active: <b>{locationName}</b></span>
+                  </div>
                   <span className="px-1.5 py-0.2 rounded bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 font-bold uppercase tracking-wider text-[8px] flex items-center gap-1 shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] inline-block animate-ping" />
                     <span>EOC LIVE FEED</span>
                   </span>
                 </div>
+
               </div>
 
               {/* SECTION 2: HERO RISK STATUS BANNER CARD */}
