@@ -1448,95 +1448,97 @@ export default function CitizenLifelinePage() {
         <div className="flex-1 overflow-y-auto scrollbar-thin p-3.5 space-y-3.5 pb-20 bg-[#F5F1E8] bg-tactical-grid">
           
           {/* ========================================================================= */}
-          {/* GLOBAL US MUNICIPAL ZONE & NOAA METRO SELECTOR (PERSISTENT ACROSS TABS)    */}
+          {/* GLOBAL US MUNICIPAL ZONE & NOAA METRO SELECTOR (PERSISTENT EXCEPT PROFILE) */}
           {/* ========================================================================= */}
-          <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-2xl shadow-xs space-y-2">
-            
-            {/* Clean Dropdown Row with GPS & Refresh Controls (Exact Match to Reference Photo) */}
-            <div className="flex items-center gap-1.5">
-              {/* Styled US Locations Dropdown */}
-              <div className="relative flex-1 flex items-center">
-                <div className="absolute left-2.5 pointer-events-none text-rose-600 flex items-center text-xs">
-                  <span>📍</span>
+          {activeTab !== 'PROFILE' && (
+            <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-2xl shadow-xs space-y-2">
+              
+              {/* Clean Dropdown Row with GPS & Refresh Controls (Exact Match to Reference Photo) */}
+              <div className="flex items-center gap-1.5">
+                {/* Styled US Locations Dropdown */}
+                <div className="relative flex-1 flex items-center">
+                  <div className="absolute left-2.5 pointer-events-none text-rose-600 flex items-center text-xs">
+                    <span>📍</span>
+                  </div>
+                  
+                  <select
+                    aria-label="Select United States Location"
+                    value={selectedZoneId}
+                    onChange={(e) => {
+                      const targetId = e.target.value;
+                      setSelectedZoneId(targetId);
+                      const zone = monitoredZones.find(z => z.id === targetId);
+                      if (zone) {
+                        applyZoneTelemetry(zone);
+                      }
+                    }}
+                    className="w-full bg-[#FFFDF8] hover:bg-[#FAF8F2] text-[#0f766e] border border-[#0d9488]/60 focus:border-[#0d9488] text-[11px] font-mono font-bold pl-7 pr-7 py-2 rounded-xl outline-none shadow-xs cursor-pointer transition-all appearance-none truncate"
+                  >
+                    {monitoredZones.map((z) => {
+                      const tempStr = z.temperatureF !== null ? `(${z.temperatureF.toFixed(0)}°F)` : '';
+                      return (
+                        <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans font-medium py-1">
+                          📍 {z.name} — {z.metro} {tempStr}
+                        </option>
+                      );
+                    })}
+                  </select>
+
+                  <ChevronDown className="w-4 h-4 text-[#0d9488] absolute right-2.5 pointer-events-none" />
                 </div>
-                
-                <select
-                  aria-label="Select United States Location"
-                  value={selectedZoneId}
-                  onChange={(e) => {
-                    const targetId = e.target.value;
-                    setSelectedZoneId(targetId);
-                    const zone = monitoredZones.find(z => z.id === targetId);
-                    if (zone) {
-                      applyZoneTelemetry(zone);
-                    }
-                  }}
-                  className="w-full bg-[#FFFDF8] hover:bg-[#FAF8F2] text-[#0f766e] border border-[#0d9488]/60 focus:border-[#0d9488] text-[11px] font-mono font-bold pl-7 pr-7 py-2 rounded-xl outline-none shadow-xs cursor-pointer transition-all appearance-none truncate"
-                >
-                  {monitoredZones.map((z) => {
-                    const tempStr = z.temperatureF !== null ? `(${z.temperatureF.toFixed(0)}°F)` : '';
-                    return (
-                      <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans font-medium py-1">
-                        📍 {z.name} — {z.metro} {tempStr}
-                      </option>
-                    );
-                  })}
-                </select>
 
-                <ChevronDown className="w-4 h-4 text-[#0d9488] absolute right-2.5 pointer-events-none" />
-              </div>
-
-              {/* 📍 GPS MY LOCATION Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition((pos) => {
-                      const lat = pos.coords.latitude;
-                      const lng = pos.coords.longitude;
-                      setUserCoords({ lat, lng });
-                      let closest = monitoredZones[0];
-                      let minDist = Infinity;
-                      monitoredZones.forEach(z => {
-                        const d = Math.hypot(z.lat - lat, z.lng - lng);
-                        if (d < minDist) {
-                          minDist = d;
-                          closest = z;
+                {/* 📍 GPS MY LOCATION Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition((pos) => {
+                        const lat = pos.coords.latitude;
+                        const lng = pos.coords.longitude;
+                        setUserCoords({ lat, lng });
+                        let closest = monitoredZones[0];
+                        let minDist = Infinity;
+                        monitoredZones.forEach(z => {
+                          const d = Math.hypot(z.lat - lat, z.lng - lng);
+                          if (d < minDist) {
+                            minDist = d;
+                            closest = z;
+                          }
+                        });
+                        if (closest) {
+                          applyZoneTelemetry(closest);
                         }
                       });
-                      if (closest) {
-                        applyZoneTelemetry(closest);
-                      }
-                    });
-                  }
-                }}
-                title="Lock onto GPS Coordinates (My Location)"
-                className="px-2.5 py-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl text-[10px] font-mono font-bold shrink-0 cursor-pointer transition shadow-xs flex items-center gap-1 active:scale-95"
-              >
-                <Crosshair className="w-3.5 h-3.5 text-[#0d9488]" />
-                <span className="hidden xs:inline">GPS</span>
-              </button>
+                    }
+                  }}
+                  title="Lock onto GPS Coordinates (My Location)"
+                  className="px-2.5 py-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl text-[10px] font-mono font-bold shrink-0 cursor-pointer transition shadow-xs flex items-center gap-1 active:scale-95"
+                >
+                  <Crosshair className="w-3.5 h-3.5 text-[#0d9488]" />
+                  <span className="hidden xs:inline">GPS</span>
+                </button>
 
-              {/* 🔄 Refresh Live Feeds */}
-              <button
-                type="button"
-                onClick={() => fetchCivicPulseLiveData()}
-                title="Refresh Live NOAA & CivicPulse Feeds"
-                className="p-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl shrink-0 cursor-pointer transition shadow-xs active:scale-95"
-              >
-                <RotateCw className="w-3.5 h-3.5 text-[#0d9488]" />
-              </button>
-            </div>
-
-            {/* Sub-bar with Live Location */}
-            <div className="flex items-center justify-between text-[9.5px] text-[#5A4D49] pt-1 border-t border-[#DDD5C7] font-mono">
-              <div className="flex items-center gap-1 truncate max-w-full">
-                <span className="text-rose-600">●</span>
-                <span className="truncate">Active: <b>{locationName}</b></span>
+                {/* 🔄 Refresh Live Feeds */}
+                <button
+                  type="button"
+                  onClick={() => fetchCivicPulseLiveData()}
+                  title="Refresh Live NOAA & CivicPulse Feeds"
+                  className="p-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl shrink-0 cursor-pointer transition shadow-xs active:scale-95"
+                >
+                  <RotateCw className="w-3.5 h-3.5 text-[#0d9488]" />
+                </button>
               </div>
-            </div>
 
-          </div>
+              {/* Sub-bar with Live Location */}
+              <div className="flex items-center justify-between text-[9.5px] text-[#5A4D49] pt-1 border-t border-[#DDD5C7] font-mono">
+                <div className="flex items-center gap-1 truncate max-w-full">
+                  <span className="text-rose-600">●</span>
+                  <span className="truncate">Active: <b>{locationName}</b></span>
+                </div>
+              </div>
+
+            </div>
+          )}
 
           {/* ========================================================================= */}
           {/* TAB 1: NOWCAST (FIRST PAGE — ALL 9 OFFICIAL CIVICPULSE SECTIONS)           */}
