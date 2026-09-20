@@ -34,6 +34,7 @@ import {
   Shield 
 } from 'lucide-react';
 import { SOSCategory, CitizenPing } from '@/app/api/citizen-sync/route';
+import { INITIAL_ZONES, LiveZoneTelemetry } from '@/lib/liveWeatherService';
 
 type CitizenTab = 'NOWCAST' | 'MAP' | 'DEMO' | 'EVACUATE' | 'ALERTS' | 'PROFILE' | 'SOS';
 
@@ -60,33 +61,33 @@ interface FamilyMember {
 const DEFAULT_SHELTERS: Shelter[] = [
   {
     id: 'sh-1',
-    name: 'District Community Relief Center (Elevated Ridge Camp)',
-    address: 'Sector 4 High Ground Transit Corridor',
-    distance: '1.2 km away',
-    walkTime: '12 min walk',
-    capacity: '380 / 500 Available',
+    name: 'Burton Barr Central Cooling Oasis & Medical Triage',
+    address: '1221 N Central Ave, Downtown Transit Hub',
+    distance: '0.4 mi away',
+    walkTime: '6 min walk',
+    capacity: '420 / 600 Available',
     status: 'OPEN',
-    amenities: ['High-Power AC', 'Cold Water Refill', 'Medical Staff on Duty', 'Device Charging', 'Backup Generator']
+    amenities: ['High-Power Commercial AC', 'Cold Hydration Refill', 'Paramedics on Duty', 'Device Charging', 'Backup Generator']
   },
   {
     id: 'sh-2',
-    name: 'Govt Senior Model School Relief Hub',
-    address: 'East Central Safe Refuge Area',
-    distance: '1.7 km away',
-    walkTime: '18 min walk',
-    capacity: '240 / 400 Available',
+    name: 'Civic Community Resilience Center & Refuge',
+    address: '1112 E Buckeye Corridor Safe Haven',
+    distance: '1.1 mi away',
+    walkTime: '14 min walk',
+    capacity: '280 / 450 Available',
     status: 'OPEN',
-    amenities: ['AC Gymnasium', 'Hydration Station', 'Senior Care Area', 'Backup Generator']
+    amenities: ['AC Gymnasium', 'Senior Hydration Station', 'Free Transit Shuttle Bay', 'Medical First Aid']
   },
   {
     id: 'sh-3',
-    name: 'District Indoor Sports Complex Base Camp',
-    address: 'Municipal Sports Plaza High Ground',
-    distance: '2.6 km away',
-    walkTime: '28 min walk',
-    capacity: '850 / 1200 Available',
+    name: 'Municipal Convention Center Emergency Refuge Hub',
+    address: '100 N 3rd St, High Ground Sector',
+    distance: '1.8 mi away',
+    walkTime: '22 min walk',
+    capacity: '1,200 / 2,000 Available',
     status: 'OPEN',
-    amenities: ['Shaded Pavilion', 'Emergency Medical Kit', 'Free Bus Transfer', 'Pet Friendly Area']
+    amenities: ['Mass Shaded Concourse', 'Oxygen Concentrators', 'Free Meal Distribution', 'Pet-Friendly Area']
   }
 ];
 
@@ -111,30 +112,53 @@ export default function CitizenLifelinePage() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const beaconIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // CivicPulse Live System Telemetry
+  const [monitoredZones, setMonitoredZones] = useState<LiveZoneTelemetry[]>(INITIAL_ZONES.map(z => ({
+    ...z,
+    temperatureF: 104,
+    temperatureC: 40,
+    apparentTempF: 107,
+    humidityPct: 18,
+    precipitationIn: 0,
+    windSpeedMph: 8,
+    weatherCode: 0,
+    localObservationTime: '14:00',
+    isDaytime: true,
+    airQualityAqi: 52,
+    pm25: 12,
+    pm10: 24,
+    liveRiskScore: 84,
+    isLiveAvailable: true,
+    lastUpdatedUtc: new Date().toUTCString(),
+    dataSourceCitation: 'NOAA / Open-Meteo HRRR'
+  })));
+  const [selectedZoneId, setSelectedZoneId] = useState<string>('zone-phx-core');
+
   // Location & Weather Telemetry
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [locationName, setLocationName] = useState<string>('Hyderabad, Telangana, India');
-  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number }>({ lat: 17.3850, lng: 78.4867 });
+  const [locationName, setLocationName] = useState<string>('Phoenix Core Urban, Phoenix, AZ');
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number }>({ lat: 33.4484, lng: -112.0740 });
   const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
 
-  const [liveTempC, setLiveTempC] = useState<number>(32);
-  const [liveFeelsLikeC, setLiveFeelsLikeC] = useState<number>(36.4);
-  const [liveHumidity, setLiveHumidity] = useState<number>(51);
-  const [liveWindSpeedKm, setLiveWindSpeedKm] = useState<number>(4.2);
+  const [liveTempC, setLiveTempC] = useState<number>(40);
+  const [liveTempF, setLiveTempF] = useState<number>(104);
+  const [liveFeelsLikeC, setLiveFeelsLikeC] = useState<number>(41.7);
+  const [liveHumidity, setLiveHumidity] = useState<number>(18);
+  const [liveWindSpeedKm, setLiveWindSpeedKm] = useState<number>(12.8);
   const [liveRainIntensity, setLiveRainIntensity] = useState<number>(0);
-  const [liveRainProb, setLiveRainProb] = useState<number>(53);
-  const [liveRiskScore, setLiveRiskScore] = useState<number>(15);
-  const [liveRiskLevel, setLiveRiskLevel] = useState<string>('NORMAL RISK INDEX');
-  const [actionWindowHours, setActionWindowHours] = useState<number>(12);
-  const [heroTitle, setHeroTitle] = useState<string>('Atmospheric Baseline Stable');
-  const [heroDesc, setHeroDesc] = useState<string>('Current conditions: Partly Cloudy at 32°C. Safe for outdoor routines.');
-  const [surgeDepthM, setSurgeDepthM] = useState<number>(0.4);
-  const [weatherCondition, setWeatherCondition] = useState<string>('Partly Cloudy');
+  const [liveRainProb, setLiveRainProb] = useState<number>(15);
+  const [liveRiskScore, setLiveRiskScore] = useState<number>(84);
+  const [liveRiskLevel, setLiveRiskLevel] = useState<string>('CRITICAL RISK INDEX');
+  const [actionWindowHours, setActionWindowHours] = useState<number>(3.5);
+  const [heroTitle, setHeroTitle] = useState<string>('CRITICAL: Extreme Urban Heat Surge Warning');
+  const [heroDesc, setHeroDesc] = useState<string>('Ambient thermal peak 40°C (104°F) with high UV radiation. Municipal cooling shelters open 24/7.');
+  const [surgeDepthM, setSurgeDepthM] = useState<number>(0.2);
+  const [weatherCondition, setWeatherCondition] = useState<string>('Extreme Thermal Spike');
 
   // AI MTL Heads
-  const [thunderstormProb, setThunderstormProb] = useState<number>(73);
-  const [cloudburstProb, setCloudburstProb] = useState<number>(42);
-  const [flashFloodProb, setFlashFloodProb] = useState<number>(36);
+  const [thunderstormProb, setThunderstormProb] = useState<number>(24);
+  const [cloudburstProb, setCloudburstProb] = useState<number>(12);
+  const [flashFloodProb, setFlashFloodProb] = useState<number>(88); // Heat surge / thermal stress head
 
   // SOS Emergency State
   const [selectedSOSCategory, setSelectedSOSCategory] = useState<SOSCategory>('HEAT_STROKE');
@@ -272,6 +296,91 @@ export default function CitizenLifelinePage() {
     const interval = setInterval(pollSync, 3000);
     return () => clearInterval(interval);
   }, [pollSync]);
+
+  // -------------------------------------------------------------
+  // 4b. Fetch CivicPulse Live System Telemetry from /api/live-data
+  // -------------------------------------------------------------
+  const applyZoneTelemetry = useCallback((zone: LiveZoneTelemetry) => {
+    setSelectedZoneId(zone.id);
+    setLocationName(`${zone.name}, ${zone.metro}`);
+    setUserCoords({ lat: zone.lat, lng: zone.lng });
+    
+    const tF = zone.temperatureF !== null ? zone.temperatureF : 104;
+    const tC = zone.temperatureC !== null ? zone.temperatureC : Math.round(((tF - 32) * 5) / 9);
+    const feelsF = zone.apparentTempF !== null ? zone.apparentTempF : tF + 3;
+    const feelsC = Math.round(((feelsF - 32) * 5) / 9);
+    const hum = zone.humidityPct !== null ? zone.humidityPct : 18;
+    const wind = zone.windSpeedMph !== null ? Math.round(zone.windSpeedMph * 1.609) : 12;
+    const rain = zone.precipitationIn !== null ? Math.round(zone.precipitationIn * 25.4 * 10) / 10 : 0;
+    const score = zone.liveRiskScore !== null ? zone.liveRiskScore : 78;
+
+    setLiveTempF(tF);
+    setLiveTempC(tC);
+    setLiveFeelsLikeC(feelsC);
+    setLiveHumidity(hum);
+    setLiveWindSpeedKm(wind);
+    setLiveRainIntensity(rain);
+    setLiveRiskScore(score);
+
+    if (score >= 70 || tF >= 100) {
+      setLiveRiskLevel('CRITICAL RISK INDEX');
+      setActionWindowHours(2.5);
+      setHeroTitle(`CRITICAL: Extreme Thermal Surge Alert (${tF}°F / ${tC}°C)`);
+      setHeroDesc(`Severe heat stress & ozone spike in ${zone.name}. 14 municipal cooling centers activated.`);
+      setSurgeDepthM(0.2);
+      setLiveRainProb(hum > 40 ? 35 : 10);
+      setThunderstormProb(tF > 105 ? 30 : 15);
+      setCloudburstProb(8);
+      setFlashFloodProb(score);
+      setWeatherCondition('Extreme Heatwave Alert');
+    } else if (score >= 40 || tF >= 88) {
+      setLiveRiskLevel('ELEVATED RISK INDEX');
+      setActionWindowHours(5.0);
+      setHeroTitle(`ELEVATED: High Thermal & Solar Watch (${tF}°F / ${tC}°C)`);
+      setHeroDesc(`Elevated heat index observed. Hydration stations active across ${zone.metro}.`);
+      setSurgeDepthM(0.4);
+      setLiveRainProb(25);
+      setThunderstormProb(45);
+      setCloudburstProb(25);
+      setFlashFloodProb(score);
+      setWeatherCondition('Warm & Sunny');
+    } else {
+      setLiveRiskLevel('NORMAL RISK INDEX');
+      setActionWindowHours(12);
+      setHeroTitle('Atmospheric Baseline Stable');
+      setHeroDesc(`Current conditions: Stable baseline at ${tC}°C (${tF}°F). Safe for outdoor routines.`);
+      setSurgeDepthM(0.4);
+      setLiveRainProb(15);
+      setThunderstormProb(20);
+      setCloudburstProb(10);
+      setFlashFloodProb(15);
+      setWeatherCondition('Clear & Moderate');
+    }
+  }, []);
+
+  const fetchCivicPulseLiveData = useCallback(async () => {
+    try {
+      const res = await fetch('/api/live-data', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.zones && data.zones.length > 0) {
+          setMonitoredZones(data.zones);
+          const activeZone = data.zones.find((z: LiveZoneTelemetry) => z.id === selectedZoneId) || data.zones[0];
+          if (activeZone) {
+            applyZoneTelemetry(activeZone);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Live telemetry fetch error:', e);
+    }
+  }, [selectedZoneId, applyZoneTelemetry]);
+
+  useEffect(() => {
+    fetchCivicPulseLiveData();
+    const interval = setInterval(fetchCivicPulseLiveData, 60000);
+    return () => clearInterval(interval);
+  }, [fetchCivicPulseLiveData]);
 
   // -------------------------------------------------------------
   // 5. Dynamic Location Search & Open-Meteo Fetch
@@ -573,22 +682,22 @@ export default function CitizenLifelinePage() {
           {activeTab === 'NOWCAST' && (
             <div className="space-y-3.5">
               
-              {/* SECTION 1: SEARCH & GPS LOCATION BAR (Photo 1) */}
+              {/* SECTION 1: CIVICPULSE ZONE SELECTOR & SEARCH BAR */}
               <div className="bg-white border border-slate-200 p-2.5 rounded-2xl shadow-xs space-y-2">
                 <div className="flex items-center space-x-1.5">
-                  <MapPin className="w-4 h-4 text-orange-600 shrink-0" />
+                  <MapPin className="w-4 h-4 text-blue-800 shrink-0" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleLocationSearch(searchQuery)}
-                    placeholder="Search Indian City / District..."
+                    placeholder="Search City / District (e.g. Phoenix, Miami, Delhi)..."
                     className="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
                   />
                   <button
                     onClick={() => handleLocationSearch(searchQuery)}
                     disabled={isSearchingLocation}
-                    className="px-2.5 py-1 bg-blue-900 text-white font-bold rounded-lg text-xs shrink-0 cursor-pointer"
+                    className="px-2.5 py-1 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-lg text-xs shrink-0 cursor-pointer"
                   >
                     {isSearchingLocation ? '...' : 'Search'}
                   </button>
@@ -607,19 +716,37 @@ export default function CitizenLifelinePage() {
                     <Crosshair className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => handleLocationSearch(locationName.split(',')[0])}
-                    title="Refresh Live Data"
+                    onClick={() => fetchCivicPulseLiveData()}
+                    title="Refresh Live NOAA & CivicPulse Feeds"
                     className="p-1 bg-slate-100 border border-slate-300 text-blue-900 hover:bg-slate-200 rounded-lg shrink-0 cursor-pointer"
                   >
                     <RotateCw className="w-4 h-4" />
                   </button>
                 </div>
 
+                {/* Horizontal Scrolling CivicPulse Monitored Zone Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none pt-0.5 border-t border-slate-100">
+                  <span className="text-[8.5px] font-bold text-slate-400 uppercase tracking-wider shrink-0">CivicPulse Zones:</span>
+                  {monitoredZones.slice(0, 10).map((z) => (
+                    <button
+                      key={z.id}
+                      onClick={() => applyZoneTelemetry(z)}
+                      className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold whitespace-nowrap transition cursor-pointer shrink-0 border ${
+                        selectedZoneId === z.id
+                          ? 'bg-blue-900 text-white border-blue-900 shadow-xs'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      📍 {z.name.split(' ')[0]} ({z.temperatureF !== null ? `${z.temperatureF}°F` : '95°F'})
+                    </button>
+                  ))}
+                </div>
+
                 <div className="flex items-center justify-between text-[10px] text-slate-600 pt-0.5 border-t border-slate-100">
-                  <span className="truncate max-w-[220px]">📍 Current: <b>{locationName}</b></span>
+                  <span className="truncate max-w-[220px]">📍 Active: <b>{locationName}</b></span>
                   <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold uppercase tracking-wider text-[8px] flex items-center gap-1 shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block animate-ping" />
-                    <span>LIVE FEED</span>
+                    <span>EOC LIVE FEED</span>
                   </span>
                 </div>
               </div>
@@ -710,21 +837,27 @@ export default function CitizenLifelinePage() {
                 {/* 3 MTL Output Head Boxes */}
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="p-2 bg-amber-50 rounded-2xl border border-amber-200">
-                    <span className="text-[8px] font-bold text-amber-800 uppercase block">⚡ THUNDERSTORM</span>
-                    <span className="text-base font-black font-mono text-amber-950">{thunderstormProb}%</span>
-                    <span className="text-[8px] font-bold text-amber-800 block mt-0.5 uppercase">MODERATE</span>
+                    <span className="text-[8px] font-bold text-amber-800 uppercase block">🌡️ THERMAL SURGE</span>
+                    <span className="text-base font-black font-mono text-amber-950">{liveRiskScore}%</span>
+                    <span className="text-[8px] font-bold text-amber-800 block mt-0.5 uppercase">
+                      {liveTempF >= 100 ? 'CRITICAL PEAK' : liveTempF >= 88 ? 'ELEVATED' : 'MODERATE'}
+                    </span>
                   </div>
 
                   <div className="p-2 bg-blue-50 rounded-2xl border border-blue-200">
-                    <span className="text-[8px] font-bold text-blue-800 uppercase block">🌧️ CLOUDBURST</span>
-                    <span className="text-base font-black font-mono text-blue-950">{cloudburstProb}%</span>
-                    <span className="text-[8px] text-blue-800 block mt-0.5 font-bold font-mono">25 mm/h</span>
+                    <span className="text-[8px] font-bold text-blue-800 uppercase block">⚡ GRID & SQUALL</span>
+                    <span className="text-base font-black font-mono text-blue-950">{thunderstormProb}%</span>
+                    <span className="text-[8px] text-blue-800 block mt-0.5 font-bold font-mono">
+                      {thunderstormProb > 60 ? 'HIGH LOAD' : 'MONITORING'}
+                    </span>
                   </div>
 
                   <div className="p-2 bg-rose-50 rounded-2xl border border-rose-200">
-                    <span className="text-[8px] font-bold text-rose-800 uppercase block">🌊 FLASH FLOOD</span>
+                    <span className="text-[8px] font-bold text-rose-800 uppercase block">🌊 PLUVIAL INUNDATION</span>
                     <span className="text-base font-black font-mono text-rose-950">{flashFloodProb}%</span>
-                    <span className="text-[8px] text-rose-800 block mt-0.5 font-bold font-mono">+0.4 m</span>
+                    <span className="text-[8px] text-rose-800 block mt-0.5 font-bold font-mono">
+                      {cloudburstProb > 50 ? `${cloudburstProb}% Burst` : `+${surgeDepthM}m Surge`}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -734,22 +867,25 @@ export default function CitizenLifelinePage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-1 text-xs font-black text-slate-900 uppercase">
                     <Sun className="w-4 h-4 text-amber-500" />
-                    <span>TODAY&apos;S WEATHER</span>
+                    <span>TODAY&apos;S ATMOSPHERIC VITALS</span>
                   </div>
-                  <span className="text-[9px] text-slate-400 font-mono">Updated: {clockTime} IST</span>
+                  <span className="text-[9px] text-slate-400 font-mono">Updated: {clockTime}</span>
                 </div>
 
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-baseline space-x-1">
                       <span className="text-3xl font-black text-slate-900 font-mono">{liveTempC}°</span>
-                      <span className="text-base font-bold text-slate-500">C</span>
+                      <span className="text-sm font-bold text-slate-500">C</span>
+                      <span className="text-slate-300 mx-1">/</span>
+                      <span className="text-xl font-bold text-slate-600 font-mono">{liveTempF}°</span>
+                      <span className="text-xs font-bold text-slate-400">F</span>
                     </div>
                     <div className="text-[11px] text-slate-600 mt-0.5">
                       Feels like <b>{liveFeelsLikeC}°C</b> &bull; {weatherCondition}
                     </div>
                     <div className="text-[9.5px] text-slate-400 mt-0.5">
-                      Sunrise 06:04 AM &bull; Sunset 06:14 PM
+                      CivicPulse Real-Time Telemetry Node
                     </div>
                   </div>
 
@@ -762,7 +898,7 @@ export default function CitizenLifelinePage() {
                 {/* 3 Environmental Vitals Chips */}
                 <div className="grid grid-cols-3 gap-2 text-center font-mono">
                   <div className="p-2 bg-slate-50 rounded-2xl border border-slate-200">
-                    <span className="text-[8px] font-bold text-slate-500 uppercase block">RAIN INTENSITY</span>
+                    <span className="text-[8px] font-bold text-slate-500 uppercase block">PRECIPITATION</span>
                     <span className="text-xs font-black text-slate-900">{liveRainIntensity} mm/h</span>
                   </div>
                   <div className="p-2 bg-slate-50 rounded-2xl border border-slate-200">
@@ -770,14 +906,14 @@ export default function CitizenLifelinePage() {
                     <span className="text-xs font-black text-slate-900">{liveHumidity}%</span>
                   </div>
                   <div className="p-2 bg-slate-50 rounded-2xl border border-slate-200">
-                    <span className="text-[8px] font-bold text-slate-500 uppercase block">WIND & DIRECTION</span>
+                    <span className="text-[8px] font-bold text-slate-500 uppercase block">WIND SPEED</span>
                     <span className="text-xs font-black text-slate-900">{liveWindSpeedKm} km/h</span>
                   </div>
                 </div>
 
                 <div className="text-[8.5px] text-slate-400 border-t border-slate-100 pt-1.5 flex justify-between">
-                  <span>Source: Live India Open-Meteo & IMD Doppler Radar Feed</span>
-                  <span className="font-bold text-slate-600">GPS Live Ground Node</span>
+                  <span>Source: CivicPulse AI Risk Engine & NOAA Open-Meteo Ensembles</span>
+                  <span className="font-bold text-slate-600">● Live Node</span>
                 </div>
               </div>
 
@@ -1047,7 +1183,7 @@ export default function CitizenLifelinePage() {
                     <span>GIS EARLY WARNING TACTICAL MAP</span>
                   </span>
                   <span className="text-[9px] bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full font-bold">
-                    ISRO Bhuvan WMS
+                    CivicPulse GIS Layer
                   </span>
                 </div>
 
@@ -1061,7 +1197,7 @@ export default function CitizenLifelinePage() {
                     <div className="text-xs font-bold">{locationName.split(',')[0]} Operations Basin</div>
                     <div className="text-[10px] text-blue-200">Lat {userCoords.lat.toFixed(4)}, Lng {userCoords.lng.toFixed(4)}</div>
                     <span className="inline-block px-2 py-0.5 bg-emerald-600 text-white text-[8px] rounded-full font-bold">
-                      Safe Zone Elevation: 325m MSL
+                      Designated Safe Ridge Elevation & Cool Zone
                     </span>
                   </div>
                 </div>
@@ -1069,13 +1205,13 @@ export default function CitizenLifelinePage() {
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <button 
                     onClick={() => setActiveTab('EVACUATE')}
-                    className="p-2.5 bg-emerald-700 text-white font-bold rounded-xl text-center shadow-xs"
+                    className="p-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-center shadow-xs cursor-pointer"
                   >
                     View Safe Corridor ➔
                   </button>
                   <button 
                     onClick={() => setActiveTab('SOS')}
-                    className="p-2.5 bg-red-600 text-white font-bold rounded-xl text-center shadow-xs"
+                    className="p-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-center shadow-xs cursor-pointer"
                   >
                     Broadcast SOS Pin ➔
                   </button>
@@ -1085,60 +1221,108 @@ export default function CitizenLifelinePage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 3: DEMO SIMULATION                                                    */}
+          {/* TAB 3: CIVICPULSE EMERGENCY SCENARIO SIMULATOR                            */}
           {/* ========================================================================= */}
           {activeTab === 'DEMO' && (
             <div className="space-y-3 font-mono">
-              <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-3xl p-4 shadow-sm space-y-2">
+              <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white rounded-3xl p-4 shadow-sm space-y-2 border border-blue-700">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
                     <span>🎬</span>
-                    <span>SIH JURY DEMO DASHBOARD</span>
+                    <span>CIVICPULSE SCENARIO SIMULATOR</span>
                   </span>
-                  <span className="text-[9px] bg-white/20 px-2 py-0.5 rounded font-bold">INTERACTIVE</span>
+                  <span className="text-[9px] bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 px-2 py-0.5 rounded font-bold">LIVE 2-WAY</span>
                 </div>
-                <p className="text-[11px] text-amber-100 font-sans">
-                  Trigger live catastrophe scenarios to demonstrate real-time cross-device sync between the citizen phone and the laptop EOC command desk.
+                <p className="text-[11px] text-blue-200 font-sans">
+                  Trigger multi-hazard disaster scenarios to demonstrate real-time telemetry updates and 2-way dispatch sync with the CivicPulse EOC command portal.
                 </p>
               </div>
 
               <div className="space-y-2">
                 <button
                   onClick={() => {
-                    setLiveRiskScore(88);
+                    setLiveTempF(114);
+                    setLiveTempC(45.5);
+                    setLiveFeelsLikeC(48.2);
+                    setLiveHumidity(12);
+                    setLiveWindSpeedKm(18.5);
+                    setLiveRiskScore(94);
                     setLiveRiskLevel('CRITICAL RISK INDEX');
-                    setActionWindowHours(2.5);
-                    setHeroTitle('RED CRITICAL: Severe Flash Flood Warning');
-                    setHeroDesc('Inundation surge wave (+2.8m) estimated in 2.5 hours. Evacuate ground floors.');
-                    setSurgeDepthM(2.8);
-                    setLiveRainIntensity(120);
+                    setActionWindowHours(1.5);
+                    setHeroTitle('CRITICAL: Historic Heatwave & Grid Demand Surge (114°F)');
+                    setHeroDesc('Peak thermal danger threshold exceeded. Emergency cooling shelters & transit waivers active.');
+                    setSurgeDepthM(0.1);
+                    setLiveRainIntensity(0);
+                    setWeatherCondition('Extreme Thermal Peak');
+                    setThunderstormProb(15);
+                    setCloudburstProb(5);
+                    setFlashFloodProb(94);
                     setActiveTab('NOWCAST');
                   }}
                   className="w-full p-3 bg-white border border-red-300 hover:border-red-600 rounded-2xl flex items-center justify-between shadow-xs transition cursor-pointer text-left"
                 >
                   <div>
-                    <div className="font-bold text-red-900 text-xs">Scenario A: Severe Cloudburst & Flash Flood</div>
-                    <div className="text-[9.5px] text-slate-500 font-sans">120 mm/h rain surge, triggers urgent siren & evacuation route</div>
+                    <div className="font-bold text-red-900 text-xs">Scenario A: Extreme Heatwave & Grid Crisis</div>
+                    <div className="text-[9.5px] text-slate-500 font-sans">114°F ambient spike, demand response & paramedic surge</div>
                   </div>
                   <span className="px-2 py-1 bg-red-600 text-white rounded-lg text-[9px] font-bold">Trigger</span>
                 </button>
 
                 <button
                   onClick={() => {
-                    setLiveRiskScore(15);
-                    setLiveRiskLevel('NORMAL RISK INDEX');
-                    setActionWindowHours(12);
-                    setHeroTitle('Atmospheric Baseline Stable');
-                    setHeroDesc('Current conditions: Partly Cloudy at 32°C. Safe for outdoor routines.');
-                    setSurgeDepthM(0.4);
-                    setLiveRainIntensity(0);
+                    setLiveTempF(82);
+                    setLiveTempC(27.8);
+                    setLiveFeelsLikeC(31.2);
+                    setLiveHumidity(92);
+                    setLiveWindSpeedKm(45.0);
+                    setLiveRiskScore(88);
+                    setLiveRiskLevel('CRITICAL RISK INDEX');
+                    setActionWindowHours(2.0);
+                    setHeroTitle('RED CRITICAL: Severe Cloudburst & Flash Flood (+2.8m)');
+                    setHeroDesc('Violent convective rainfall (120 mm/h). Ground floor inundation expected in 2 hrs.');
+                    setSurgeDepthM(2.8);
+                    setLiveRainIntensity(120);
+                    setWeatherCondition('Severe Cloudburst');
+                    setThunderstormProb(95);
+                    setCloudburstProb(90);
+                    setFlashFloodProb(88);
+                    setActiveTab('NOWCAST');
+                  }}
+                  className="w-full p-3 bg-white border border-blue-300 hover:border-blue-600 rounded-2xl flex items-center justify-between shadow-xs transition cursor-pointer text-left"
+                >
+                  <div>
+                    <div className="font-bold text-blue-900 text-xs">Scenario B: Monsoon Cloudburst & Flash Flood</div>
+                    <div className="text-[9.5px] text-slate-500 font-sans">120 mm/h rain surge, triggers evacuation corridor</div>
+                  </div>
+                  <span className="px-2 py-1 bg-blue-700 text-white rounded-lg text-[9px] font-bold">Trigger</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    const defaultZone = monitoredZones[0];
+                    if (defaultZone) applyZoneTelemetry(defaultZone);
+                    else {
+                      setLiveTempF(78);
+                      setLiveTempC(25.5);
+                      setLiveFeelsLikeC(26.0);
+                      setLiveHumidity(45);
+                      setLiveWindSpeedKm(8.0);
+                      setLiveRiskScore(15);
+                      setLiveRiskLevel('NORMAL RISK INDEX');
+                      setActionWindowHours(12);
+                      setHeroTitle('Atmospheric Baseline Stable');
+                      setHeroDesc('Current conditions: Stable weather. Safe for outdoor routines.');
+                      setSurgeDepthM(0.2);
+                      setLiveRainIntensity(0);
+                      setWeatherCondition('Clear & Moderate');
+                    }
                     setActiveTab('NOWCAST');
                   }}
                   className="w-full p-3 bg-white border border-emerald-300 hover:border-emerald-600 rounded-2xl flex items-center justify-between shadow-xs transition cursor-pointer text-left"
                 >
                   <div>
-                    <div className="font-bold text-emerald-900 text-xs">Reset: Restore Baseline Weather</div>
-                    <div className="text-[9.5px] text-slate-500 font-sans">Clears active disaster alerts and resets telemetry</div>
+                    <div className="font-bold text-emerald-900 text-xs">Reset: Restore Baseline Telemetry</div>
+                    <div className="text-[9.5px] text-slate-500 font-sans">Syncs live conditions from NOAA / Open-Meteo feeds</div>
                   </div>
                   <span className="px-2 py-1 bg-emerald-700 text-white rounded-lg text-[9px] font-bold">Reset</span>
                 </button>
