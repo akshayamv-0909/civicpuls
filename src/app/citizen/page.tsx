@@ -1231,11 +1231,11 @@ export default function CitizenLifelinePage() {
           action: 'SUBMIT_SOS',
           ping: {
             type: selectedSOSCategory,
-            zoneId: selectedZoneId,
-            metro: locationName,
-            lat: userCoords.lat,
-            lng: userCoords.lng,
-            address: `${locationName} • Lat ${userCoords.lat.toFixed(4)}, Lng ${userCoords.lng.toFixed(4)}`,
+            zoneId: 'zone-phx-core',
+            metro: 'Phoenix, AZ',
+            lat: 33.4484,
+            lng: -112.0740,
+            address: '1221 N Central Ave, Phoenix, AZ (Downtown Core)',
             notes: `${sosNotes || 'High-priority distress signal transmitted from citizen handset.'} [Persons: ${peopleCount}${hasInfant ? ', Infant Present' : ''}${hasElderly ? ', Senior Present' : ''}${hasMedicalOxygen ? ', Oxygen Required' : ''}]`
           }
         })
@@ -1268,10 +1268,10 @@ export default function CitizenLifelinePage() {
           action: 'SUBMIT_PING',
           ping: {
             type: 'SAFE',
-            zoneId: selectedZoneId,
-            metro: locationName,
-            lat: userCoords.lat,
-            lng: userCoords.lng,
+            zoneId: 'zone-phx-core',
+            metro: 'Phoenix, AZ',
+            lat: 33.4484,
+            lng: -112.0740,
             notes: 'Citizen confirmed safe at residence via mobile portal'
           }
         })

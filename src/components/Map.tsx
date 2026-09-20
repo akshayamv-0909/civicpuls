@@ -19,7 +19,6 @@ interface MapProps {
   simulatedScore?: number | null;
   sosPings?: CitizenPing[];
   onDispatchRescue?: (pingId: string) => void;
-  focusedCoords?: { lat: number; lng: number } | null;
 }
 
 const mapTileConfigs: Record<SatelliteViewType, {
@@ -88,23 +87,24 @@ function getThermalDomeColor(tempF: number | null): string {
 function MapController({ 
   selectedZone, 
   userLocation,
-  focusedCoords 
 }: { 
   selectedZone: LiveZoneTelemetry | undefined;
   userLocation: { lat: number; lng: number } | null;
-  focusedCoords?: { lat: number; lng: number } | null;
 }) {
   const map = useMap();
+
   useEffect(() => {
-    if (focusedCoords) {
-      map.flyTo([focusedCoords.lat, focusedCoords.lng], 13, { duration: 1.5 });
-    } else if (userLocation) {
-      map.flyTo([userLocation.lat, userLocation.lng], 10, { duration: 1.5 });
-    } else if (selectedZone) {
-      // Calibrated zoom level 8.5 gives a full view of the 15-mile metropolitan heat dome footprint
-      map.flyTo([selectedZone.lat, selectedZone.lng], 8.5, { duration: 1.2 });
+    if (selectedZone && typeof selectedZone.lat === 'number' && typeof selectedZone.lng === 'number') {
+      map.flyTo([selectedZone.lat, selectedZone.lng], 12, { duration: 1.2 });
     }
-  }, [selectedZone, userLocation, focusedCoords, map]);
+  }, [selectedZone, map]);
+
+  useEffect(() => {
+    if (userLocation) {
+      map.flyTo([userLocation.lat, userLocation.lng], 13, { duration: 1.2 });
+    }
+  }, [userLocation, map]);
+
   return null;
 }
 
@@ -118,10 +118,11 @@ export default function Map({
   simulatedScore = null,
   sosPings = [],
   onDispatchRescue,
-  focusedCoords
 }: MapProps) {
-  const defaultCenter: [number, number] = [38.50, -96.50];
   const selectedZone = zones.find(z => z.id === selectedZoneId) || zones[0];
+  const defaultCenter: [number, number] = selectedZone 
+    ? [selectedZone.lat, selectedZone.lng] 
+    : [33.4484, -112.0740];
 
   const [activeBaseView, setActiveBaseView] = useState<SatelliteViewType>('gis');
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -240,9 +241,9 @@ export default function Map({
 
       <MapContainer 
         center={defaultCenter} 
-        zoom={4} 
+        zoom={12} 
         minZoom={3} 
-        maxZoom={16}
+        maxZoom={18}
         style={{ height: '100%', width: '100%' }}
       >
         <TileLayer
@@ -261,7 +262,7 @@ export default function Map({
           />
         )}
 
-        <MapController selectedZone={selectedZone} userLocation={userLocation} focusedCoords={focusedCoords} />
+        <MapController selectedZone={selectedZone} userLocation={userLocation} />
 
         {/* 1. METROPOLITAN THERMAL HEAT DOME (HEAT ISLAND PLUME OVERLAY) */}
         {selectedZone && (
