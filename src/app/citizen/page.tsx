@@ -696,31 +696,8 @@ export default function CitizenLifelinePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#2D2421] sm:bg-tactical-grid flex flex-col justify-center items-center sm:py-4 px-0 sm:px-4 text-[#263238] font-sans antialiased selection:bg-[#0f766e] selection:text-white relative">
+    <div className="min-h-screen bg-[#0a0f1d] flex flex-col justify-center items-center py-0 sm:py-6 px-0 sm:px-4 text-[#263238] font-sans antialiased selection:bg-[#0f766e] selection:text-white relative">
       
-      {/* Desktop Companion Top Navigation Bar */}
-      <div 
-        style={{ backgroundColor: '#E5CDC6', borderColor: '#CCA298' }}
-        className="hidden sm:flex items-center justify-between max-w-[440px] w-full mb-2.5 px-3 py-1.5 rounded-xl border text-[#263238] text-xs font-mono shadow-xs"
-      >
-        <div className="flex items-center gap-2">
-          <div 
-            style={{ backgroundColor: '#FFFDF8', borderColor: '#CCA298' }}
-            className="w-5 h-5 border flex items-center justify-center rounded-md shadow-xs"
-          >
-            <Activity className="h-3 w-3 text-[#0f766e]" strokeWidth={2.5} />
-          </div>
-          <span className="font-extrabold text-[#263238] tracking-wider uppercase text-[11px]">CIVICPULSE CITIZEN HUB</span>
-        </div>
-        <a 
-          href="/" 
-          className="px-2.5 py-0.5 rounded-lg bg-[#0f766e] hover:bg-[#0d9488] text-white font-mono font-bold text-[10px] flex items-center gap-1 shadow-xs transition cursor-pointer"
-        >
-          <span>🏛️ EOC Portal</span>
-          <span>↗</span>
-        </a>
-      </div>
-
       {/* Visual Strobe Overlay for Night Signaling */}
       <div 
         id="strobe-overlay" 
@@ -728,7 +705,7 @@ export default function CitizenLifelinePage() {
       />
 
       {/* Clean Mobile Phone Shell (Exact Phone Grid Length & Frame) */}
-      <div className="w-full max-w-[440px] h-[100dvh] sm:h-[890px] sm:max-h-[94vh] sm:my-auto bg-[#F5F1E8] sm:rounded-[40px] sm:border-[8px] sm:border-[#3D332F] sm:shadow-[0_25px_60px_rgba(45,36,33,0.5)] flex flex-col relative overflow-hidden bg-tactical-grid">
+      <div className="w-full max-w-[420px] h-[100dvh] sm:h-[880px] sm:max-h-[94vh] sm:my-auto bg-[#F5F1E8] sm:rounded-[42px] sm:border-[7px] sm:border-slate-800 sm:shadow-[0_25px_60px_rgba(0,0,0,0.65)] flex flex-col relative overflow-hidden bg-tactical-grid">
         
         {/* 1. ANDROID STATUS BAR (Deep Tactical Charcoal) */}
         <div className="h-7 bg-[#2D2421] text-[#E5CDC6] px-4 flex items-center justify-between text-[11px] font-mono font-bold shrink-0 z-50">
