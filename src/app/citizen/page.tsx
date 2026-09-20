@@ -2928,354 +2928,354 @@ export default function CitizenLifelinePage() {
           })}
         </nav>
 
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 🚨 POPUP MODAL: EMERGENCY SIREN ALERT & EOC SOS ACKNOWLEDGEMENT           */}
-      {/* ========================================================================= */}
-      {isSirenModalOpen && sirenEventData && (
-        <div className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in zoom-in duration-200">
-          <div className="bg-[#FFFDF8] rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl border-4 border-[#DC2626] font-sans text-[#263238] relative overflow-hidden">
-            
-            {/* Top Siren Warning Banner */}
-            <div className="bg-[#DC2626] -m-5 mb-3 p-4 text-white text-center flex flex-col items-center justify-center space-y-1">
-              <div className="flex items-center gap-2">
-                <Siren className="w-7 h-7 animate-bounce text-white" />
-                <Volume2 className="w-6 h-6 animate-pulse text-[#FEF3C7]" />
-              </div>
-              <span className="text-[10px] font-mono font-black uppercase tracking-widest text-[#FEF3C7] block">
-                AUDIBLE EMERGENCY SIREN ACTIVE
-              </span>
-              <h3 className="text-sm font-black text-white leading-tight font-mono">
-                {sirenEventData.title}
-              </h3>
-            </div>
-
-            <div className="space-y-2.5 pt-2 text-xs">
-              <div className="p-3 bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl space-y-1.5 font-mono">
-                <div className="flex items-center justify-between text-[9px] font-bold">
-                  <span className="px-2 py-0.5 bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 rounded-full">
-                    ✓ EOC DESK ACKNOWLEDGED
-                  </span>
-                  <span className="text-[#6B6F6B]">{sirenEventData.acknowledgedAt || clockTime}</span>
+        {/* ========================================================================= */}
+        {/* 🚨 POPUP MODAL: EMERGENCY SIREN ALERT & EOC SOS ACKNOWLEDGEMENT           */}
+        {/* ========================================================================= */}
+        {isSirenModalOpen && sirenEventData && (
+          <div className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 animate-in fade-in zoom-in duration-200">
+            <div className="bg-[#FFFDF8] rounded-3xl w-full p-4 space-y-3.5 shadow-2xl border-4 border-[#DC2626] font-sans text-[#263238] relative overflow-hidden">
+              
+              {/* Top Siren Warning Banner */}
+              <div className="bg-[#DC2626] -m-4 mb-3 p-3.5 text-white text-center flex flex-col items-center justify-center space-y-1">
+                <div className="flex items-center gap-2">
+                  <Siren className="w-6 h-6 animate-bounce text-white" />
+                  <Volume2 className="w-5 h-5 animate-pulse text-[#FEF3C7]" />
                 </div>
-
-                <div className="text-[11px] font-bold text-[#263238] pt-1">
-                  👤 Commander: <span className="text-[#0f766e]">{sirenEventData.acknowledgedBy || 'Battalion Chief Marcus Vance • FEMA Task Force 1'}</span>
-                </div>
-
-                {sirenEventData.assignedUnit && (
-                  <div className="text-[11px] font-bold text-[#263238]">
-                    🚑 Assigned Unit: <span className="text-[#DC2626]">{sirenEventData.assignedUnit}</span> (ETA ~{sirenEventData.etaMinutes || 4} min)
-                  </div>
-                )}
-
-                <div className="text-[10.5px] text-[#5A4D49] font-sans leading-relaxed pt-1 border-t border-[#DDD5C7]">
-                  “{sirenEventData.message}”
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between px-2 text-[10px] text-[#6B6F6B] font-mono">
-                <span>📍 GPS: {userCoords.lat.toFixed(4)}, {userCoords.lng.toFixed(4)}</span>
-                <span className="text-[#0f766e] font-bold">● Beacon Locked</span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                stopEmergencySirenSound();
-                setIsSirenModalOpen(false);
-              }}
-              className="w-full py-3 bg-[#DC2626] hover:bg-[#B91C1C] text-white font-mono font-black text-xs rounded-2xl shadow-lg cursor-pointer transition flex items-center justify-center gap-2 active:scale-95"
-            >
-              <Volume2 className="w-4 h-4" />
-              <span>🔕 Mute Siren / Acknowledge Receipt</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 🧠 POPUP MODAL: EXPLAINABLE AI (XAI) MODEL DIAGNOSTICS                    */}
-      {/* ========================================================================= */}
-      {isXaiModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-[#FFFDF8] rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl border border-[#DDD5C7] max-h-[90vh] overflow-y-auto scrollbar-thin font-sans text-[#263238]">
-            <div className="flex items-center justify-between pb-3 border-b border-[#DDD5C7]">
-              <div className="flex items-center space-x-2.5">
-                <div className="w-9 h-9 rounded-xl bg-[#E8F5EF] border border-[#0d9488]/40 text-[#0f766e] flex items-center justify-center font-bold text-sm shadow-sm">
-                  🧠
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-[#263238]">Explainable AI (XAI) Diagnostics</h3>
-                  <p className="text-[10px] text-[#6B6F6B] font-mono">Spatiotemporal Transformer &bull; 2–6h Nowcast</p>
-                </div>
-              </div>
-              <button onClick={() => setIsXaiModalOpen(false)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
-                &times;
-              </button>
-            </div>
-
-            {/* NWP Bypass Banner */}
-            <div className="bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl p-3 space-y-1 text-xs text-[#263238]">
-              <div className="flex items-center justify-between font-bold text-[11px] font-mono">
-                <span className="flex items-center space-x-1 text-[#0f766e]">
-                  <Zap className="w-4 h-4" />
-                  <span>NWP Latency Bypass Engine</span>
+                <span className="text-[9.5px] font-mono font-black uppercase tracking-widest text-[#FEF3C7] block">
+                  AUDIBLE EMERGENCY SIREN ACTIVE
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-[#E8F5EF] text-[#0f766e] text-[9px]">38ms Inference</span>
-              </div>
-              <p className="text-[10.5px] leading-relaxed text-[#5A4D49]">
-                Traditional physics-based NWP models require 6–12 hour simulation runs. CivicPulse deep learning transformers extract multivariate precursors in <b>38 milliseconds</b>, delivering actionable <b>2 to 6-hour lead time</b>.
-              </p>
-            </div>
-
-            {/* 4 Pillars */}
-            <div className="space-y-1.5">
-              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#6B6F6B] font-mono">4 Atmospheric Predictive Pillars</h4>
-              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                <div className="p-2.5 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7]">
-                  <span className="text-[8.5px] font-bold text-[#6B6F6B] uppercase block">💧 Fuel: IWV Moisture</span>
-                  <span className="text-xs font-black text-[#0f766e]">54.2 kg/m²</span>
-                  <span className="text-[8px] text-[#0d9488] block font-bold">+8.4 kg/m² / 2h</span>
-                </div>
-                <div className="p-2.5 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7]">
-                  <span className="text-[8.5px] font-bold text-[#6B6F6B] uppercase block">⚡ Energy: CAPE / CIN</span>
-                  <span className="text-xs font-black text-[#D97706]">2,450 J/kg</span>
-                  <span className="text-[8px] text-[#6B6F6B] block">CIN Cap: 15 J/kg</span>
-                </div>
-                <div className="p-2.5 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7]">
-                  <span className="text-[8.5px] font-bold text-[#6B6F6B] uppercase block">🌪️ Lift: CTT Drop Rate</span>
-                  <span className="text-xs font-black text-[#263238]">-14.2°C / 15m</span>
-                  <span className="text-[8px] text-[#6B6F6B] block">Conv: 14.2 × 10⁻⁵</span>
-                </div>
-                <div className="p-2.5 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7]">
-                  <span className="text-[8.5px] font-bold text-[#6B6F6B] uppercase block">⛰️ Topography: USGS 3DEP LiDAR</span>
-                  <span className="text-xs font-black text-[#0f766e]">28.4° Slope</span>
-                  <span className="text-[8px] text-[#6B6F6B] block">Soil Sat: 86%</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsXaiModalOpen(false)}
-              className="w-full py-2.5 bg-[#0f766e] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer transition font-mono"
-            >
-              Close Model Diagnostics
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 🛰️ POPUP MODAL: SATELLITE-DIRECT EWMS                                     */}
-      {/* ========================================================================= */}
-      {isSatelliteModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-[#FFFDF8] rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl border border-[#DDD5C7] max-h-[90vh] overflow-y-auto scrollbar-thin font-sans text-[#263238]">
-            <div className="flex items-center justify-between pb-3 border-b border-[#DDD5C7]">
-              <div className="flex items-center space-x-2.5">
-                <div className="w-9 h-9 rounded-xl bg-[#2D2421] text-white flex items-center justify-center text-sm shadow">
-                  🛰️
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-[#263238]">NOAA GOES-16/18 Direct Downlink EWMS</h3>
-                  <p className="text-[10px] text-[#6B6F6B] font-mono">Direct L-Band Emergency Telemetry & HRIT/EMWIN Broadcast</p>
-                </div>
-              </div>
-              <button onClick={() => setIsSatelliteModalOpen(false)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
-                &times;
-              </button>
-            </div>
-
-            <div className="p-3 bg-[#2D2421] text-[#00e5a3] rounded-2xl font-mono text-[10px] space-y-1">
-              <div className="text-[#E5CDC6] text-[8.5px] flex justify-between">
-                <span>RAW L-BAND EMWIN PACKET:</span>
-                <span className="text-[#0d9488]">CRC-16 OK (0x9B4F)</span>
-              </div>
-              <div className="tracking-widest">
-                55 AA 04 1E 08 4E 1A 9B 4F 82 11 F0 38 29
-              </div>
-              <div className="text-[9px] text-[#DDD5C7]">
-                Payload: NOAA Multi-Hazard Emergency Alert &bull; Frequency: 1694.1 MHz HRIT
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsSatelliteModalOpen(false)}
-              className="w-full py-2.5 bg-[#0f766e] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold shadow cursor-pointer transition font-mono"
-            >
-              Close Satellite Telemetry
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 🎟️ POPUP MODAL: FREE TRANSIT PASS                                         */}
-      {/* ========================================================================= */}
-      {isTransitPassOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-[#FFFDF8] rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl border border-[#DDD5C7] font-sans text-[#263238] relative">
-            <div className="flex justify-between items-start border-b border-[#DDD5C7] pb-2.5">
-              <div>
-                <span className="text-[9px] font-bold text-[#0f766e] uppercase tracking-wider block font-mono">
-                  MUNICIPAL DISASTER RELIEF
-                </span>
-                <h3 className="text-sm font-bold text-[#263238]">
-                  Emergency Free Transit Pass
+                <h3 className="text-xs sm:text-sm font-black text-white leading-tight font-mono">
+                  {sirenEventData.title}
                 </h3>
               </div>
-              <span className="text-[9px] bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 px-2 py-0.5 rounded-full font-bold font-mono">
-                VALID TODAY
-              </span>
-            </div>
 
-            <div className="bg-[#FAF8F2] border border-[#DDD5C7] p-3.5 rounded-2xl text-center space-y-2">
-              <div className="w-36 h-36 mx-auto bg-white p-2 rounded-xl border border-[#DDD5C7] shadow-inner flex flex-col items-center justify-center">
-                <div className="grid grid-cols-6 gap-1 p-1.5">
-                  {Array.from({ length: 36 }).map((_, i) => (
-                    <div 
-                      key={i} 
-                      className={`w-3.5 h-3.5 rounded-xs ${i % 2 === 0 || i % 5 === 0 ? 'bg-[#263238]' : 'bg-transparent'}`} 
-                    />
-                  ))}
+              <div className="space-y-2.5 pt-1 text-xs">
+                <div className="p-3 bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl space-y-1.5 font-mono">
+                  <div className="flex items-center justify-between text-[9px] font-bold">
+                    <span className="px-2 py-0.5 bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 rounded-full">
+                      ✓ EOC DESK ACKNOWLEDGED
+                    </span>
+                    <span className="text-[#6B6F6B]">{sirenEventData.acknowledgedAt || clockTime}</span>
+                  </div>
+
+                  <div className="text-[10.5px] font-bold text-[#263238] pt-1">
+                    👤 Commander: <span className="text-[#0f766e]">{sirenEventData.acknowledgedBy || 'Battalion Chief Marcus Vance • FEMA Task Force 1'}</span>
+                  </div>
+
+                  {sirenEventData.assignedUnit && (
+                    <div className="text-[10.5px] font-bold text-[#263238]">
+                      🚑 Assigned Unit: <span className="text-[#DC2626]">{sirenEventData.assignedUnit}</span> (ETA ~{sirenEventData.etaMinutes || 4} min)
+                    </div>
+                  )}
+
+                  <div className="text-[10.5px] text-[#5A4D49] font-sans leading-relaxed pt-1 border-t border-[#DDD5C7]">
+                    “{sirenEventData.message}”
+                  </div>
                 </div>
-                <span className="text-[8.5px] text-[#6B6F6B] font-mono mt-0.5">#CIVICPULSE-2026-RELIEF-AUTH</span>
+
+                <div className="flex items-center justify-between px-2 text-[9.5px] text-[#6B6F6B] font-mono">
+                  <span>📍 GPS: {userCoords.lat.toFixed(4)}, {userCoords.lng.toFixed(4)}</span>
+                  <span className="text-[#0f766e] font-bold">● Beacon Locked</span>
+                </div>
               </div>
 
-              <div className="text-[11px] text-[#5A4D49]">
-                Show this pass to any transit operator for zero-fare boarding to verified emergency cooling centers.
-              </div>
+              <button
+                onClick={() => {
+                  stopEmergencySirenSound();
+                  setIsSirenModalOpen(false);
+                }}
+                className="w-full py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white font-mono font-black text-xs rounded-2xl shadow-lg cursor-pointer transition flex items-center justify-center gap-2 active:scale-95"
+              >
+                <Volume2 className="w-4 h-4" />
+                <span>🔕 Mute Siren / Acknowledge Receipt</span>
+              </button>
             </div>
-
-            <button
-              onClick={() => setIsTransitPassOpen(false)}
-              className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl font-bold text-xs shadow cursor-pointer transition font-mono"
-            >
-              Done / Close Pass
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ========================================================================= */}
-      {/* 📶 POPUP MODAL: BLE MESH NETWORK                                          */}
-      {/* ========================================================================= */}
-      {isBleMeshModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-[#FFFDF8] rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl border border-[#DDD5C7] font-sans text-[#263238]">
-            <div className="flex justify-between items-start border-b border-[#DDD5C7] pb-2.5">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-xl bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 flex items-center justify-center font-bold text-sm">
-                  📶
+        {/* ========================================================================= */}
+        {/* 🧠 POPUP MODAL: EXPLAINABLE AI (XAI) MODEL DIAGNOSTICS                    */}
+        {/* ========================================================================= */}
+        {isXaiModalOpen && (
+          <div className="absolute inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 animate-in fade-in zoom-in duration-150">
+            <div className="bg-[#FFFDF8] rounded-3xl w-full p-4 space-y-3 shadow-2xl border border-[#DDD5C7] max-h-[92%] overflow-y-auto scrollbar-thin font-sans text-[#263238]">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[#DDD5C7]">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#E8F5EF] border border-[#0d9488]/40 text-[#0f766e] flex items-center justify-center font-bold text-sm shadow-sm">
+                    🧠
+                  </div>
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-black text-[#263238]">Explainable AI (XAI) Diagnostics</h3>
+                    <p className="text-[9px] text-[#6B6F6B] font-mono">Spatiotemporal Transformer &bull; 2–6h Nowcast</p>
+                  </div>
                 </div>
+                <button onClick={() => setIsXaiModalOpen(false)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
+                  &times;
+                </button>
+              </div>
+
+              {/* NWP Bypass Banner */}
+              <div className="bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl p-2.5 space-y-1 text-xs text-[#263238]">
+                <div className="flex items-center justify-between font-bold text-[10.5px] font-mono">
+                  <span className="flex items-center space-x-1 text-[#0f766e]">
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>NWP Latency Bypass Engine</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-[#E8F5EF] text-[#0f766e] text-[8.5px]">38ms Inference</span>
+                </div>
+                <p className="text-[10px] leading-relaxed text-[#5A4D49]">
+                  CivicPulse deep learning transformers extract multivariate precursors in <b>38ms</b>, delivering actionable <b>2 to 6-hour lead time</b>.
+                </p>
+              </div>
+
+              {/* 4 Pillars */}
+              <div className="space-y-1.5">
+                <h4 className="text-[9.5px] font-black uppercase tracking-wider text-[#6B6F6B] font-mono">4 Atmospheric Predictive Pillars</h4>
+                <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
+                  <div className="p-2 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7]">
+                    <span className="text-[8px] font-bold text-[#6B6F6B] uppercase block">💧 Fuel: IWV Moisture</span>
+                    <span className="text-[11px] font-black text-[#0f766e]">54.2 kg/m²</span>
+                    <span className="text-[7.5px] text-[#0d9488] block font-bold">+8.4 kg/m² / 2h</span>
+                  </div>
+                  <div className="p-2 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7]">
+                    <span className="text-[8px] font-bold text-[#6B6F6B] uppercase block">⚡ Energy: CAPE / CIN</span>
+                    <span className="text-[11px] font-black text-[#D97706]">2,450 J/kg</span>
+                    <span className="text-[7.5px] text-[#6B6F6B] block">CIN Cap: 15 J/kg</span>
+                  </div>
+                  <div className="p-2 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7]">
+                    <span className="text-[8px] font-bold text-[#6B6F6B] uppercase block">🌪️ Lift: CTT Drop Rate</span>
+                    <span className="text-[11px] font-black text-[#263238]">-14.2°C / 15m</span>
+                    <span className="text-[7.5px] text-[#6B6F6B] block">Conv: 14.2 × 10⁻⁵</span>
+                  </div>
+                  <div className="p-2 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7]">
+                    <span className="text-[8px] font-bold text-[#6B6F6B] uppercase block">⛰️ Topography: LiDAR</span>
+                    <span className="text-[11px] font-black text-[#0f766e]">28.4° Slope</span>
+                    <span className="text-[7.5px] text-[#6B6F6B] block">Soil Sat: 86%</span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsXaiModalOpen(false)}
+                className="w-full py-2 bg-[#0f766e] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer transition font-mono"
+              >
+                Close Model Diagnostics
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* 🛰️ POPUP MODAL: SATELLITE-DIRECT EWMS                                     */}
+        {/* ========================================================================= */}
+        {isSatelliteModalOpen && (
+          <div className="absolute inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 animate-in fade-in zoom-in duration-150">
+            <div className="bg-[#FFFDF8] rounded-3xl w-full p-4 space-y-3 shadow-2xl border border-[#DDD5C7] max-h-[92%] overflow-y-auto scrollbar-thin font-sans text-[#263238]">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[#DDD5C7]">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#2D2421] text-white flex items-center justify-center text-sm shadow">
+                    🛰️
+                  </div>
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-black text-[#263238]">NOAA GOES-16/18 Downlink EWMS</h3>
+                    <p className="text-[9px] text-[#6B6F6B] font-mono">L-Band Direct Telemetry & HRIT Broadcast</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsSatelliteModalOpen(false)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
+                  &times;
+                </button>
+              </div>
+
+              <div className="p-3 bg-[#2D2421] text-[#00e5a3] rounded-2xl font-mono text-[9.5px] space-y-1">
+                <div className="text-[#E5CDC6] text-[8px] flex justify-between">
+                  <span>RAW L-BAND EMWIN PACKET:</span>
+                  <span className="text-[#0d9488]">CRC-16 OK (0x9B4F)</span>
+                </div>
+                <div className="tracking-widest">
+                  55 AA 04 1E 08 4E 1A 9B 4F 82 11 F0 38 29
+                </div>
+                <div className="text-[8.5px] text-[#DDD5C7]">
+                  Payload: NOAA Multi-Hazard Emergency Alert &bull; 1694.1 MHz HRIT
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsSatelliteModalOpen(false)}
+                className="w-full py-2 bg-[#0f766e] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold shadow cursor-pointer transition font-mono"
+              >
+                Close Satellite Telemetry
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* 🎟️ POPUP MODAL: FREE TRANSIT PASS                                         */}
+        {/* ========================================================================= */}
+        {isTransitPassOpen && (
+          <div className="absolute inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 animate-in fade-in zoom-in duration-150">
+            <div className="bg-[#FFFDF8] rounded-3xl w-full p-4 space-y-3 shadow-2xl border border-[#DDD5C7] font-sans text-[#263238] relative">
+              <div className="flex justify-between items-start border-b border-[#DDD5C7] pb-2">
                 <div>
-                  <h3 className="text-sm font-bold text-[#263238]">BLE Mesh Zero-Signal Relay</h3>
-                  <p className="text-[9px] text-[#6B6F6B] font-mono">Device-to-Device Multi-Hop Network</p>
+                  <span className="text-[8.5px] font-bold text-[#0f766e] uppercase tracking-wider block font-mono">
+                    MUNICIPAL DISASTER RELIEF
+                  </span>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#263238]">
+                    Emergency Free Transit Pass
+                  </h3>
+                </div>
+                <span className="text-[8.5px] bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 px-2 py-0.5 rounded-full font-bold font-mono">
+                  VALID TODAY
+                </span>
+              </div>
+
+              <div className="bg-[#FAF8F2] border border-[#DDD5C7] p-3 rounded-2xl text-center space-y-2">
+                <div className="w-32 h-32 mx-auto bg-white p-2 rounded-xl border border-[#DDD5C7] shadow-inner flex flex-col items-center justify-center">
+                  <div className="grid grid-cols-6 gap-1 p-1">
+                    {Array.from({ length: 36 }).map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`w-3 h-3 rounded-xs ${i % 2 === 0 || i % 5 === 0 ? 'bg-[#263238]' : 'bg-transparent'}`} 
+                      />
+                    ))}
+                  </div>
+                  <span className="text-[8px] text-[#6B6F6B] font-mono mt-0.5">#CIVICPULSE-RELIEF-AUTH</span>
+                </div>
+
+                <div className="text-[10.5px] text-[#5A4D49]">
+                  Show this pass to transit operators for zero-fare boarding to verified emergency cooling centers.
                 </div>
               </div>
-              <button onClick={() => setIsBleMeshModalOpen(false)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
-                &times;
+
+              <button
+                onClick={() => setIsTransitPassOpen(false)}
+                className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl font-bold text-xs shadow cursor-pointer transition font-mono"
+              >
+                Done / Close Pass
               </button>
             </div>
-
-            <div className="p-3 bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl text-xs space-y-1.5">
-              <div className="font-bold text-[#263238] flex items-center justify-between font-mono">
-                <span>Mesh Peers Nearby:</span>
-                <span className="text-[#0f766e] font-black">6 Nodes Connected</span>
-              </div>
-              <p className="text-[11px] text-[#5A4D49]">
-                When cellular 4G/5G towers collapse, your emergency SOS hops across neighbouring phones via Bluetooth Low Energy (BLE) until reaching an active satellite uplink node.
-              </p>
-            </div>
-
-            <button
-              onClick={() => setIsBleMeshModalOpen(false)}
-              className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl font-bold text-xs shadow cursor-pointer transition font-mono"
-            >
-              Close Mesh Telemetry
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ========================================================================= */}
-      {/* 🌊 POPUP MODAL: USGS HYDROLOGICAL TELEMETRY                                */}
-      {/* ========================================================================= */}
-      {isRiverModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-[#FFFDF8] rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl border border-[#DDD5C7] font-sans text-[#263238]">
-            <div className="flex justify-between items-start border-b border-[#DDD5C7] pb-2.5">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-xl bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 flex items-center justify-center font-bold text-sm">
-                  🌊
+        {/* ========================================================================= */}
+        {/* 📶 POPUP MODAL: BLE MESH NETWORK                                          */}
+        {/* ========================================================================= */}
+        {isBleMeshModalOpen && (
+          <div className="absolute inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 animate-in fade-in zoom-in duration-150">
+            <div className="bg-[#FFFDF8] rounded-3xl w-full p-4 space-y-3 shadow-2xl border border-[#DDD5C7] font-sans text-[#263238]">
+              <div className="flex justify-between items-start border-b border-[#DDD5C7] pb-2">
+                <div className="flex items-center space-x-2">
+                  <div className="w-7 h-7 rounded-xl bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 flex items-center justify-center font-bold text-sm">
+                    📶
+                  </div>
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-bold text-[#263238]">BLE Mesh Zero-Signal Relay</h3>
+                    <p className="text-[8.5px] text-[#6B6F6B] font-mono">Device-to-Device Multi-Hop Network</p>
+                  </div>
                 </div>
+                <button onClick={() => setIsBleMeshModalOpen(false)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
+                  &times;
+                </button>
+              </div>
+
+              <div className="p-3 bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl text-xs space-y-1.5">
+                <div className="font-bold text-[#263238] flex items-center justify-between font-mono">
+                  <span>Mesh Peers Nearby:</span>
+                  <span className="text-[#0f766e] font-black">6 Nodes Connected</span>
+                </div>
+                <p className="text-[10.5px] text-[#5A4D49]">
+                  When cellular 4G/5G towers collapse, your emergency SOS hops across neighbouring phones via BLE until reaching a satellite uplink node.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setIsBleMeshModalOpen(false)}
+                className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl font-bold text-xs shadow cursor-pointer transition font-mono"
+              >
+                Close Mesh Telemetry
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* 🌊 POPUP MODAL: USGS HYDROLOGICAL TELEMETRY                                */}
+        {/* ========================================================================= */}
+        {isRiverModalOpen && (
+          <div className="absolute inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 animate-in fade-in zoom-in duration-150">
+            <div className="bg-[#FFFDF8] rounded-3xl w-full p-4 space-y-3 shadow-2xl border border-[#DDD5C7] font-sans text-[#263238]">
+              <div className="flex justify-between items-start border-b border-[#DDD5C7] pb-2">
+                <div className="flex items-center space-x-2">
+                  <div className="w-7 h-7 rounded-xl bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 flex items-center justify-center font-bold text-sm">
+                    🌊
+                  </div>
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-bold text-[#263238]">USGS Streamflow & River Gauges</h3>
+                    <p className="text-[8.5px] text-[#6B6F6B] font-mono">USGS National Water Information System</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsRiverModalOpen(false)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
+                  &times;
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                <div className="p-2.5 bg-[#FAF8F2] border border-[#DDD5C7] rounded-xl">
+                  <span className="text-[8px] text-[#6B6F6B] uppercase block">River Water Level</span>
+                  <span className="text-xs font-black text-[#0f766e]">2.45 m</span>
+                  <span className="text-[7.5px] text-[#D97706] block font-bold">Warning Level: 3.50m</span>
+                </div>
+                <div className="p-2.5 bg-[#FAF8F2] border border-[#DDD5C7] rounded-xl">
+                  <span className="text-[8px] text-[#6B6F6B] uppercase block">Discharge Flow</span>
+                  <span className="text-xs font-black text-[#263238]">1,840 cfs</span>
+                  <span className="text-[7.5px] text-[#6B6F6B] block">Velocity: 2.1 m/s</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsRiverModalOpen(false)}
+                className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl font-bold text-xs shadow cursor-pointer transition font-mono"
+              >
+                Close Hydrological Data
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* 📅 POPUP MODAL: DAY INSPECTION MODAL                                      */}
+        {/* ========================================================================= */}
+        {selectedDayDetail !== null && (
+          <div className="absolute inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 animate-in fade-in zoom-in duration-150">
+            <div className="bg-[#FFFDF8] rounded-3xl w-full p-4 space-y-3 shadow-2xl border border-[#DDD5C7] font-sans text-[#263238]">
+              <div className="flex justify-between items-start border-b border-[#DDD5C7] pb-2">
                 <div>
-                  <h3 className="text-sm font-bold text-[#263238]">USGS Streamflow & River Gauges</h3>
-                  <p className="text-[9px] text-[#6B6F6B] font-mono">USGS National Water Information System (NWIS)</p>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#263238]">7-Day Meteorological Outlook</h3>
+                  <p className="text-[8.5px] text-[#6B6F6B] font-mono">Detailed Day Forecast & Hazards</p>
                 </div>
+                <button onClick={() => setSelectedDayDetail(null)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
+                  &times;
+                </button>
               </div>
-              <button onClick={() => setIsRiverModalOpen(false)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
-                &times;
+
+              <div className="p-3 bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl text-xs space-y-1.5">
+                <div className="font-bold text-[#263238] font-mono text-[11px]">Precautionary Recommendation:</div>
+                <p className="text-[10.5px] text-[#5A4D49]">
+                  Maintain charged battery reserves, locate verified cooling shelters, and monitor official CivicPulse disaster advisories.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setSelectedDayDetail(null)}
+                className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl font-bold text-xs shadow cursor-pointer transition font-mono"
+              >
+                Close Details
               </button>
             </div>
-
-            <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-              <div className="p-2.5 bg-[#FAF8F2] border border-[#DDD5C7] rounded-xl">
-                <span className="text-[8.5px] text-[#6B6F6B] uppercase block">River Water Level</span>
-                <span className="text-sm font-black text-[#0f766e]">2.45 m</span>
-                <span className="text-[8px] text-[#D97706] block font-bold">Warning Level: 3.50m</span>
-              </div>
-              <div className="p-2.5 bg-[#FAF8F2] border border-[#DDD5C7] rounded-xl">
-                <span className="text-[8.5px] text-[#6B6F6B] uppercase block">Discharge Flow</span>
-                <span className="text-sm font-black text-[#263238]">1,840 cfs</span>
-                <span className="text-[8px] text-[#6B6F6B] block">Velocity: 2.1 m/s</span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsRiverModalOpen(false)}
-              className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl font-bold text-xs shadow cursor-pointer transition font-mono"
-            >
-              Close Hydrological Data
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ========================================================================= */}
-      {/* 📅 POPUP MODAL: DAY INSPECTION MODAL                                      */}
-      {/* ========================================================================= */}
-      {selectedDayDetail !== null && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-[#FFFDF8] rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl border border-[#DDD5C7] font-sans text-[#263238]">
-            <div className="flex justify-between items-start border-b border-[#DDD5C7] pb-2.5">
-              <div>
-                <h3 className="text-sm font-bold text-[#263238]">7-Day Meteorological Outlook</h3>
-                <p className="text-[9px] text-[#6B6F6B] font-mono">Detailed Day Forecast & Hazards</p>
-              </div>
-              <button onClick={() => setSelectedDayDetail(null)} className="w-7 h-7 rounded-full bg-[#FAF8F2] border border-[#DDD5C7] text-[#263238] hover:bg-[#E5CDC6] flex items-center justify-center text-sm font-bold cursor-pointer">
-                &times;
-              </button>
-            </div>
-
-            <div className="p-3 bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl text-xs space-y-1.5">
-              <div className="font-bold text-[#263238] font-mono">Precautionary Recommendation:</div>
-              <p className="text-[11px] text-[#5A4D49]">
-                Maintain charged battery reserves, locate verified cooling shelters, and monitor official CivicPulse disaster advisories.
-              </p>
-            </div>
-
-            <button
-              onClick={() => setSelectedDayDetail(null)}
-              className="w-full bg-[#0f766e] hover:bg-[#0d9488] text-white py-2 rounded-xl font-bold text-xs shadow cursor-pointer transition font-mono"
-            >
-              Close Details
-            </button>
-          </div>
-        </div>
-      )}
+      </div>
 
     </div>
   );
