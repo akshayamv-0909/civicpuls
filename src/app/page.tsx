@@ -154,7 +154,6 @@ export default function Dashboard() {
   const [citizenPings, setCitizenPings] = useState<CitizenPing[]>([]);
   const [urgentSosList, setUrgentSosList] = useState<CitizenPing[]>([]);
   const [isDispatchingRescue, setIsDispatchingRescue] = useState<boolean>(false);
-  const [focusedSosCoords, setFocusedSosCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   const fetchCitizenSync = useCallback(async () => {
     try {
@@ -904,54 +903,17 @@ export default function Dashboard() {
           <div className="flex flex-1 overflow-hidden">
             {/* Map Container */}
             <div className="flex-1 relative bg-[#080d17] z-0">
-              {/* Top Floating SOS Emergency Beacon Broadcast Alert */}
-              {urgentSosList.length > 0 && (
-                <div className="absolute top-3 left-4 right-4 z-[999] bg-[#DC2626]/95 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl shadow-2xl border-2 border-white/40 flex flex-wrap items-center justify-between font-mono gap-2 animate-in fade-in slide-in-from-top-4 duration-300">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-3.5 h-3.5 rounded-full bg-white animate-ping shrink-0" />
-                    <div className="truncate text-xs">
-                      <span className="font-black text-white">🚨 ACTIVE CITIZEN DISTRESS BEACON: </span>
-                      <span className="font-bold text-yellow-300">{urgentSosList[0].categoryName}</span>
-                      <span className="text-[11px] text-white/90 ml-1.5 font-sans">({urgentSosList[0].address || urgentSosList[0].metro})</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={() => {
-                        setSelectedZoneId(urgentSosList[0].zoneId);
-                        setFocusedSosCoords({ lat: urgentSosList[0].lat, lng: urgentSosList[0].lng });
-                      }}
-                      className="px-3 py-1 bg-white hover:bg-slate-100 text-[#DC2626] rounded-xl text-xs font-black shadow-sm cursor-pointer transition active:scale-95 flex items-center gap-1"
-                    >
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span>Locate on Map</span>
-                    </button>
-                    <button
-                      onClick={() => handleDispatchRescueTeam(urgentSosList[0].id)}
-                      className="px-3 py-1 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl text-xs font-black shadow-sm cursor-pointer transition active:scale-95 flex items-center gap-1"
-                    >
-                      <Siren className="w-3.5 h-3.5" />
-                      <span>Dispatch EMS</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
               <HeatMap 
                 key="urban-heatmap-view"
                 zones={liveZones}
                 selectedZoneId={selectedZoneId}
-                onZoneSelect={(id) => {
-                  setSelectedZoneId(id);
-                  setFocusedSosCoords(null);
-                }}
+                onZoneSelect={(id) => setSelectedZoneId(id)}
                 coolingBusesDeployed={tacticalPlan.coolingBuses}
                 generatorsDeployed={tacticalPlan.gridGenerators}
                 paramedicSurgeDeployed={tacticalPlan.paramedicSurge}
                 simulatedScore={isTacticalActive ? simulatedHeatRiskScore : null}
                 sosPings={citizenPings}
                 onDispatchRescue={handleDispatchRescueTeam}
-                focusedCoords={focusedSosCoords}
               />
 
               {/* Floating Legend */}
@@ -1738,7 +1700,6 @@ export default function Dashboard() {
                               type="button"
                               onClick={() => {
                                 setSelectedZoneId(p.zoneId);
-                                setFocusedSosCoords({ lat: p.lat, lng: p.lng });
                               }}
                               className="font-bold hover:underline cursor-pointer flex items-center gap-1 text-left"
                               title="Click to view & focus on map"
@@ -1767,7 +1728,6 @@ export default function Dashboard() {
                                 <button
                                   onClick={() => {
                                     setSelectedZoneId(p.zoneId);
-                                    setFocusedSosCoords({ lat: p.lat, lng: p.lng });
                                   }}
                                   className="bg-[#E0F2FE] hover:bg-[#BAE6FD] text-[#0369A1] px-2 py-1 rounded-lg font-bold text-[10px] border border-[#7DD3FC] cursor-pointer inline-flex items-center gap-1 shadow-xs active:scale-95"
                                   title="Focus map on citizen location"
@@ -1799,7 +1759,6 @@ export default function Dashboard() {
                                 <button
                                   onClick={() => {
                                     setSelectedZoneId(p.zoneId);
-                                    setFocusedSosCoords({ lat: p.lat, lng: p.lng });
                                   }}
                                   className="bg-[#E0F2FE] hover:bg-[#BAE6FD] text-[#0369A1] px-2 py-0.5 rounded-lg font-bold text-[9.5px] border border-[#7DD3FC] cursor-pointer inline-flex items-center gap-1 shadow-xs active:scale-95"
                                   title="Focus map on citizen location"
