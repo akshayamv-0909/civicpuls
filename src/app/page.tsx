@@ -701,22 +701,11 @@ export default function Dashboard() {
           <button
             onClick={handleBroadcastEmergencySiren}
             style={{ backgroundColor: '#DC2626', borderColor: '#991B1B', color: '#FFFFFF' }}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full border font-mono text-[10.5px] font-extrabold shadow-sm hover:brightness-110 active:scale-95 transition-all cursor-pointer whitespace-nowrap shrink-0 animate-pulse"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full border font-mono text-[10.5px] font-extrabold shadow-sm hover:brightness-110 active:scale-95 transition-all cursor-pointer whitespace-nowrap shrink-0"
             title="Broadcast Physical Emergency Siren Alert to all connected citizen handsets (/citizen)"
           >
             <Siren className="w-3.5 h-3.5 text-white" />
             <span>📢 Siren Alert</span>
-          </button>
-
-          {/* 🚨 Citizen Alert Button (Pitch Red) */}
-          <button
-            onClick={() => setIsCitizenAlertModalOpen(true)}
-            style={{ backgroundColor: '#0f766e', borderColor: '#0d9488', color: '#FFFFFF' }}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full border font-mono text-[10.5px] font-extrabold shadow-sm hover:brightness-110 transition-all cursor-pointer whitespace-nowrap shrink-0"
-            title="Launch Citizen Phone Alert SMS, QR & WEA Simulator"
-          >
-            <Smartphone className="w-3 h-3 text-white" />
-            <span>Citizen Alert</span>
           </button>
 
           {/* ⚡ 90-Sec Demo Button */}
