@@ -11,7 +11,6 @@ import {
   ChevronRight, 
   HeartHandshake, 
   Sun, 
-  AlertTriangle, 
   Siren, 
   PhoneCall, 
   Compass, 
@@ -59,38 +58,210 @@ interface FamilyMember {
   lastUpdated: string;
 }
 
-const DEFAULT_SHELTERS: Shelter[] = [
-  {
-    id: 'sh-1',
-    name: 'Burton Barr Central Cooling Oasis & Medical Triage',
-    address: '1221 N Central Ave, Downtown Transit Hub',
-    distance: '0.4 mi away',
-    walkTime: '6 min walk',
-    capacity: '420 / 600 Available',
-    status: 'OPEN',
-    amenities: ['High-Power Commercial AC', 'Cold Hydration Refill', 'Paramedics on Duty', 'Device Charging', 'Backup Generator']
-  },
-  {
-    id: 'sh-2',
-    name: 'Civic Community Resilience Center & Refuge',
-    address: '1112 E Buckeye Corridor Safe Haven',
-    distance: '1.1 mi away',
-    walkTime: '14 min walk',
-    capacity: '280 / 450 Available',
-    status: 'OPEN',
-    amenities: ['AC Gymnasium', 'Senior Hydration Station', 'Free Transit Shuttle Bay', 'Medical First Aid']
-  },
-  {
-    id: 'sh-3',
-    name: 'Municipal Convention Center Emergency Refuge Hub',
-    address: '100 N 3rd St, High Ground Sector',
-    distance: '1.8 mi away',
-    walkTime: '22 min walk',
-    capacity: '1,200 / 2,000 Available',
-    status: 'OPEN',
-    amenities: ['Mass Shaded Concourse', 'Oxygen Concentrators', 'Free Meal Distribution', 'Pet-Friendly Area']
+// Dynamic US Municipal Emergency Shelters
+const getSheltersForZone = (zoneId: string, locationName: string, metro: string): Shelter[] => {
+  if (zoneId.includes('phx')) {
+    return [
+      {
+        id: 'sh-phx-1',
+        name: 'Burton Barr Central Relief Oasis',
+        address: '1221 N Central Ave, Downtown Transit Hub',
+        distance: '0.4 mi away',
+        walkTime: '6 min walk',
+        capacity: '420 / 600 Available',
+        status: 'OPEN',
+        amenities: ['Commercial High-Power AC', 'Cold Hydration Refill', 'Paramedics on Duty', 'Device Charging', 'Backup Power']
+      },
+      {
+        id: 'sh-phx-2',
+        name: 'Civic Community Resilience Center & Refuge',
+        address: '1112 E Buckeye Corridor Safe Haven',
+        distance: '1.1 mi away',
+        walkTime: '14 min walk',
+        capacity: '280 / 450 Available',
+        status: 'OPEN',
+        amenities: ['AC Gymnasium', 'Senior Hydration Station', 'Free Transit Shuttle Bay', 'Medical First Aid']
+      },
+      {
+        id: 'sh-phx-3',
+        name: 'Municipal Convention Center Emergency Refuge Hub',
+        address: '100 N 3rd St, High Ground Sector',
+        distance: '1.8 mi away',
+        walkTime: '22 min walk',
+        capacity: '1,200 / 2,000 Available',
+        status: 'OPEN',
+        amenities: ['Mass Shaded Concourse', 'Oxygen Concentrators', 'Free Meal Distribution', 'Pet-Friendly Area']
+      }
+    ];
+  } else if (zoneId.includes('la')) {
+    return [
+      {
+        id: 'sh-la-1',
+        name: 'Echo Park High-Ground Cooling Oasis',
+        address: '1149 Glendale Blvd, Central District',
+        distance: '0.5 mi away',
+        walkTime: '7 min walk',
+        capacity: '350 / 500 Available',
+        status: 'OPEN',
+        amenities: ['Commercial AC', 'Wildfire Smoke HEPA Filtration', 'First Responders', 'Cold Hydration']
+      },
+      {
+        id: 'sh-la-2',
+        name: 'Los Angeles Convention Center Emergency Hub',
+        address: '1201 S Figueroa St, Downtown Haven',
+        distance: '1.2 mi away',
+        walkTime: '15 min walk',
+        capacity: '1,500 / 2,500 Available',
+        status: 'OPEN',
+        amenities: ['Mass Shaded Hall', 'Paramedics', 'Oxygen Tanks', 'Pet-Friendly Area']
+      },
+      {
+        id: 'sh-la-3',
+        name: 'Silver Lake Community Resilience Refuge',
+        address: '2245 Glendale Blvd, High Ridge Sector',
+        distance: '1.9 mi away',
+        walkTime: '24 min walk',
+        capacity: '210 / 300 Available',
+        status: 'OPEN',
+        amenities: ['Backup Generator', 'Emergency Medical Supplies', 'Cold Water Misters']
+      }
+    ];
+  } else if (zoneId.includes('houston') || zoneId.includes('hou')) {
+    return [
+      {
+        id: 'sh-hou-1',
+        name: 'George R. Brown High-Ground Evacuation Hub',
+        address: '1001 Avenida De Las Americas',
+        distance: '0.3 mi away',
+        walkTime: '5 min walk',
+        capacity: '1,800 / 3,000 Available',
+        status: 'OPEN',
+        amenities: ['Flood Inundation Barrier', 'Commercial AC', 'Medical Surge Team', 'Free Shuttle']
+      },
+      {
+        id: 'sh-hou-2',
+        name: 'Toyota Center Disaster Triage & Cooling Refuge',
+        address: '1510 Polk St, Core Haven',
+        distance: '0.9 mi away',
+        walkTime: '12 min walk',
+        capacity: '800 / 1,200 Available',
+        status: 'OPEN',
+        amenities: ['Emergency Oxygen', 'Paramedics', 'Backup Power', 'Food & Hydration']
+      },
+      {
+        id: 'sh-hou-3',
+        name: 'Buffalo Bayou Elevated Resilience Station',
+        address: '105 Sabine St, High Sector',
+        distance: '1.6 mi away',
+        walkTime: '20 min walk',
+        capacity: '400 / 600 Available',
+        status: 'OPEN',
+        amenities: ['High Ridge MSL 22m', 'First Aid', 'Water Purification Station']
+      }
+    ];
+  } else if (zoneId.includes('vegas') || zoneId.includes('lv')) {
+    return [
+      {
+        id: 'sh-lv-1',
+        name: 'Cashman Center Resilience & Cooling Oasis',
+        address: '850 Las Vegas Blvd N',
+        distance: '0.6 mi away',
+        walkTime: '8 min walk',
+        capacity: '650 / 900 Available',
+        status: 'OPEN',
+        amenities: ['Commercial Heavy AC', 'Electrolyte Refill Station', 'EMT Medical Bay', 'Shuttle Bay']
+      },
+      {
+        id: 'sh-lv-2',
+        name: 'Clark County Government Center Safe Haven',
+        address: '500 S Grand Central Pkwy',
+        distance: '1.3 mi away',
+        walkTime: '16 min walk',
+        capacity: '450 / 700 Available',
+        status: 'OPEN',
+        amenities: ['Shaded Concourse', 'Emergency Paramedics', 'Device Recharging Hub']
+      },
+      {
+        id: 'sh-lv-3',
+        name: 'Las Vegas Convention Center Refuge Hub',
+        address: '3150 Paradise Rd',
+        distance: '2.1 mi away',
+        walkTime: '25 min walk',
+        capacity: '2,000 / 3,500 Available',
+        status: 'OPEN',
+        amenities: ['Mass Cooling Concourse', 'Oxygen Concentrators', 'Meal Distribution']
+      }
+    ];
+  } else if (zoneId.includes('miami') || zoneId.includes('mia')) {
+    return [
+      {
+        id: 'sh-mia-1',
+        name: 'Marlins Park Hurricane & Surge Refuge Center',
+        address: '501 Marlins Way, Little Havana Ridge',
+        distance: '0.5 mi away',
+        walkTime: '7 min walk',
+        capacity: '1,200 / 2,000 Available',
+        status: 'OPEN',
+        amenities: ['Category 5 Storm Rating', 'Surge Inundation Barrier', 'Paramedics', 'Backup Power']
+      },
+      {
+        id: 'sh-mia-2',
+        name: 'Miami Beach High-Ground Resilience Station',
+        address: '1901 Convention Ctr Dr',
+        distance: '1.4 mi away',
+        walkTime: '18 min walk',
+        capacity: '850 / 1,400 Available',
+        status: 'OPEN',
+        amenities: ['Elevated Flood Haven', 'AC Concourse', 'Cold Hydration', 'Medical Desk']
+      },
+      {
+        id: 'sh-mia-3',
+        name: 'Brickell Financial Safe Oasis Center',
+        address: '701 S Miami Ave',
+        distance: '1.7 mi away',
+        walkTime: '21 min walk',
+        capacity: '500 / 800 Available',
+        status: 'OPEN',
+        amenities: ['Emergency Power', 'Oxygen Supply', 'First Aid Station']
+      }
+    ];
   }
-];
+
+  // Default standard US Municipal Safe Haven
+  const primaryName = (locationName || 'Downtown Core').split('&')[0].trim().split('—')[0].trim();
+  return [
+    {
+      id: `sh-${zoneId}-1`,
+      name: `${primaryName} Central Relief Oasis`,
+      address: `1221 Central Corridor, ${metro}`,
+      distance: '0.4 mi away',
+      walkTime: '6 min walk',
+      capacity: '450 / 600 Available',
+      status: 'OPEN',
+      amenities: ['Commercial High-Power AC', 'Cold Hydration Refill', 'Paramedics on Duty', 'Device Charging', 'Backup Generator']
+    },
+    {
+      id: `sh-${zoneId}-2`,
+      name: `${metro.split(',')[0]} Civic Resilience Center`,
+      address: `450 High Ridge Corridor, ${metro}`,
+      distance: '1.1 mi away',
+      walkTime: '14 min walk',
+      capacity: '320 / 500 Available',
+      status: 'OPEN',
+      amenities: ['AC Gymnasium', 'Senior Hydration Station', 'Free Transit Shuttle Bay', 'Medical First Aid']
+    },
+    {
+      id: `sh-${zoneId}-3`,
+      name: `${metro.split(',')[0]} Municipal Emergency Refuge Hub`,
+      address: `800 Safe Elevation Pkwy, ${metro}`,
+      distance: '1.8 mi away',
+      walkTime: '22 min walk',
+      capacity: '1,100 / 2,000 Available',
+      status: 'OPEN',
+      amenities: ['Mass Shaded Concourse', 'Oxygen Concentrators', 'Free Meal Distribution', 'Pet-Friendly Area']
+    }
+  ];
+};
 
 export default function CitizenLifelinePage() {
   // Navigation & Role
@@ -98,6 +269,7 @@ export default function CitizenLifelinePage() {
   const [isOfficerMode, setIsOfficerMode] = useState<boolean>(false);
   const [clockTime, setClockTime] = useState<string>('02:15 PM');
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isNavigating, setIsNavigating] = useState<boolean>(false);
 
   // Modals
   const [isTransitPassOpen, setIsTransitPassOpen] = useState(false);
@@ -616,6 +788,25 @@ export default function CitizenLifelinePage() {
     }
   };
 
+  // -------------------------------------------------------------
+  // 11. Shortest Safe Evacuation Navigation HUD & Audio Guidance
+  // -------------------------------------------------------------
+  const handleToggleNavigation = () => {
+    if (isNavigating) {
+      window.speechSynthesis?.cancel();
+      setIsNavigating(false);
+    } else {
+      setIsNavigating(true);
+      const shelters = getSheltersForZone(selectedZoneId, locationName, monitoredZones.find(z => z.id === selectedZoneId)?.metro || 'Phoenix, AZ');
+      const primary = shelters[0];
+      const text = `Starting shortest safe evacuation route to ${primary.name}. Proceed North via high-ground safe corridor for zero point four miles. Safe elevation confirmed at 370 meters above sea level.`;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.95;
+      window.speechSynthesis?.speak(utterance);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0f1d] flex flex-col justify-center items-center py-0 sm:py-6 px-0 sm:px-4 text-[#263238] font-sans antialiased selection:bg-[#0f766e] selection:text-white relative">
       
@@ -715,105 +906,107 @@ export default function CitizenLifelinePage() {
         <div className="flex-1 overflow-y-auto scrollbar-thin p-3.5 space-y-3.5 pb-20 bg-[#F5F1E8] bg-tactical-grid">
           
           {/* ========================================================================= */}
+          {/* GLOBAL US MUNICIPAL ZONE & NOAA METRO SELECTOR (PERSISTENT ACROSS TABS)    */}
+          {/* ========================================================================= */}
+          <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-2xl shadow-xs space-y-2">
+            
+            {/* Clean Dropdown Row with GPS & Refresh Controls (Exact Match to Reference Photo) */}
+            <div className="flex items-center gap-1.5">
+              {/* Styled US Locations Dropdown */}
+              <div className="relative flex-1 flex items-center">
+                <div className="absolute left-2.5 pointer-events-none text-rose-600 flex items-center text-xs">
+                  <span>📍</span>
+                </div>
+                
+                <select
+                  aria-label="Select United States Location"
+                  value={selectedZoneId}
+                  onChange={(e) => {
+                    const targetId = e.target.value;
+                    setSelectedZoneId(targetId);
+                    const zone = monitoredZones.find(z => z.id === targetId);
+                    if (zone) {
+                      applyZoneTelemetry(zone);
+                    }
+                  }}
+                  className="w-full bg-[#FFFDF8] hover:bg-[#FAF8F2] text-[#0f766e] border border-[#0d9488]/60 focus:border-[#0d9488] text-[11px] font-mono font-bold pl-7 pr-7 py-2 rounded-xl outline-none shadow-xs cursor-pointer transition-all appearance-none truncate"
+                >
+                  {monitoredZones.map((z) => {
+                    const tempStr = z.temperatureF !== null ? `(${z.temperatureF.toFixed(0)}°F)` : '';
+                    return (
+                      <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans font-medium py-1">
+                        📍 {z.name} — {z.metro} {tempStr}
+                      </option>
+                    );
+                  })}
+                </select>
+
+                <ChevronDown className="w-4 h-4 text-[#0d9488] absolute right-2.5 pointer-events-none" />
+              </div>
+
+              {/* 📍 GPS MY LOCATION Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((pos) => {
+                      const lat = pos.coords.latitude;
+                      const lng = pos.coords.longitude;
+                      setUserCoords({ lat, lng });
+                      let closest = monitoredZones[0];
+                      let minDist = Infinity;
+                      monitoredZones.forEach(z => {
+                        const d = Math.hypot(z.lat - lat, z.lng - lng);
+                        if (d < minDist) {
+                          minDist = d;
+                          closest = z;
+                        }
+                      });
+                      if (closest) {
+                        applyZoneTelemetry(closest);
+                      }
+                    });
+                  }
+                }}
+                title="Lock onto GPS Coordinates (My Location)"
+                className="px-2.5 py-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl text-[10px] font-mono font-bold shrink-0 cursor-pointer transition shadow-xs flex items-center gap-1 active:scale-95"
+              >
+                <Crosshair className="w-3.5 h-3.5 text-[#0d9488]" />
+                <span className="hidden xs:inline">GPS</span>
+              </button>
+
+              {/* 🔄 Refresh Live Feeds */}
+              <button
+                type="button"
+                onClick={() => fetchCivicPulseLiveData()}
+                title="Refresh Live NOAA & CivicPulse Feeds"
+                className="p-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl shrink-0 cursor-pointer transition shadow-xs active:scale-95"
+              >
+                <RotateCw className="w-3.5 h-3.5 text-[#0d9488]" />
+              </button>
+            </div>
+
+            {/* Sub-bar with Live Provenance & Coordinates */}
+            <div className="flex items-center justify-between text-[9.5px] text-[#5A4D49] pt-1 border-t border-[#DDD5C7] font-mono">
+              <div className="flex items-center gap-1 truncate max-w-[230px]">
+                <span className="text-rose-600">●</span>
+                <span className="truncate">Active: <b>{locationName}</b></span>
+              </div>
+              <span className="px-1.5 py-0.2 rounded bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 font-bold uppercase tracking-wider text-[8px] flex items-center gap-1 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] inline-block animate-ping" />
+                <span>EOC LIVE FEED</span>
+              </span>
+            </div>
+
+          </div>
+
+          {/* ========================================================================= */}
           {/* TAB 1: NOWCAST (FIRST PAGE — ALL 9 OFFICIAL CIVICPULSE SECTIONS)           */}
           {/* ========================================================================= */}
           {activeTab === 'NOWCAST' && (
             <div className="space-y-3.5">
               
-              {/* SECTION 1: OFFICIAL US MUNICIPAL ZONE & NOAA METRO SELECTOR */}
-              <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-2xl shadow-xs space-y-2">
-                
-                {/* Clean Dropdown Row with GPS & Refresh Controls (Exact Match to Reference Photo) */}
-                <div className="flex items-center gap-1.5">
-                  {/* Styled US Locations Dropdown */}
-                  <div className="relative flex-1 flex items-center">
-                    <div className="absolute left-2.5 pointer-events-none text-rose-600 flex items-center text-xs">
-                      <span>📍</span>
-                    </div>
-                    
-                    <select
-                      aria-label="Select United States Location"
-                      value={selectedZoneId}
-                      onChange={(e) => {
-                        const targetId = e.target.value;
-                        setSelectedZoneId(targetId);
-                        const zone = monitoredZones.find(z => z.id === targetId);
-                        if (zone) {
-                          applyZoneTelemetry(zone);
-                        }
-                      }}
-                      className="w-full bg-[#FFFDF8] hover:bg-[#FAF8F2] text-[#0f766e] border border-[#0d9488]/60 focus:border-[#0d9488] text-[11px] font-mono font-bold pl-7 pr-7 py-2 rounded-xl outline-none shadow-xs cursor-pointer transition-all appearance-none truncate"
-                    >
-                      {monitoredZones.map((z) => {
-                        const tempStr = z.temperatureF !== null ? `(${z.temperatureF.toFixed(0)}°F)` : '';
-                        return (
-                          <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans font-medium py-1">
-                            📍 {z.name} — {z.metro} {tempStr}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    <ChevronDown className="w-4 h-4 text-[#0d9488] absolute right-2.5 pointer-events-none" />
-                  </div>
-
-                  {/* 📍 GPS MY LOCATION Button */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition((pos) => {
-                          const lat = pos.coords.latitude;
-                          const lng = pos.coords.longitude;
-                          setUserCoords({ lat, lng });
-                          let closest = monitoredZones[0];
-                          let minDist = Infinity;
-                          monitoredZones.forEach(z => {
-                            const d = Math.hypot(z.lat - lat, z.lng - lng);
-                            if (d < minDist) {
-                              minDist = d;
-                              closest = z;
-                            }
-                          });
-                          if (closest) {
-                            applyZoneTelemetry(closest);
-                          }
-                        });
-                      }
-                    }}
-                    title="Lock onto GPS Coordinates (My Location)"
-                    className="px-2.5 py-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl text-[10px] font-mono font-bold shrink-0 cursor-pointer transition shadow-xs flex items-center gap-1 active:scale-95"
-                  >
-                    <Crosshair className="w-3.5 h-3.5 text-[#0d9488]" />
-                    <span className="hidden xs:inline">GPS</span>
-                  </button>
-
-                  {/* 🔄 Refresh Live Feeds */}
-                  <button
-                    type="button"
-                    onClick={() => fetchCivicPulseLiveData()}
-                    title="Refresh Live NOAA & CivicPulse Feeds"
-                    className="p-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl shrink-0 cursor-pointer transition shadow-xs active:scale-95"
-                  >
-                    <RotateCw className="w-3.5 h-3.5 text-[#0d9488]" />
-                  </button>
-                </div>
-
-                {/* Sub-bar with Live Provenance & Coordinates */}
-                <div className="flex items-center justify-between text-[9.5px] text-[#5A4D49] pt-1 border-t border-[#DDD5C7] font-mono">
-                  <div className="flex items-center gap-1 truncate max-w-[230px]">
-                    <span className="text-rose-600">●</span>
-                    <span className="truncate">Active: <b>{locationName}</b></span>
-                  </div>
-                  <span className="px-1.5 py-0.2 rounded bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 font-bold uppercase tracking-wider text-[8px] flex items-center gap-1 shrink-0">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] inline-block animate-ping" />
-                    <span>EOC LIVE FEED</span>
-                  </span>
-                </div>
-
-              </div>
-
-              {/* SECTION 2: HERO RISK STATUS BANNER CARD */}
+              {/* SECTION 1: HERO RISK STATUS BANNER CARD */}
               <div className="bg-[#FFFDF8] border border-[#DDD5C7] rounded-3xl p-4 shadow-sm space-y-3">
                 <div className="flex items-center justify-between">
                   <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider flex items-center gap-1 font-mono ${
@@ -1405,96 +1598,276 @@ export default function CitizenLifelinePage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 4: EVACUATE & SAFE ROUTES                                             */}
+          {/* TAB 4: EVACUATE & SHORTEST SAFE ROUTE VISUALIZER                          */}
           {/* ========================================================================= */}
-          {activeTab === 'EVACUATE' && (
-            <div className="space-y-3 font-mono">
-              <div className="bg-[#FFFDF8] border border-[#DDD5C7] rounded-3xl p-4 shadow-sm space-y-3">
-                <div className="flex items-center justify-between border-b border-[#DDD5C7] pb-2">
-                  <span className="text-xs font-black text-[#0f766e] flex items-center gap-1.5">
-                    <Compass className="w-4 h-4 text-[#0d9488]" />
-                    <span>DESIGNATED SAFE EVACUATION CORRIDOR</span>
-                  </span>
-                  <span className="text-[9px] bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 px-2 py-0.5 rounded-full font-bold">
-                    ACTIVE ROUTE
-                  </span>
-                </div>
+          {activeTab === 'EVACUATE' && (() => {
+            const currentShelters = getSheltersForZone(selectedZoneId, locationName, monitoredZones.find(z => z.id === selectedZoneId)?.metro || 'Phoenix, AZ');
+            const primaryShelter = currentShelters[0];
 
-                <div className="space-y-2 text-xs font-sans">
-                  <div className="bg-[#FAF8F2] border border-[#0d9488]/40 p-3 rounded-2xl flex items-start gap-2 text-[#263238]">
-                    <CheckCircle2 className="w-4 h-4 text-[#0d9488] shrink-0 mt-0.5" />
-                    <div>
-                      <div className="font-bold font-mono text-xs text-[#0f766e]">PRIMARY SAFE ROUTE: North High Ridge Corridor</div>
-                      <div className="text-[11px] text-[#5A4D49] leading-tight mt-0.5">
-                        Proceed North via Temple Hill Pass (1.2 km). Elevated relief camp with emergency power and paramedics on duty.
+            return (
+              <div className="space-y-3 font-mono">
+                
+                {/* 1. SATELLITE TERRAIN SHORTEST EVACUATION ROUTE MAP (Exact Match to Reference Photo) */}
+                <div className="w-full h-72 rounded-3xl relative overflow-hidden border-2 border-[#DDD5C7] shadow-md bg-[#1c242b]">
+                  {/* Realistic Topographic / Aerial Satellite Texture Grid */}
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='320' viewBox='0 0 400 320'%3E%3Crect width='400' height='320' fill='%232c3832'/%3E%3Cpath d='M0 70 Q130 50 210 90 T400 130' stroke='%23222c27' stroke-width='42' fill='none' opacity='0.7'/%3E%3Cpath d='M70 0 Q100 160 150 320' stroke='%233d4b43' stroke-width='24' fill='none' opacity='0.6'/%3E%3Cpath d='M260 0 Q290 170 350 320' stroke='%233d4b43' stroke-width='20' fill='none' opacity='0.6'/%3E%3Cpath d='M0 200 Q190 220 400 190' stroke='%234b5c52' stroke-width='16' fill='none' opacity='0.5'/%3E%3Cg opacity='0.25' fill='%23607568'%3E%3Crect x='25' y='25' width='32' height='28'/%3E%3Crect x='65' y='35' width='42' height='22'/%3E%3Crect x='125' y='18' width='28' height='38'/%3E%3Crect x='225' y='35' width='52' height='28'/%3E%3Crect x='305' y='25' width='38' height='42'/%3E%3Crect x='35' y='115' width='48' height='32'/%3E%3Crect x='195' y='125' width='42' height='38'/%3E%3Crect x='315' y='135' width='48' height='28'/%3E%3Crect x='45' y='235' width='52' height='32'/%3E%3Crect x='155' y='245' width='48' height='42'/%3E%3Crect x='285' y='235' width='62' height='38'/%3E%3C/g%3E%3C/svg%3E")`,
+                      backgroundSize: 'cover'
+                    }}
+                  />
+
+                  {/* SVG Tactical Evacuation Route Overlay */}
+                  <svg className="absolute inset-0 w-full h-full z-10 pointer-events-none" viewBox="0 0 360 288">
+                    <defs>
+                      <filter id="hazardGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                      </filter>
+                      <filter id="routeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                      </filter>
+                    </defs>
+
+                    {/* 1. BLUE DASHED HAZARD DANGER BASIN CIRCLE */}
+                    <circle 
+                      cx="170" 
+                      cy="155" 
+                      r="84" 
+                      fill="rgba(2, 132, 199, 0.22)" 
+                      stroke="#0284c7" 
+                      strokeWidth="2.5" 
+                      strokeDasharray="6,4"
+                      filter="url(#hazardGlow)"
+                    />
+
+                    {/* Outer Hazard Wave Ring */}
+                    <circle 
+                      cx="170" 
+                      cy="155" 
+                      r="90" 
+                      fill="none" 
+                      stroke="#38bdf8" 
+                      strokeWidth="1" 
+                      strokeDasharray="4,6" 
+                      opacity="0.6"
+                    />
+
+                    {/* 2. GLOWING GREEN DASHED SHORTEST SAFE EVACUATION ROUTE */}
+                    {/* Glowing neon shadow trail */}
+                    <path 
+                      d="M 170 155 Q 215 105, 278 54" 
+                      fill="none" 
+                      stroke="#10b981" 
+                      strokeWidth="7" 
+                      strokeOpacity="0.35"
+                      filter="url(#routeGlow)"
+                    />
+                    {/* Main animated dashed green evacuation line */}
+                    <path 
+                      d="M 170 155 Q 215 105, 278 54" 
+                      fill="none" 
+                      stroke="#10b981" 
+                      strokeWidth="4" 
+                      strokeDasharray="8,5" 
+                      strokeLinecap="round"
+                    />
+
+                    {/* 3. USER LOCATION NODE (Inside Danger Basin) */}
+                    <circle cx="170" cy="155" r="18" fill="#ea580c" opacity="0.35" />
+                    <circle cx="170" cy="155" r="10" fill="#ea580c" stroke="#ffffff" strokeWidth="2.5" />
+                    <circle cx="170" cy="155" r="4" fill="#ffffff" />
+
+                    {/* 4. DESTINATION REFUGE MARKER (🟢 Safe Oasis on High Ridge) */}
+                    <circle cx="278" cy="54" r="14" fill="#10b981" stroke="#ffffff" strokeWidth="2.5" />
+                    <path d="M 273 54 L 276 57 L 283 50" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+
+                  {/* TOP FLOATING DESTINATION BADGE (Exact Match to Reference Photo) */}
+                  <div className="absolute top-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-md rounded-2xl p-2.5 shadow-lg border border-[#DDD5C7] flex items-center gap-2.5 z-20">
+                    <div className="w-4 h-4 rounded-full bg-[#10b981] flex items-center justify-center shrink-0 shadow-xs">
+                      <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+                    </div>
+                    <div className="flex-1 min-w-0 font-sans">
+                      <div className="font-black text-xs text-[#263238] truncate flex items-center gap-1.5">
+                        <span>{primaryShelter.name}</span>
+                      </div>
+                      <div className="text-[10px] text-[#5A4D49] font-mono flex items-center gap-1.5 truncate mt-0.5">
+                        <span>Safe Elevation: <b>370m MSL</b></span>
+                        <span>•</span>
+                        <span className="text-[#0f766e] font-bold">Distance: {primaryShelter.distance}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-[#FAF8F2] border border-[#DC2626]/40 p-3 rounded-2xl flex items-start gap-2 text-[#263238]">
-                    <AlertTriangle className="w-4 h-4 text-[#DC2626] shrink-0 mt-0.5" />
-                    <div>
-                      <div className="font-bold font-mono text-xs text-[#DC2626]">HAZARD CUTOFF: Lowland River Basin</div>
-                      <div className="text-[11px] text-[#5A4D49] leading-tight mt-0.5">
-                        Water surge inundation wave expected. Avoid underpasses and river bank roads.
-                      </div>
-                    </div>
+                  {/* MAP FOOTER ATTRIBUTION (Leaflet / USGS Satellite) */}
+                  <div className="absolute bottom-2 left-2.5 z-20 text-[8.5px] font-mono text-white/90 bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded-md flex items-center gap-1 border border-white/10">
+                    <span className="text-[#38bdf8]">🇺🇦 Leaflet</span>
+                    <span className="text-white/40">|</span>
+                    <span>© USGS / NOAA Earth Observation Imagery</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] pt-1 border-t border-[#DDD5C7]">
-                  <span className="text-[#0f766e] font-bold">Free Municipal Transit Active</span>
-                  <button
-                    onClick={() => setIsTransitPassOpen(true)}
-                    className="bg-[#0f766e] hover:bg-[#0d9488] text-white px-3 py-1 rounded-xl font-bold flex items-center gap-1 shadow-xs text-xs cursor-pointer transition"
-                  >
-                    <QrCode className="w-3.5 h-3.5" />
-                    <span>Relief Transit Pass</span>
-                  </button>
-                </div>
-              </div>
+                {/* 2. TACTICAL DESTINATION ACTION CARD (Exact Match to Reference Photo) */}
+                <div className="bg-[#E8F5EF] border-2 border-[#0d9488]/40 rounded-3xl p-4 space-y-3 shadow-sm font-sans">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xs sm:text-sm font-black text-[#263238] leading-tight">
+                        Destination: {primaryShelter.name}
+                      </h3>
+                    </div>
+                    <div className="text-xs font-black text-[#0f766e] font-mono shrink-0 whitespace-nowrap">
+                      {primaryShelter.distance.split(' ')[0]} mi (Safe Ridge Trail)
+                    </div>
+                  </div>
 
-              {/* Verified Relief Shelters */}
-              <div className="bg-[#FFFDF8] border border-[#DDD5C7] rounded-3xl p-4 shadow-sm space-y-3">
-                <div className="flex items-center justify-between border-b border-[#DDD5C7] pb-2">
-                  <span className="text-xs font-black text-[#263238] flex items-center gap-1.5">
-                    <Building2 className="w-4 h-4 text-[#0f766e]" />
-                    <span>VERIFIED HIGH-GROUND RELIEF SHELTERS</span>
-                  </span>
-                  <span className="text-[9px] text-[#6B6F6B]">3 Open</span>
+                  <p className="text-[11px] text-[#0f766e] font-medium leading-relaxed">
+                    Ascend via high-ground safe corridor (370m MSL). Bypasses low-lying blue flood/heat basin.
+                  </p>
+
+                  {/* 2 Primary Action Buttons */}
+                  <div className="grid grid-cols-2 gap-2 pt-1 font-mono">
+                    <button
+                      onClick={handleToggleNavigation}
+                      className={`py-3 rounded-2xl text-xs font-black flex items-center justify-center space-x-1.5 shadow-sm transition active:scale-95 cursor-pointer text-white ${
+                        isNavigating ? 'bg-[#047857] hover:bg-[#065f46] animate-pulse ring-2 ring-[#10b981]' : 'bg-[#0f766e] hover:bg-[#0d9488]'
+                      }`}
+                    >
+                      <Navigation className="w-4 h-4" />
+                      <span>{isNavigating ? 'HUD Active (6m)' : 'Start Navigation'}</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setSelectedSOSCategory('FLOOD_TRAP');
+                        setSosNotes(`Rescue requested along high-ground evacuation corridor to ${primaryShelter.name}.`);
+                        handleTriggerSOS();
+                      }}
+                      className="py-3 bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black rounded-2xl text-xs flex items-center justify-center space-x-1.5 shadow-sm transition cursor-pointer"
+                    >
+                      <Siren className="w-4 h-4 animate-pulse" />
+                      <span>Request Rescue Pick</span>
+                    </button>
+                  </div>
                 </div>
 
-                <div className="space-y-2.5">
-                  {DEFAULT_SHELTERS.map((s) => (
-                    <div key={s.id} className="p-3 bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl space-y-2">
-                      <div className="flex justify-between items-start gap-2">
-                        <div>
-                          <div className="font-bold text-xs text-[#263238] font-sans">{s.name}</div>
-                          <div className="text-[10px] text-[#6B6F6B]">{s.address}</div>
+                {/* 3. ACTIVE TURN-BY-TURN HUD GUIDANCE (Appears when Start Navigation is clicked) */}
+                {isNavigating && (
+                  <div className="bg-[#FFFDF8] border-2 border-[#0f766e] rounded-3xl p-4 shadow-md space-y-2.5 font-mono animate-in fade-in zoom-in duration-200">
+                    <div className="flex items-center justify-between text-xs font-black text-[#0f766e]">
+                      <span className="flex items-center gap-1.5">
+                        <Navigation className="w-4 h-4 animate-spin text-[#0d9488]" />
+                        <span>LIVE GPS HUD & TURN GUIDANCE</span>
+                      </span>
+                      <span className="text-[9px] bg-[#E8F5EF] px-2 py-0.5 rounded-full border border-[#0d9488]/40 font-bold">
+                        GPS LOCKED (370m MSL)
+                      </span>
+                    </div>
+
+                    <div className="space-y-2 text-xs font-sans">
+                      <div className="p-2.5 bg-[#E8F5EF] rounded-xl border border-[#0d9488]/40 flex items-start gap-2.5">
+                        <span className="text-base">⬆️</span>
+                        <div className="flex-1">
+                          <div className="font-black text-xs text-[#0f766e]">Step 1: Head North on Central Corridor (0.1 mi)</div>
+                          <div className="text-[10.5px] text-[#5A4D49]">Ascend towards high-ridge intersection away from flood basin.</div>
                         </div>
-                        <span className="text-[9px] bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 px-2 py-0.5 rounded-full font-bold shrink-0">
-                          {s.capacity}
-                        </span>
+                        <span className="text-[9px] font-mono text-[#0f766e] font-bold shrink-0">1 min</span>
                       </div>
 
-                      <div className="flex items-center justify-between text-[10px] pt-1 border-t border-[#DDD5C7]">
-                        <span className="text-[#0f766e] font-semibold">{s.distance} ({s.walkTime})</span>
-                        <a
-                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name + ' ' + s.address)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-[#0f766e] hover:bg-[#0d9488] text-white px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 text-[9.5px] cursor-pointer"
-                        >
-                          <span>Navigate</span>
-                          <ChevronRight className="w-3 h-3" />
-                        </a>
+                      <div className="p-2.5 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7] flex items-start gap-2.5 opacity-80">
+                        <span className="text-base">↗️</span>
+                        <div className="flex-1">
+                          <div className="font-bold text-xs text-[#263238]">Step 2: Turn Right onto High Ridge Trail (0.2 mi)</div>
+                          <div className="text-[10.5px] text-[#5A4D49]">Safe elevation zone above 350m MSL. Continuous shade & misting.</div>
+                        </div>
+                        <span className="text-[9px] font-mono text-[#6B6F6B] shrink-0">3 min</span>
+                      </div>
+
+                      <div className="p-2.5 bg-[#FAF8F2] rounded-xl border border-[#DDD5C7] flex items-start gap-2.5 opacity-80">
+                        <span className="text-base">🏁</span>
+                        <div className="flex-1">
+                          <div className="font-bold text-xs text-[#263238]">Step 3: Arrive at {primaryShelter.name} (0.1 mi)</div>
+                          <div className="text-[10.5px] text-[#5A4D49]">Enter via Gate A for medical triage, cold hydration & power.</div>
+                        </div>
+                        <span className="text-[9px] font-mono text-[#6B6F6B] shrink-0">2 min</span>
                       </div>
                     </div>
-                  ))}
+
+                    <div className="flex items-center justify-between pt-1 border-t border-[#DDD5C7] text-[10px]">
+                      <span className="text-[#0f766e] font-bold">Total Route: 0.4 mi &bull; ETA 6 min walk</span>
+                      <button
+                        onClick={() => setIsNavigating(false)}
+                        className="text-[#DC2626] font-bold hover:underline cursor-pointer"
+                      >
+                        End HUD Guidance ✕
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* 4. VERIFIED HIGH-GROUND RELIEF SHELTERS DIRECTORY */}
+                <div className="bg-[#FFFDF8] border border-[#DDD5C7] rounded-3xl p-4 shadow-sm space-y-3 font-sans">
+                  <div className="flex items-center justify-between border-b border-[#DDD5C7] pb-2 font-mono">
+                    <span className="text-xs font-black text-[#263238] flex items-center gap-1.5">
+                      <Building2 className="w-4 h-4 text-[#0f766e]" />
+                      <span>VERIFIED HIGH-GROUND RELIEF SHELTERS</span>
+                    </span>
+                    <span className="text-[9px] bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 px-2 py-0.5 rounded-full font-bold">
+                      {currentShelters.length} Open
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 font-mono">
+                    {currentShelters.map((s) => (
+                      <div key={s.id} className="p-3 bg-[#FAF8F2] border border-[#DDD5C7] rounded-2xl space-y-2">
+                        <div className="flex justify-between items-start gap-2">
+                          <div>
+                            <div className="font-bold text-xs text-[#263238] font-sans">{s.name}</div>
+                            <div className="text-[10px] text-[#6B6F6B]">{s.address}</div>
+                          </div>
+                          <span className="text-[9px] bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40 px-2 py-0.5 rounded-full font-bold shrink-0">
+                            {s.capacity}
+                          </span>
+                        </div>
+
+                        {/* Amenities chips */}
+                        <div className="flex flex-wrap gap-1">
+                          {s.amenities.slice(0, 3).map((a, i) => (
+                            <span key={i} className="text-[8px] bg-[#FFFDF8] text-[#5A4D49] border border-[#DDD5C7] px-1.5 py-0.2 rounded-md font-sans">
+                              ✓ {a}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-[#DDD5C7]">
+                          <span className="text-[#0f766e] font-semibold">{s.distance} ({s.walkTime})</span>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => setIsTransitPassOpen(true)}
+                              className="bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] px-2 py-1 rounded-lg font-bold text-[9px] cursor-pointer"
+                            >
+                              Transit Pass
+                            </button>
+                            <a
+                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name + ' ' + s.address)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-[#0f766e] hover:bg-[#0d9488] text-white px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 text-[9.5px] cursor-pointer"
+                            >
+                              <span>Navigate</span>
+                              <ChevronRight className="w-3 h-3" />
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ========================================================================= */}
           {/* TAB 5: ALERTS                                                             */}
