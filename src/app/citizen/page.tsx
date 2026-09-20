@@ -225,25 +225,59 @@ const getSheltersForZone = (zoneId: string, locationName: string, metro: string)
         amenities: ['Emergency Power', 'Oxygen Supply', 'First Aid Station']
       }
     ];
+  } else if (zoneId.includes('dc') || zoneId.includes('columbia') || (locationName && locationName.toLowerCase().includes('columbia'))) {
+    return [
+      {
+        id: 'sh-dc-1',
+        name: 'Columbia Heights East, Washington, DC Central Relief Oasis',
+        address: '14th & Park Rd NW, High Ridge Sector',
+        distance: '0.4 mi away',
+        walkTime: '5 min walk',
+        capacity: '520 / 750 Available',
+        status: 'OPEN',
+        amenities: ['Commercial AC & Misting', 'Cold Hydration Station', 'Paramedics on Duty', 'Device Charging', 'Backup Power']
+      },
+      {
+        id: 'sh-dc-2',
+        name: 'Walter E. Washington Emergency Refuge Center',
+        address: '801 Mt Vernon Pl NW',
+        distance: '1.2 mi away',
+        walkTime: '15 min walk',
+        capacity: '1,800 / 3,000 Available',
+        status: 'OPEN',
+        amenities: ['Mass Shaded Concourse', 'Medical Surge Bay', 'Free Transit Shuttle', 'Oxygen Refill']
+      },
+      {
+        id: 'sh-dc-3',
+        name: 'Dupont Circle Community Resilience Hub',
+        address: '1500 Connecticut Ave NW',
+        distance: '1.7 mi away',
+        walkTime: '21 min walk',
+        capacity: '400 / 600 Available',
+        status: 'OPEN',
+        amenities: ['First Aid Clinic', 'Senior Resting Bays', 'Emergency Battery Reserve']
+      }
+    ];
   }
 
-  // Default standard US Municipal Safe Haven
-  const primaryName = (locationName || 'Downtown Core').split('&')[0].trim().split('—')[0].trim();
+  // Default standard US Municipal Safe Haven matching zone and city
+  const cleanZoneName = (locationName || 'Downtown Core').split('—')[0].split('-')[0].trim();
+  const cleanMetro = (metro || locationName.split(',')[1] || 'Municipal Core').trim();
   return [
     {
       id: `sh-${zoneId}-1`,
-      name: `${primaryName} Central Relief Oasis`,
-      address: `1221 Central Corridor, ${metro}`,
+      name: `${cleanZoneName}, ${cleanMetro} Central Relief Oasis`,
+      address: `1221 Central High-Ground Corridor, ${cleanMetro}`,
       distance: '0.4 mi away',
-      walkTime: '6 min walk',
+      walkTime: '5 min walk',
       capacity: '450 / 600 Available',
       status: 'OPEN',
       amenities: ['Commercial High-Power AC', 'Cold Hydration Refill', 'Paramedics on Duty', 'Device Charging', 'Backup Generator']
     },
     {
       id: `sh-${zoneId}-2`,
-      name: `${metro.split(',')[0]} Civic Resilience Center`,
-      address: `450 High Ridge Corridor, ${metro}`,
+      name: `${cleanMetro.split(',')[0]} Civic Resilience Center & Safe Haven`,
+      address: `450 High Ridge Corridor, ${cleanMetro}`,
       distance: '1.1 mi away',
       walkTime: '14 min walk',
       capacity: '320 / 500 Available',
@@ -252,8 +286,8 @@ const getSheltersForZone = (zoneId: string, locationName: string, metro: string)
     },
     {
       id: `sh-${zoneId}-3`,
-      name: `${metro.split(',')[0]} Municipal Emergency Refuge Hub`,
-      address: `800 Safe Elevation Pkwy, ${metro}`,
+      name: `${cleanMetro.split(',')[0]} Municipal Emergency Refuge Hub`,
+      address: `800 Safe Elevation Pkwy, ${cleanMetro}`,
       distance: '1.8 mi away',
       walkTime: '22 min walk',
       capacity: '1,100 / 2,000 Available',
@@ -890,7 +924,6 @@ export default function CitizenLifelinePage() {
     };
   }));
   const [selectedZoneId, setSelectedZoneId] = useState<string>('zone-phx-core');
-  const [evacMapLayer, setEvacMapLayer] = useState<'satellite' | 'radar' | 'dem' | 'street'>('satellite');
 
   // Location & Weather Telemetry
   const [locationName, setLocationName] = useState<string>('Phoenix Core Urban, Phoenix, AZ');
@@ -1451,13 +1484,14 @@ export default function CitizenLifelinePage() {
           {/* GLOBAL US MUNICIPAL ZONE & NOAA METRO SELECTOR (PERSISTENT EXCEPT PROFILE) */}
           {/* ========================================================================= */}
           {activeTab !== 'PROFILE' && (
-            <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-2.5 rounded-2xl shadow-xs space-y-2">
+            <div className="bg-[#FFFDF8] border border-[#DDD5C7] p-3 rounded-3xl shadow-xs space-y-2 font-sans">
               
               {/* Clean Dropdown Row with GPS & Refresh Controls (Exact Match to Reference Photo) */}
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 {/* Styled US Locations Dropdown */}
                 <div className="relative flex-1 flex items-center">
-                  <div className="absolute left-2.5 pointer-events-none text-rose-600 flex items-center text-xs">
+                  <div className="absolute left-3 pointer-events-none text-rose-500 flex items-center gap-0.5 text-xs z-10">
+                    <span>📍</span>
                     <span>📍</span>
                   </div>
                   
@@ -1472,19 +1506,18 @@ export default function CitizenLifelinePage() {
                         applyZoneTelemetry(zone);
                       }
                     }}
-                    className="w-full bg-[#FFFDF8] hover:bg-[#FAF8F2] text-[#0f766e] border border-[#0d9488]/60 focus:border-[#0d9488] text-[11px] font-mono font-bold pl-7 pr-7 py-2 rounded-xl outline-none shadow-xs cursor-pointer transition-all appearance-none truncate"
+                    className="w-full bg-[#FFFDF8] hover:bg-[#FAF8F2] text-[#0f766e] border border-[#0d9488]/70 focus:border-[#0d9488] text-xs font-mono font-bold pl-10 pr-8 py-2.5 rounded-2xl outline-none shadow-xs cursor-pointer transition-all appearance-none truncate"
                   >
                     {monitoredZones.map((z) => {
-                      const tempStr = z.temperatureF !== null ? `(${z.temperatureF.toFixed(0)}°F)` : '';
                       return (
                         <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans font-medium py-1">
-                          📍 {z.name} — {z.metro} {tempStr}
+                          📍 {z.name} — {z.metro}
                         </option>
                       );
                     })}
                   </select>
 
-                  <ChevronDown className="w-4 h-4 text-[#0d9488] absolute right-2.5 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-[#0d9488] absolute right-3 pointer-events-none" />
                 </div>
 
                 {/* 📍 GPS MY LOCATION Button */}
@@ -1512,10 +1545,9 @@ export default function CitizenLifelinePage() {
                     }
                   }}
                   title="Lock onto GPS Coordinates (My Location)"
-                  className="px-2.5 py-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl text-[10px] font-mono font-bold shrink-0 cursor-pointer transition shadow-xs flex items-center gap-1 active:scale-95"
+                  className="w-10 h-10 bg-[#FFFDF8] hover:bg-[#FAF8F2] border border-[#DDD5C7] text-[#0d9488] rounded-2xl shrink-0 cursor-pointer transition shadow-xs flex items-center justify-center active:scale-95"
                 >
-                  <Crosshair className="w-3.5 h-3.5 text-[#0d9488]" />
-                  <span className="hidden xs:inline">GPS</span>
+                  <Crosshair className="w-4 h-4 text-[#0d9488]" />
                 </button>
 
                 {/* 🔄 Refresh Live Feeds */}
@@ -1523,16 +1555,16 @@ export default function CitizenLifelinePage() {
                   type="button"
                   onClick={() => fetchCivicPulseLiveData()}
                   title="Refresh Live NOAA & CivicPulse Feeds"
-                  className="p-2 bg-[#FAF8F2] hover:bg-[#E5CDC6] border border-[#DDD5C7] text-[#0f766e] rounded-xl shrink-0 cursor-pointer transition shadow-xs active:scale-95"
+                  className="w-10 h-10 bg-[#FFFDF8] hover:bg-[#FAF8F2] border border-[#DDD5C7] text-[#0d9488] rounded-2xl shrink-0 cursor-pointer transition shadow-xs flex items-center justify-center active:scale-95"
                 >
-                  <RotateCw className="w-3.5 h-3.5 text-[#0d9488]" />
+                  <RotateCw className="w-4 h-4 text-[#0d9488]" />
                 </button>
               </div>
 
               {/* Sub-bar with Live Location */}
-              <div className="flex items-center justify-between text-[9.5px] text-[#5A4D49] pt-1 border-t border-[#DDD5C7] font-mono">
-                <div className="flex items-center gap-1 truncate max-w-full">
-                  <span className="text-rose-600">●</span>
+              <div className="flex items-center text-[10px] text-[#5A4D49] pt-1 border-t border-[#DDD5C7] font-mono">
+                <div className="flex items-center gap-1.5 truncate max-w-full">
+                  <span className="text-rose-600 font-bold">●</span>
                   <span className="truncate">Active: <b>{locationName}</b></span>
                 </div>
               </div>
@@ -2163,229 +2195,114 @@ export default function CitizenLifelinePage() {
             return (
               <div className="space-y-3 font-mono">
                 
-                {/* 0. MAP LAYER TOGGLE SELECTOR BAR (Exact Match to Reference Photo) */}
-                <div className="grid grid-cols-4 gap-1 p-1 bg-[#FFFDF8] border border-[#DDD5C7] rounded-2xl shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => setEvacMapLayer('satellite')}
-                    className={`py-1.5 px-1.5 rounded-xl text-[9.5px] font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
-                      evacMapLayer === 'satellite'
-                        ? 'bg-[#1e293b] text-white shadow-xs'
-                        : 'text-[#5A4D49] hover:bg-[#FAF8F2]'
-                    }`}
-                  >
-                    <span>🛰️</span>
-                    <span className="truncate">Bhuvan</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setEvacMapLayer('radar')}
-                    className={`py-1.5 px-1.5 rounded-xl text-[9.5px] font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
-                      evacMapLayer === 'radar'
-                        ? 'bg-[#1e293b] text-white shadow-xs'
-                        : 'text-[#5A4D49] hover:bg-[#FAF8F2]'
-                    }`}
-                  >
-                    <span>☁️</span>
-                    <span className="truncate">INSAT WV</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setEvacMapLayer('dem')}
-                    className={`py-1.5 px-1.5 rounded-xl text-[9.5px] font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
-                      evacMapLayer === 'dem'
-                        ? 'bg-[#1e293b] text-white shadow-xs'
-                        : 'text-[#5A4D49] hover:bg-[#FAF8F2]'
-                    }`}
-                  >
-                    <span>⛰️</span>
-                    <span className="truncate">CartoDEM</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setEvacMapLayer('street')}
-                    className={`py-1.5 px-1.5 rounded-xl text-[9.5px] font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
-                      evacMapLayer === 'street'
-                        ? 'bg-[#1e293b] text-white shadow-xs'
-                        : 'text-[#5A4D49] hover:bg-[#FAF8F2]'
-                    }`}
-                  >
-                    <span>🗺️</span>
-                    <span className="truncate">Street</span>
-                  </button>
-                </div>
-
                 {/* 1. SATELLITE TERRAIN SHORTEST EVACUATION ROUTE MAP (Exact Match to Reference Photo) */}
-                <div className="w-full h-76 rounded-3xl relative overflow-hidden border-2 border-[#DDD5C7] shadow-md bg-[#2b352e]">
+                <div className="w-full h-80 rounded-[28px] relative overflow-hidden border-2 border-[#DDD5C7] shadow-md bg-[#132225]">
                   
-                  {/* Layer A: High-Resolution Aerial Satellite Photograph Composition */}
-                  {evacMapLayer === 'satellite' && (
-                    <div className="absolute inset-0 pointer-events-none">
-                      <svg className="w-full h-full object-cover" viewBox="0 0 360 304" preserveAspectRatio="xMidYMid slice">
-                        <defs>
-                          {/* Urban Building Texture Pattern */}
-                          <pattern id="urbanBlocks" width="40" height="40" patternUnits="userSpaceOnUse">
-                            <rect width="40" height="40" fill="#323c34" />
-                            <rect x="2" y="2" width="16" height="15" fill="#887e6f" opacity="0.85" />
-                            <rect x="20" y="2" width="17" height="15" fill="#b0a592" opacity="0.8" />
-                            <rect x="2" y="20" width="16" height="17" fill="#6c776e" opacity="0.8" />
-                            <rect x="20" y="20" width="17" height="17" fill="#c3baaa" opacity="0.75" />
-                            {/* Inner Alleyways */}
-                            <line x1="0" y1="18.5" x2="40" y2="18.5" stroke="#252e27" strokeWidth="2.5" />
-                            <line x1="18.5" y1="0" x2="18.5" y2="40" stroke="#252e27" strokeWidth="2.5" />
-                          </pattern>
+                  {/* Vector GIS Map Layer with Roads and Building Parcels */}
+                  <div className="absolute inset-0 pointer-events-none">
+                    <svg className="w-full h-full object-cover" viewBox="0 0 360 320" preserveAspectRatio="xMidYMid slice">
+                      <defs>
+                        <filter id="hazardGlow" x="-20%" y="-20%" width="140%" height="140%">
+                          <feGaussianBlur stdDeviation="3.5" result="blur" />
+                          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                        <filter id="routeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                          <feGaussianBlur stdDeviation="3" result="blur" />
+                          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                      </defs>
 
-                          <pattern id="denseSettlement" width="24" height="24" patternUnits="userSpaceOnUse">
-                            <rect width="24" height="24" fill="#364038" />
-                            <rect x="1" y="1" width="9" height="9" fill="#9e9383" opacity="0.9" />
-                            <rect x="12" y="1" width="10" height="9" fill="#d2c9b8" opacity="0.85" />
-                            <rect x="1" y="12" width="9" height="10" fill="#58635a" opacity="0.85" />
-                            <rect x="12" y="12" width="10" height="10" fill="#818e84" opacity="0.8" />
-                            <line x1="0" y1="11" x2="24" y2="11" stroke="#202721" strokeWidth="1.5" />
-                            <line x1="11" y1="0" x2="11" y2="24" stroke="#202721" strokeWidth="1.5" />
-                          </pattern>
-                        </defs>
+                      {/* Dark Base Map */}
+                      <rect width="360" height="320" fill="#132225" />
 
-                        {/* Satellite Base Soil & Vegetation Terrain */}
-                        <rect width="360" height="304" fill="#2d372f" />
+                      {/* Subtle Grid Roads & Street Arteries */}
+                      <path d="M 0 85 Q 180 95 360 70" stroke="#1d3438" strokeWidth="18" fill="none" opacity="0.8" />
+                      <path d="M 0 190 Q 180 205 360 175" stroke="#1d3438" strokeWidth="22" fill="none" opacity="0.8" />
+                      <path d="M 90 0 Q 105 160 125 320" stroke="#1d3438" strokeWidth="16" fill="none" opacity="0.75" />
+                      <path d="M 235 0 Q 250 160 270 320" stroke="#1d3438" strokeWidth="16" fill="none" opacity="0.75" />
 
-                        {/* Dense Urban Rooftop Blocks Grid */}
-                        <rect x="0" y="0" width="280" height="304" fill="url(#denseSettlement)" opacity="0.95" />
-                        <rect x="110" y="30" width="160" height="240" fill="url(#urbanBlocks)" opacity="0.85" />
+                      {/* Urban Building Parcel Blocks */}
+                      <rect x="45" y="115" width="40" height="28" rx="3" fill="#182c2f" opacity="0.9" />
+                      <rect x="45" y="215" width="42" height="30" rx="3" fill="#182c2f" opacity="0.9" />
+                      <rect x="145" y="240" width="48" height="32" rx="3" fill="#182c2f" opacity="0.85" />
+                      <rect x="250" y="125" width="44" height="28" rx="3" fill="#182c2f" opacity="0.9" />
+                      <rect x="245" y="215" width="46" height="32" rx="3" fill="#182c2f" opacity="0.9" />
 
-                        {/* Major Highway Artery & Cross Streets */}
-                        <path d="M 0 65 Q 140 45 220 85 T 360 115" stroke="#48534c" strokeWidth="14" fill="none" opacity="0.9" />
-                        <path d="M 0 65 Q 140 45 220 85 T 360 115" stroke="#e2d8c3" strokeWidth="1.5" strokeDasharray="6,6" fill="none" opacity="0.7" />
-                        
-                        <path d="M 85 0 Q 110 150 145 304" stroke="#48534c" strokeWidth="12" fill="none" opacity="0.85" />
-                        <path d="M 85 0 Q 110 150 145 304" stroke="#e2d8c3" strokeWidth="1" strokeDasharray="5,5" fill="none" opacity="0.6" />
+                      {/* 1. BLUE DASHED HAZARD DANGER BASIN CIRCLE */}
+                      <circle 
+                        cx="165" 
+                        cy="170" 
+                        r={hazardRadius} 
+                        fill="rgba(2, 132, 199, 0.14)" 
+                        stroke="#0284c7" 
+                        strokeWidth="2.5" 
+                        strokeDasharray="6,5"
+                        filter="url(#hazardGlow)"
+                      />
 
-                        <path d="M 230 0 Q 245 160 270 304" stroke="#3d4740" strokeWidth="10" fill="none" opacity="0.8" />
-                        <path d="M 0 195 Q 180 215 360 185" stroke="#3d4740" strokeWidth="10" fill="none" opacity="0.8" />
+                      {/* Outer Blue Hazard Wave Ring */}
+                      <circle 
+                        cx="165" 
+                        cy="170" 
+                        r={hazardRadius + 7} 
+                        fill="none" 
+                        stroke="#38bdf8" 
+                        strokeWidth="1.2" 
+                        strokeDasharray="4,6" 
+                        opacity="0.65"
+                      />
 
-                        {/* Green Urban Tree Canopies & Park Areas */}
-                        <circle cx="50" cy="40" r="22" fill="#263b2a" opacity="0.75" />
-                        <circle cx="65" cy="55" r="18" fill="#314c36" opacity="0.8" />
-                        <circle cx="215" cy="245" r="28" fill="#263b2a" opacity="0.7" />
-                        <circle cx="235" cy="260" r="22" fill="#34523a" opacity="0.8" />
-                        <circle cx="45" cy="265" r="26" fill="#243828" opacity="0.7" />
+                      {/* 2. GLOWING VIBRANT GREEN SHORTEST SAFE EVACUATION ROUTE */}
+                      {/* Neon glow trail */}
+                      <line 
+                        x1="165" 
+                        y1="170" 
+                        x2="255" 
+                        y2="60" 
+                        stroke="#00e5a3" 
+                        strokeWidth="8" 
+                        strokeOpacity="0.4"
+                        filter="url(#routeGlow)"
+                      />
+                      {/* Main core evacuation vector */}
+                      <line 
+                        x1="165" 
+                        y1="170" 
+                        x2="255" 
+                        y2="60" 
+                        stroke="#10b981" 
+                        strokeWidth="4.5" 
+                      />
+                      {/* Segmented dashed highlights */}
+                      <line 
+                        x1="165" 
+                        y1="170" 
+                        x2="255" 
+                        y2="60" 
+                        stroke="#6ee7b7" 
+                        strokeWidth="2" 
+                        strokeDasharray="6,6"
+                        strokeLinecap="round"
+                      />
 
-                        {/* River / Drainage Canal Corridor on Right Flank */}
-                        <path d="M 325 -10 C 295 80, 335 180, 305 315" stroke="#1b332c" strokeWidth="32" fill="none" opacity="0.9" />
-                        <path d="M 325 -10 C 295 80, 335 180, 305 315" stroke="#24493e" strokeWidth="22" fill="none" opacity="0.95" />
-                        <path d="M 325 -10 C 295 80, 335 180, 305 315" stroke="#3a6b5c" strokeWidth="8" fill="none" opacity="0.7" />
+                      {/* 3. USER LOCATION CONCENTRIC HAZARD NODE (Exact Match to Reference Photo) */}
+                      {/* Outer brown/amber halo */}
+                      <circle cx="165" cy="170" r="14" fill="#78350f" opacity="0.9" />
+                      {/* White ring */}
+                      <circle cx="165" cy="170" r="9" fill="#ffffff" />
+                      {/* Center orange-red core */}
+                      <circle cx="165" cy="170" r="5.5" fill="#ea580c" />
 
-                        {/* Canal Crossing Bridges */}
-                        <line x1="290" y1="95" x2="335" y2="90" stroke="#717c74" strokeWidth="5" />
-                        <line x1="285" y1="210" x2="325" y2="205" stroke="#717c74" strokeWidth="5" />
-                      </svg>
-                    </div>
-                  )}
-
-                  {/* Layer B: INSAT / GOES Atmospheric Radar Layer */}
-                  {evacMapLayer === 'radar' && (
-                    <div className="absolute inset-0 bg-[#0e1622] pointer-events-none">
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_45%_50%,rgba(220,38,38,0.45)_0%,rgba(234,88,12,0.35)_35%,rgba(13,148,136,0.25)_65%,transparent_85%)]" />
-                      <div className="absolute inset-0 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:20px_20px] opacity-25" />
-                    </div>
-                  )}
-
-                  {/* Layer C: CartoDEM Digital Elevation Contours */}
-                  {evacMapLayer === 'dem' && (
-                    <div className="absolute inset-0 bg-[#16201b] pointer-events-none">
-                      <svg className="w-full h-full opacity-60" viewBox="0 0 360 304">
-                        <path d="M 0 50 Q 180 80 360 40" stroke="#0d9488" strokeWidth="2" fill="none" opacity="0.8" />
-                        <path d="M 0 100 Q 180 140 360 90" stroke="#10b981" strokeWidth="2" fill="none" opacity="0.7" />
-                        <path d="M 0 160 Q 180 200 360 150" stroke="#eab308" strokeWidth="2" fill="none" opacity="0.7" />
-                        <path d="M 0 220 Q 180 260 360 210" stroke="#f97316" strokeWidth="2" fill="none" opacity="0.8" />
-                        <text x="20" y="45" fill="#10b981" fontSize="9" fontFamily="monospace">370m MSL (Ridge Peak)</text>
-                        <text x="20" y="215" fill="#f97316" fontSize="9" fontFamily="monospace">190m MSL (Lowland Basin)</text>
-                      </svg>
-                    </div>
-                  )}
-
-                  {/* Layer D: Street Map */}
-                  {evacMapLayer === 'street' && (
-                    <div className="absolute inset-0 bg-[#e8ece9] pointer-events-none">
-                      <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:16px_16px] opacity-40" />
-                    </div>
-                  )}
-
-                  {/* SVG Tactical Evacuation Route Overlay */}
-                  <svg className="absolute inset-0 w-full h-full z-10 pointer-events-none" viewBox="0 0 360 304">
-                    <defs>
-                      <filter id="hazardGlow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur stdDeviation="3.5" result="blur" />
-                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                      </filter>
-                      <filter id="routeGlow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur stdDeviation="3" result="blur" />
-                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                      </filter>
-                    </defs>
-
-                    {/* 1. BLUE DASHED HAZARD DANGER BASIN CIRCLE */}
-                    <circle 
-                      cx="175" 
-                      cy="155" 
-                      r={hazardRadius} 
-                      fill="rgba(2, 132, 199, 0.20)" 
-                      stroke="#0284c7" 
-                      strokeWidth="2.5" 
-                      strokeDasharray="7,5"
-                      filter="url(#hazardGlow)"
-                    />
-
-                    {/* Outer Hazard Wave Ring */}
-                    <circle 
-                      cx="175" 
-                      cy="155" 
-                      r={hazardRadius + 6} 
-                      fill="none" 
-                      stroke="#38bdf8" 
-                      strokeWidth="1" 
-                      strokeDasharray="4,6" 
-                      opacity="0.65"
-                    />
-
-                    {/* 2. GLOWING GREEN DASHED SHORTEST SAFE EVACUATION ROUTE */}
-                    {/* Glowing neon shadow trail */}
-                    <path 
-                      d="M 120 205 C 135 155, 175 110, 250 62" 
-                      fill="none" 
-                      stroke="#10b981" 
-                      strokeWidth="7" 
-                      strokeOpacity="0.35"
-                      filter="url(#routeGlow)"
-                    />
-                    {/* Main animated dashed green evacuation line */}
-                    <path 
-                      d="M 120 205 C 135 155, 175 110, 250 62" 
-                      fill="none" 
-                      stroke="#10b981" 
-                      strokeWidth="4" 
-                      strokeDasharray="8,5" 
-                      strokeLinecap="round"
-                      className="animate-route-flow"
-                    />
-
-                    {/* 3. USER LOCATION NODE (Inside Danger Basin at Lower Left) */}
-                    <circle cx="120" cy="205" r="16" fill="#ea580c" opacity="0.35" />
-                    <circle cx="120" cy="205" r="9" fill="#ea580c" stroke="#ffffff" strokeWidth="2.5" />
-                    <circle cx="120" cy="205" r="3.5" fill="#ffffff" />
-
-                    {/* 4. DESTINATION REFUGE MARKER (🟢 Safe Oasis on High Ground at Top Right) */}
-                    <circle cx="250" cy="62" r="13" fill="#10b981" stroke="#ffffff" strokeWidth="2.5" />
-                    <path d="M 245 62 L 248 65 L 255 58" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                      {/* 4. DESTINATION REFUGE MARKER (Top Right Safe Haven) */}
+                      <circle cx="255" cy="60" r="13" fill="#10b981" stroke="#ffffff" strokeWidth="2.5" />
+                      <path d="M 250 60 L 253 63 L 260 56" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
 
                   {/* TOP FLOATING DESTINATION BADGE (Exact Match to Reference Photo) */}
                   <div className="absolute top-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-md rounded-2xl p-2.5 shadow-lg border border-[#DDD5C7] flex items-center gap-2.5 z-20">
-                    <div className="w-4 h-4 rounded-full bg-[#10b981] flex items-center justify-center shrink-0 shadow-xs">
-                      <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+                    <div className="w-5 h-5 rounded-full bg-[#10b981] flex items-center justify-center shrink-0 shadow-xs">
+                      <span className="w-2 h-2 rounded-full bg-white" />
                     </div>
                     <div className="flex-1 min-w-0 font-sans">
                       <div className="font-black text-xs text-[#263238] truncate flex items-center gap-1.5">
@@ -2399,11 +2316,11 @@ export default function CitizenLifelinePage() {
                     </div>
                   </div>
 
-                  {/* MAP FOOTER ATTRIBUTION (Leaflet / USGS Satellite) */}
-                  <div className="absolute bottom-2 left-2.5 z-20 text-[8.5px] font-mono text-white/90 bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded-md flex items-center gap-1 border border-white/10">
-                    <span className="text-[#38bdf8]">🇺🇦 Leaflet</span>
+                  {/* MAP FOOTER ATTRIBUTION (UA Leaflet | USGS NOAA) */}
+                  <div className="absolute bottom-2.5 left-2.5 z-20 text-[8.5px] font-mono text-white/90 bg-black/70 backdrop-blur-xs px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-white/10">
+                    <span className="text-[#38bdf8] font-bold">UA Leaflet</span>
                     <span className="text-white/40">|</span>
-                    <span>© ISRO Bhuvan / NRSC & Earth Observation Imagery</span>
+                    <span>© USGS / NOAA Earth Observation Imagery</span>
                   </div>
                 </div>
 
