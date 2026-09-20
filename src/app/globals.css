@@ -119,3 +119,13 @@
 .custom-tiles {
   filter: saturate(0.88) contrast(1.08) brightness(0.94);
 }
+
+@keyframes routeMarch {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+.animate-route-flow {
+  animation: routeMarch 2s linear infinite;
+}
