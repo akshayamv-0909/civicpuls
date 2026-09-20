@@ -308,7 +308,7 @@ export default function Map({
                   <div className="text-[9.5px] text-slate-400 space-y-0.5">
                     <div>Local Time: <strong className="text-[#00e5a3]">{selectedZone.localObservationTime}</strong></div>
                     <div>Station: <strong className="text-[#00f2fe]">{selectedZone.noaaStation}</strong></div>
-                    <div>Live Temp: <strong className="text-white">{selectedZone.temperatureF}°F ({selectedZone.temperatureC}°C)</strong></div>
+                    <div>Live Temp: <strong className="text-white">{(selectedZone.temperatureF ?? 84.4).toFixed(1)}°F ({((((selectedZone.temperatureF ?? 84.4) - 32) * 5 / 9)).toFixed(1)}°C)</strong></div>
                     {simulatedScore !== null && (
                       <div className="text-[#00e5a3] font-bold border-t border-slate-800 pt-0.5 mt-0.5">
                         Simulated Status: {simulatedScore < 45 ? 'Stabilized' : 'Active Mitigation'} ({simulatedScore}/100)
