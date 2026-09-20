@@ -51,6 +51,7 @@ import {
   X
 } from 'lucide-react';
 import CitizenAlertModal from '@/components/CitizenAlertModal';
+import { CitizenPing } from '@/app/api/citizen-sync/route';
 import { 
   XAxis, 
   YAxis, 
@@ -140,12 +141,59 @@ export default function Dashboard() {
   // Tab 1: Urban Heat Simulator & Tactical Simulation State
   const [selectedZoneId, setSelectedZoneId] = useState<string>('zone-phx-core');
   const [tacticalPlan, setTacticalPlan] = useState({
-    coolingBuses: 6, // 0 to 15
-    gridGenerators: 4, // 0 to 8
-    paramedicSurge: 5, // 0 to 10
+    coolingBuses: 0, // 0 to 15 (clean baseline)
+    gridGenerators: 0, // 0 to 8
+    paramedicSurge: 0, // 0 to 10
     weaBroadcastSent: false
   });
   const [isCitizenAlertModalOpen, setIsCitizenAlertModalOpen] = useState<boolean>(false);
+
+  // Live 2-Way Citizen SOS Distress Synchronization State
+  const [citizenPings, setCitizenPings] = useState<CitizenPing[]>([]);
+  const [urgentSosList, setUrgentSosList] = useState<CitizenPing[]>([]);
+  const [isDispatchingRescue, setIsDispatchingRescue] = useState<boolean>(false);
+
+  const fetchCitizenSync = useCallback(async () => {
+    try {
+      const res = await fetch('/api/citizen-sync', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.urgentSosList) setUrgentSosList(data.urgentSosList);
+        if (data.recentPings) setCitizenPings(data.recentPings);
+      }
+    } catch (e) {
+      console.error('Error synchronizing citizen telemetry:', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCitizenSync();
+    const interval = setInterval(fetchCitizenSync, 2500);
+    return () => clearInterval(interval);
+  }, [fetchCitizenSync]);
+
+  const handleDispatchRescueTeam = async (pingId: string) => {
+    setIsDispatchingRescue(true);
+    try {
+      const res = await fetch('/api/citizen-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'DISPATCH_RESCUE',
+          pingId,
+          assignedUnit: 'Paramedic Surge Unit Medic-04 / EMS-Rescue-12',
+          etaMinutes: 5
+        })
+      });
+      if (res.ok) {
+        await fetchCitizenSync();
+      }
+    } catch (e) {
+      console.error('Error dispatching rescue team:', e);
+    } finally {
+      setIsDispatchingRescue(false);
+    }
+  };
 
   // Tab 2: Multi-Hazard Atlas State
   const [selectedStateId, setSelectedStateId] = useState<string>('TX');
@@ -649,6 +697,41 @@ export default function Dashboard() {
         )}
       </div>
 
+      {/* 🚨 2-WAY LIVE CITIZEN SOS DISTRESS NOTIFICATION BANNER */}
+      {urgentSosList.filter(p => p.status === 'PENDING').length > 0 && (
+        <div className="bg-[#DC2626] text-white px-5 py-2 flex flex-wrap items-center justify-between gap-3 border-b-2 border-[#991B1B] animate-pulse font-mono text-xs shadow-lg shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-white animate-ping shrink-0" />
+            <span className="font-extrabold tracking-wider uppercase">
+              🚨 LIVE CITIZEN SOS DISTRESS ({urgentSosList.filter(p => p.status === 'PENDING').length} PENDING):
+            </span>
+            <span className="font-normal text-[11px] truncate max-w-md hidden sm:inline">
+              {urgentSosList.find(p => p.status === 'PENDING')?.categoryName} &bull; {urgentSosList.find(p => p.status === 'PENDING')?.address}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const target = urgentSosList.find(p => p.status === 'PENDING');
+                if (target) handleDispatchRescueTeam(target.id);
+              }}
+              disabled={isDispatchingRescue}
+              className="bg-white text-[#DC2626] hover:bg-rose-100 px-3 py-1 rounded-lg font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <Siren className="w-3.5 h-3.5 text-[#DC2626]" />
+              <span>{isDispatchingRescue ? 'DISPATCHING...' : 'DISPATCH RESCUE TEAM (EMS-04)'}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('EOC_DISPATCH')}
+              className="bg-[#991B1B] hover:bg-black/40 text-white px-2.5 py-1 rounded-lg font-bold text-xs border border-white/40 cursor-pointer"
+            >
+              Dispatch Center ➔
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ========================================================================= */}
       {/* 3. TAB 1: URBAN HEAT SIMULATOR & WHAT-IF INTERVENTION LAB                 */}
       {/* ========================================================================= */}
@@ -673,7 +756,7 @@ export default function Dashboard() {
                 >
                   {liveZones.map((z) => (
                     <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans">
-                      📍 {z.name} — {z.metro} ({(z.temperatureF ?? 95.0).toFixed(1)}°F | Risk: {z.liveRiskScore ?? 74}/100)
+                      📍 {z.name} — {z.metro} ({(z.temperatureF !== null ? z.temperatureF.toFixed(1) : '84.4')}°F | Risk: {z.liveRiskScore ?? 74}/100)
                     </option>
                   ))}
                 </select>
@@ -713,6 +796,8 @@ export default function Dashboard() {
                 generatorsDeployed={tacticalPlan.gridGenerators}
                 paramedicSurgeDeployed={tacticalPlan.paramedicSurge}
                 simulatedScore={isTacticalActive ? simulatedHeatRiskScore : null}
+                sosPings={citizenPings}
+                onDispatchRescue={handleDispatchRescueTeam}
               />
 
               {/* Floating Legend */}
@@ -1438,6 +1523,104 @@ export default function Dashboard() {
               <span className="text-[10px] bg-[#FFF1F2] text-[#be123c] border border-[#FECDD3] px-2.5 py-1 rounded-full font-bold">
                 {liveAlerts.length} ACTIVE ALERTS
               </span>
+            </div>
+          </div>
+
+          {/* 🚨 2-WAY LIVE CITIZEN SOS RESCUE DISPATCH TRIAGE BOARD */}
+          <div className="bg-[#FFFDF8] border-2 border-[#dc2626] p-5 rounded-2xl shadow-md space-y-3 font-mono">
+            <div className="flex flex-wrap items-center justify-between border-b border-[#FECDD3] pb-2.5 gap-2">
+              <div>
+                <h3 className="text-sm font-bold text-[#be123c] flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#dc2626] animate-ping inline-block" />
+                  <span>Live Citizen Distress Beacons & First Responder Dispatch</span>
+                </h3>
+                <p className="text-[10px] text-[#6B6F6B]">Real-time GPS emergency signals transmitted directly from Citizen Handsets (/citizen)</p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] bg-[#FFF1F2] text-[#be123c] px-2.5 py-1 rounded-full font-bold border border-[#FECDD3]">
+                  {citizenPings.filter(p => p.type !== 'SAFE' && p.status === 'PENDING').length} PENDING TRIAGE
+                </span>
+                <button
+                  onClick={() => handleDispatchRescueTeam('ALL_PENDING')}
+                  disabled={isDispatchingRescue || citizenPings.filter(p => p.status === 'PENDING').length === 0}
+                  className="bg-[#DC2626] hover:bg-[#B91C1C] disabled:opacity-50 text-white px-3 py-1 rounded-xl text-xs font-bold shadow-sm cursor-pointer transition-colors flex items-center gap-1.5"
+                >
+                  <Siren className="w-3.5 h-3.5" />
+                  <span>{isDispatchingRescue ? 'Dispatching...' : 'Dispatch All Units (EMS Surge)'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Table of Live Citizen Distress Calls */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-[#EEE8DC] bg-[#FAF8F2] text-[9.5px] text-[#6B6F6B] uppercase tracking-wider">
+                    <th className="py-2 px-3">Time</th>
+                    <th className="py-2 px-3">Distress Category</th>
+                    <th className="py-2 px-3">Citizen GPS Location</th>
+                    <th className="py-2 px-3">Field Notes</th>
+                    <th className="py-2 px-3 text-center">Status</th>
+                    <th className="py-2 px-3 text-right">EOC Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#EEE8DC]">
+                  {citizenPings.filter(p => p.type !== 'SAFE').length > 0 ? (
+                    citizenPings.filter(p => p.type !== 'SAFE').slice(0, 5).map((p) => {
+                      const isPending = p.status === 'PENDING';
+                      return (
+                        <tr key={p.id} className="hover:bg-[#FAF8F2] transition-colors">
+                          <td className="py-2.5 px-3 font-bold text-[#be123c] whitespace-nowrap">{p.timeFormatted}</td>
+                          <td className="py-2.5 px-3 font-bold text-[#263238] whitespace-nowrap">
+                            <span className="flex items-center gap-1.5">
+                              <span>{p.type === 'HEAT_STROKE' ? '🌡️' : p.type === 'POWER_FAILURE' ? '⚡' : p.type === 'FLOOD_TRAP' ? '🌊' : '🚑'}</span>
+                              <span>{p.categoryName}</span>
+                            </span>
+                          </td>
+                          <td className="py-2.5 px-3 text-[#0369a1] text-[11px] whitespace-nowrap">
+                            📍 {p.address || `${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}`}
+                          </td>
+                          <td className="py-2.5 px-3 text-[#6B6F6B] text-[11px] font-sans max-w-xs truncate">
+                            {p.notes || 'No extra notes provided'}
+                          </td>
+                          <td className="py-2.5 px-3 text-center">
+                            <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                              isPending
+                                ? 'bg-[#FFF1F2] text-[#be123c] border border-[#FECDD3] animate-pulse'
+                                : 'bg-[#E8F5EF] text-[#0f766e] border border-[#A7F3D0]'
+                            }`}>
+                              {p.status}
+                            </span>
+                          </td>
+                          <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                            {isPending ? (
+                              <button
+                                onClick={() => handleDispatchRescueTeam(p.id)}
+                                disabled={isDispatchingRescue}
+                                className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-2.5 py-1 rounded-lg font-bold text-[10.5px] shadow-xs cursor-pointer inline-flex items-center gap-1"
+                              >
+                                <Siren className="w-3 h-3" />
+                                <span>Dispatch EMS-04</span>
+                              </button>
+                            ) : (
+                              <span className="text-[10px] text-emerald-700 font-bold">
+                                ✓ Unit: {p.assignedUnit || 'Medic-04'} (ETA {p.etaMinutes || 5}m)
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan={6} className="py-4 text-center text-[#6B6F6B] text-xs">
+                        No active citizen distress beacons reported. Network nominal.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
 

@@ -7,6 +7,8 @@ import { LiveZoneTelemetry } from '@/lib/liveWeatherService';
 import { Locate, Layers, Globe, Mountain, Flame, Radio, Moon, ShieldAlert } from 'lucide-react';
 import { SatelliteViewType } from './USClimateMap';
 
+import { CitizenPing } from '@/app/api/citizen-sync/route';
+
 interface MapProps {
   zones: LiveZoneTelemetry[];
   selectedZoneId: string | null;
@@ -15,6 +17,8 @@ interface MapProps {
   generatorsDeployed?: number;
   paramedicSurgeDeployed?: number;
   simulatedScore?: number | null;
+  sosPings?: CitizenPing[];
+  onDispatchRescue?: (pingId: string) => void;
 }
 
 const mapTileConfigs: Record<SatelliteViewType, {
@@ -106,7 +110,9 @@ export default function Map({
   coolingBusesDeployed = 0,
   generatorsDeployed = 0,
   paramedicSurgeDeployed = 0,
-  simulatedScore = null
+  simulatedScore = null,
+  sosPings = [],
+  onDispatchRescue
 }: MapProps) {
   const defaultCenter: [number, number] = [38.50, -96.50];
   const selectedZone = zones.find(z => z.id === selectedZoneId) || zones[0];
@@ -429,6 +435,62 @@ export default function Map({
             </Popup>
           </CircleMarker>
         )}
+
+        {/* Live Citizen SOS Distress Beacons */}
+        {sosPings && sosPings.filter(p => p.type !== 'SAFE' && p.status !== 'RESOLVED').map((p) => {
+          const isDispatched = p.status === 'DISPATCHED';
+          return (
+            <CircleMarker
+              key={p.id}
+              center={[p.lat, p.lng]}
+              radius={14}
+              pathOptions={{
+                color: isDispatched ? '#059669' : '#dc2626',
+                weight: 3,
+                fillColor: isDispatched ? '#10b981' : '#ef4444',
+                fillOpacity: 0.95,
+              }}
+            >
+              <Popup autoPan={true} closeButton={false}>
+                <div className="p-3 min-w-[240px] bg-[#0e1626] text-slate-100 rounded-2xl border border-rose-500/80 font-mono text-xs shadow-2xl space-y-2">
+                  <div className="flex items-center justify-between border-b border-rose-500/40 pb-1.5">
+                    <span className="font-bold text-rose-400 text-xs flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping inline-block" />
+                      <span>🚨 CITIZEN SOS BEACON</span>
+                    </span>
+                    <span className={`text-[8.5px] px-1.5 py-0.2 rounded font-bold ${isDispatched ? 'bg-emerald-900 text-emerald-300' : 'bg-rose-900 text-rose-200'}`}>
+                      {p.status}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1 text-[10.5px]">
+                    <div><strong>Category:</strong> <span className="text-rose-300">{p.categoryName}</span></div>
+                    <div><strong>Location:</strong> <span className="text-slate-300">{p.address || `${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}`}</span></div>
+                    {p.notes && (
+                      <div className="p-1.5 bg-slate-900/90 rounded-lg text-[9.5px] text-slate-300 border border-slate-800">
+                        &quot;{p.notes}&quot;
+                      </div>
+                    )}
+                    <div className="text-[9px] text-slate-400">Timestamp: {p.timeFormatted}</div>
+                  </div>
+
+                  {isDispatched ? (
+                    <div className="p-1.5 bg-emerald-950/80 border border-emerald-500/40 rounded-lg text-[10px] text-emerald-300 font-bold">
+                      🚑 Unit: {p.assignedUnit} (ETA {p.etaMinutes || 5} min)
+                    </div>
+                  ) : onDispatchRescue ? (
+                    <button
+                      onClick={() => onDispatchRescue(p.id)}
+                      className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white py-1.5 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <span>🚨 Dispatch Rescue Team (EMS-04)</span>
+                    </button>
+                  ) : null}
+                </div>
+              </Popup>
+            </CircleMarker>
+          );
+        })}
 
         {/* 2. NEIGHBORHOOD MUNICIPAL ZONE SENSOR HUBS */}
         {zones.map((zone) => {
