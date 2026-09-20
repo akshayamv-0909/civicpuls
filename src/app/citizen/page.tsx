@@ -176,11 +176,10 @@ export default function CitizenLifelinePage() {
   // Officer Triage Live Feed
   const [allRecentPings, setAllRecentPings] = useState<CitizenPing[]>([]);
 
-  // Family Safety Status
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([
-    { name: 'Me (Aarav)', relation: 'Self', status: 'SAFE', location: 'Sector 4 Lowland Basin', battery: '88%', lastUpdated: 'Just now' },
-    { name: 'Father (Ramesh)', relation: 'Father', status: 'AT_SHELTER', location: 'Elevated Ridge Camp', battery: '64%', lastUpdated: '12 min ago' },
-    { name: 'Sister (Priya)', relation: 'Sister', status: 'SAFE', location: 'High Ridge Block', battery: '92%', lastUpdated: '25 min ago' }
+    { name: 'Me (Alex)', relation: 'Self', status: 'SAFE', location: 'Downtown Central District', battery: '88%', lastUpdated: 'Just now' },
+    { name: 'Father (David)', relation: 'Father', status: 'AT_SHELTER', location: 'Burton Barr Cooling Oasis', battery: '64%', lastUpdated: '12 min ago' },
+    { name: 'Sister (Sarah)', relation: 'Sister', status: 'SAFE', location: 'North Desert Foothills', battery: '92%', lastUpdated: '25 min ago' }
   ]);
 
   // -------------------------------------------------------------
@@ -542,7 +541,7 @@ export default function CitizenLifelinePage() {
         body: JSON.stringify({
           action: 'DISPATCH_RESCUE',
           pingId,
-          assignedUnit: 'NDRF Motor Boat #4 / EMS-04',
+          assignedUnit: 'Phoenix Fire Rescue Unit #04 / EMS Medic-04',
           etaMinutes: 4
         })
       });
@@ -621,9 +620,9 @@ export default function CitizenLifelinePage() {
               <div>
                 <div className="flex items-center space-x-1.5">
                   <span className="font-black text-sm tracking-tight text-white">CivicPulse</span>
-                  <span className="text-[8px] bg-orange-500 text-white font-bold px-1.5 py-0.2 rounded uppercase">MoES / NDMA</span>
+                  <span className="text-[8px] bg-blue-600 text-white font-bold px-1.5 py-0.2 rounded uppercase">NOAA / FEMA</span>
                 </div>
-                <p className="text-[8.5px] text-blue-200 font-medium">National Disaster & Climate Early Warning</p>
+                <p className="text-[8.5px] text-blue-200 font-medium">National NOAA & FEMA Multi-Hazard Early Warning</p>
               </div>
             </div>
 
@@ -1084,12 +1083,12 @@ export default function CitizenLifelinePage() {
                       🛰️
                     </div>
                     <div>
-                      <div className="font-bold text-xs">ISRO NavIC Satellite-Direct</div>
-                      <div className="text-[9px] text-blue-200 font-mono">Zero-Telecom Messaging & Celestial Polar Skyplot</div>
+                      <div className="font-bold text-xs">NOAA GOES-R / NASA Direct</div>
+                      <div className="text-[9px] text-blue-200 font-mono">Direct L-Band Emergency Telemetry & Downlink (1694.1 MHz)</div>
                     </div>
                   </div>
                   <span className="text-[9px] bg-blue-800/90 text-blue-200 px-2 py-0.5 rounded font-mono font-bold shrink-0">
-                    2492 MHz
+                    1694 MHz
                   </span>
                 </button>
 
@@ -1129,8 +1128,8 @@ export default function CitizenLifelinePage() {
                       <Waves className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="font-bold text-slate-900 text-[11px]">River Telemetry</div>
-                      <div className="text-[8.5px] text-slate-500">CWC Water Sensors</div>
+                      <div className="font-bold text-slate-900 text-[11px]">USGS Hydro Telemetry</div>
+                      <div className="text-[8.5px] text-slate-500">NWIS Water Sensors</div>
                     </div>
                   </button>
 
@@ -1143,7 +1142,7 @@ export default function CitizenLifelinePage() {
                     </div>
                     <div>
                       <div className="font-bold text-slate-900 text-[11px]">Relief Kit QR Auth</div>
-                      <div className="text-[8.5px] text-slate-500">Anti-Hoarding</div>
+                      <div className="text-[8.5px] text-slate-500">Offline Validated</div>
                     </div>
                   </button>
                 </div>
@@ -1155,15 +1154,15 @@ export default function CitizenLifelinePage() {
                       <PhoneCall className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="font-bold text-xs text-slate-900">National Disaster Helpline</div>
-                      <div className="text-[9px] text-slate-600 font-mono">NDRF: <b>1078</b> &bull; Emergency: <b>112</b></div>
+                      <div className="font-bold text-xs text-slate-900">National Emergency & Disaster Helpline</div>
+                      <div className="text-[9px] text-slate-600 font-mono">Emergency: <b>911</b> &bull; FEMA Hotline: <b>1-800-621-3362</b></div>
                     </div>
                   </div>
                   <a
-                    href="tel:1078"
-                    className="px-3 py-1.5 bg-blue-900 hover:bg-blue-950 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer"
+                    href="tel:911"
+                    className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer"
                   >
-                    Call 1078
+                    Call 911
                   </a>
                 </div>
               </div>
@@ -1478,8 +1477,8 @@ export default function CitizenLifelinePage() {
                       {isOfficerMode ? '👮' : '👤'}
                     </div>
                     <div>
-                      <h3 className="text-xs font-black text-slate-900">{isOfficerMode ? 'Commander Vikram Rathore' : 'Aarav Sharma'}</h3>
-                      <p className="text-[9.5px] text-slate-500">{isOfficerMode ? '10th NDRF Battalion • Joint Director' : 'Citizen ID: CIVICPULSE-IN-9842 • Sector 4'}</p>
+                      <h3 className="text-xs font-black text-slate-900">{isOfficerMode ? 'Battalion Chief Marcus Vance' : 'Alex Morgan'}</h3>
+                      <p className="text-[9.5px] text-slate-500">{isOfficerMode ? 'Phoenix Fire Rescue & FEMA Task Force 1' : 'Citizen ID: CIVICPULSE-US-8492 • Maricopa County, AZ'}</p>
                     </div>
                   </div>
                   <button
@@ -1530,7 +1529,7 @@ export default function CitizenLifelinePage() {
                               className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer flex items-center justify-center gap-1"
                             >
                               <Siren className="w-3.5 h-3.5" />
-                              <span>Dispatch Motor Boat #4 (EMS-04)</span>
+                              <span>Dispatch Phoenix Fire Unit (EMS-04)</span>
                             </button>
                           )}
                         </div>
@@ -1595,7 +1594,7 @@ export default function CitizenLifelinePage() {
                   <div className="space-y-2 text-xs">
                     <div className="flex items-center gap-2 text-emerald-700 font-bold">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span>1. Transmitted to NDRF & City EOC</span>
+                      <span>1. Transmitted to FEMA IPAWS & Municipal EOC</span>
                       <span className="text-[9px] text-slate-500 ml-auto">{activeSOSBeacon.timeFormatted}</span>
                     </div>
 
@@ -1607,7 +1606,7 @@ export default function CitizenLifelinePage() {
                       ) : (
                         <Radio className="w-4 h-4 text-amber-600 animate-spin" />
                       )}
-                      <span>2. NDRF Command Room Locked</span>
+                      <span>2. Municipal 911 Command Desk Locked</span>
                       <span className="text-[9px] text-slate-500 ml-auto">GPS Verified</span>
                     </div>
 
@@ -1668,7 +1667,7 @@ export default function CitizenLifelinePage() {
                       SOS Distress Beacon
                     </h2>
                     <p className="text-[11px] text-slate-500 font-sans">
-                      Tap below to transmit an immediate high-priority signal and GPS coordinates to NDRF and City EOC command desks.
+                      Tap below to transmit an immediate high-priority signal and GPS coordinates to Municipal 911 & FEMA EOC command desks.
                     </p>
                   </div>
 
@@ -1901,8 +1900,8 @@ export default function CitizenLifelinePage() {
                   <span className="text-[8px] text-slate-500 block">Conv: 14.2 × 10⁻⁵</span>
                 </div>
                 <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                  <span className="text-[8.5px] font-bold text-slate-500 uppercase block">⛰️ Topography: CartoDEM</span>
-                  <span className="text-xs font-black text-emerald-900">28.4° Funnel</span>
+                  <span className="text-[8.5px] font-bold text-slate-500 uppercase block">⛰️ Topography: USGS 3DEP LiDAR</span>
+                  <span className="text-xs font-black text-emerald-900">28.4° Slope</span>
                   <span className="text-[8px] text-slate-500 block">Soil Sat: 86%</span>
                 </div>
               </div>
@@ -1930,8 +1929,8 @@ export default function CitizenLifelinePage() {
                   🛰️
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-slate-900">ISRO NavIC Satellite-Direct EWMS</h3>
-                  <p className="text-[10px] text-slate-500 font-mono">Zero-Telecom Messaging & Celestial Polar Skyplot</p>
+                  <h3 className="text-sm font-black text-slate-900">NOAA GOES-16/18 Direct Downlink EWMS</h3>
+                  <p className="text-[10px] text-slate-500 font-mono">Direct L-Band Emergency Telemetry & HRIT/EMWIN Broadcast</p>
                 </div>
               </div>
               <button onClick={() => setIsSatelliteModalOpen(false)} className="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-sm font-bold cursor-pointer">
@@ -1941,14 +1940,14 @@ export default function CitizenLifelinePage() {
 
             <div className="p-3 bg-slate-900 text-emerald-400 rounded-2xl font-mono text-[10px] space-y-1">
               <div className="text-slate-400 text-[8.5px] flex justify-between">
-                <span>RAW S-BAND EWMS PACKET:</span>
+                <span>RAW L-BAND EMWIN PACKET:</span>
                 <span className="text-emerald-300">CRC-16 OK (0x9B4F)</span>
               </div>
               <div className="tracking-widest">
                 55 AA 04 1E 08 4E 1A 9B 4F 82 11 F0 38 29
               </div>
               <div className="text-[9px] text-slate-300">
-                Payload: Flash Flood Surge Alert &bull; Frequency: 2492.028 MHz
+                Payload: NOAA Multi-Hazard Emergency Alert &bull; Frequency: 1694.1 MHz HRIT
               </div>
             </div>
 
@@ -1996,7 +1995,7 @@ export default function CitizenLifelinePage() {
               </div>
 
               <div className="text-[11px] text-slate-700">
-                Show this pass to any transit officer for zero-fare boarding to verified high ridge cooling shelters.
+                Show this pass to any transit operator for zero-fare boarding to verified emergency cooling centers.
               </div>
             </div>
 
@@ -2023,7 +2022,7 @@ export default function CitizenLifelinePage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">BLE Mesh Zero-Signal Relay</h3>
-                  <p className="text-[9px] text-slate-500">Device-to-Device Multi-Hop Hop Network</p>
+                  <p className="text-[9px] text-slate-500">Device-to-Device Multi-Hop Network</p>
                 </div>
               </div>
               <button onClick={() => setIsBleMeshModalOpen(false)} className="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-sm font-bold cursor-pointer">
@@ -2052,7 +2051,7 @@ export default function CitizenLifelinePage() {
       )}
 
       {/* ========================================================================= */}
-      {/* 🌊 POPUP MODAL: RIVER / CWC WATER TELEMETRY                                */}
+      {/* 🌊 POPUP MODAL: USGS HYDROLOGICAL TELEMETRY                                */}
       {/* ========================================================================= */}
       {isRiverModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
@@ -2063,8 +2062,8 @@ export default function CitizenLifelinePage() {
                   🌊
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Hydrological River Telemetry</h3>
-                  <p className="text-[9px] text-slate-500">CWC Automated Acoustic Doppler Gauges</p>
+                  <h3 className="text-sm font-bold text-slate-900">USGS Streamflow & River Gauges</h3>
+                  <p className="text-[9px] text-slate-500">USGS National Water Information System (NWIS)</p>
                 </div>
               </div>
               <button onClick={() => setIsRiverModalOpen(false)} className="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-sm font-bold cursor-pointer">

@@ -1536,7 +1536,7 @@ export default function Dashboard() {
                 <Siren className="w-4 h-4" />
                 <span>NATIONAL INCIDENT MANAGEMENT: NOAA NWS ACTIVE FEED</span>
               </span>
-              <span className="text-[#6B6F6B] hidden md:inline">| FEMA-NDRF Incident Command System Connected</span>
+              <span className="text-[#6B6F6B] hidden md:inline">| FEMA NIMS Incident Command System Connected</span>
             </div>
             
             <div className="flex items-center gap-3">
@@ -1742,7 +1742,7 @@ export default function Dashboard() {
               <div className="border-b border-[#EEE8DC] pb-2">
                 <h3 className="text-sm font-bold text-[#263238] flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-[#0f766e]" />
-                  <span>NDRF Emergency Resource Allocation</span>
+                  <span>FEMA Emergency Resource Allocation</span>
                 </h3>
                 <p className="text-[10px] text-[#6B6F6B]">Deployed vs. Reserve federal & municipal response units</p>
               </div>
@@ -1750,7 +1750,7 @@ export default function Dashboard() {
               <div className="space-y-3 pt-1 text-xs">
                 <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#DDD5C7] space-y-1.5">
                   <div className="flex justify-between">
-                    <span className="text-[#263238] font-semibold">NDRF Response Teams</span>
+                    <span className="text-[#263238] font-semibold">FEMA Urban Search & Rescue Teams</span>
                     <span className="text-[#0f766e] font-bold">48 / 60 Active</span>
                   </div>
                   <div className="h-1.5 w-full bg-[#EEE8DC] rounded-full overflow-hidden">

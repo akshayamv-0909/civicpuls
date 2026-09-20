@@ -17,7 +17,7 @@ export type ClimateHazardType =
 
 export type EmergencyRiskTier = 'LOW' | 'MODERATE' | 'HIGH' | 'VERY HIGH' | 'EXTREME';
 
-export interface NDRFAlert {
+export interface FEMAAlert {
   id: string;
   stateCode: string;
   stateName: string;
@@ -28,6 +28,8 @@ export interface NDRFAlert {
   timestamp: string;
   source: string;
 }
+
+export type NDRFAlert = FEMAAlert; // Backward compatibility alias
 
 export function getRiskTier(score: number | null): EmergencyRiskTier {
   if (score === null) return 'LOW';
