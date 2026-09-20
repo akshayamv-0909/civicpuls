@@ -293,24 +293,30 @@ export default function Dashboard() {
   }, [liveStates, selectedStateId]);
 
   // Tactical Emergency Operations Calculations
-  const liveTempF = baseSelectedZone?.temperatureF ?? 98.4;
+  const liveTempF = baseSelectedZone?.temperatureF ?? 75.0;
   const isTacticalActive = tacticalPlan.coolingBuses > 0 || tacticalPlan.gridGenerators > 0 || tacticalPlan.paramedicSurge > 0 || tacticalPlan.weaBroadcastSent;
 
   const baselineGridStress = useMemo(() => {
-    return Math.min(98, Math.max(50, Math.round(72 + (liveTempF - 85) * 1.3)));
+    if (liveTempF < 75) {
+      return Math.round(20 + Math.max(0, liveTempF - 50) * 0.4);
+    }
+    return Math.min(98, Math.max(30, Math.round(30 + (liveTempF - 75) * 2.2)));
   }, [liveTempF]);
 
   const simulatedGridStress = useMemo(() => {
-    return Math.max(30, baselineGridStress - tacticalPlan.gridGenerators * 7.5);
+    return Math.max(20, baselineGridStress - tacticalPlan.gridGenerators * 7.5);
   }, [baselineGridStress, tacticalPlan.gridGenerators]);
 
   const baselineHospitalIcu = useMemo(() => {
-    const elderly = baseSelectedZone?.elderlyPopulationPct ?? 24;
-    return Math.min(98, Math.max(45, Math.round(68 + (liveTempF - 85) * 1.4 + elderly * 0.4)));
+    const elderly = baseSelectedZone?.elderlyPopulationPct ?? 18;
+    if (liveTempF < 75) {
+      return Math.round(18 + elderly * 0.3);
+    }
+    return Math.min(98, Math.max(25, Math.round(25 + (liveTempF - 75) * 2.1 + elderly * 0.4)));
   }, [liveTempF, baseSelectedZone]);
 
   const simulatedHospitalIcu = useMemo(() => {
-    return Math.max(25, Math.round(baselineHospitalIcu - tacticalPlan.paramedicSurge * 4.8 - tacticalPlan.coolingBuses * 2.2));
+    return Math.max(18, Math.round(baselineHospitalIcu - tacticalPlan.paramedicSurge * 4.8 - tacticalPlan.coolingBuses * 2.2));
   }, [baselineHospitalIcu, tacticalPlan.paramedicSurge, tacticalPlan.coolingBuses]);
 
   const shelterWalkingCoverage = useMemo(() => {
@@ -323,7 +329,7 @@ export default function Dashboard() {
     return Math.round((liveTempF - drop) * 10) / 10;
   }, [liveTempF, tacticalPlan.coolingBuses]);
 
-  const currentHeatRiskScore = baseSelectedZone?.liveRiskScore ?? 76;
+  const currentHeatRiskScore = baseSelectedZone?.liveRiskScore ?? 50;
   const simulatedHeatRiskScore = useMemo(() => {
     if (!isTacticalActive) return currentHeatRiskScore;
     const drop = Math.round(
@@ -878,7 +884,9 @@ export default function Dashboard() {
                         <span className="text-[8px] text-[#0f766e] font-bold">{baseSelectedZone.isDaytime ? '☀️ Solar Peak' : '🌙 Night Low'}</span>
                       </div>
                       <strong className="text-sm text-[#263238]">
-                        {`${(baseSelectedZone.temperatureF ?? 98.4).toFixed(1)}°F (${(baseSelectedZone.temperatureC ?? 36.9).toFixed(1)}°C)`}
+                        {baseSelectedZone.temperatureF !== null
+                          ? `${baseSelectedZone.temperatureF.toFixed(1)}°F (${((baseSelectedZone.temperatureF - 32) * 5 / 9).toFixed(1)}°C)`
+                          : 'Live Feed'}
                       </strong>
                       {isTacticalActive && simulatedTempF !== null && (
                         <div className="text-[9px] text-[#0f766e] font-bold mt-0.5">
