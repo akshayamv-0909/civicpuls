@@ -2653,17 +2653,17 @@ export default function CitizenLifelinePage() {
                         <div>
                           <div className="text-xs font-black uppercase tracking-tight flex items-center gap-1.5 font-mono">
                             <span>880Hz Acoustic Search Beacon</span>
-                            {acousticActive && <span className="text-[8px] bg-white text-[#0f766e] px-1.5 py-0.2 rounded-full font-black font-mono">PULSING</span>}
+                            {acousticActive && <span className="text-[8px] bg-white text-[#0f766e] px-1.5 py-0.2 rounded-full font-black font-mono animate-pulse">PULSING</span>}
                           </div>
                           <p className={`text-[9.5px] font-sans font-normal leading-tight mt-0.5 ${acousticActive ? 'text-white/90' : 'text-[#5A4D49]'}`}>
-                            {acousticActive ? 'Transmitting 880Hz audio pings for rescue teams & K9 units' : 'Tap to emit loud 880Hz audio pings for rescue search teams'}
+                            {acousticActive ? 'Emitting 880Hz/440Hz audio pings for FEMA Search & Rescue (SAR) & K9 units' : 'Tap to emit loud 880Hz acoustic chirps to guide nearby rescue teams'}
                           </p>
                         </div>
                       </div>
                       <span className={`text-[10px] font-mono font-bold px-2.5 py-1.5 rounded-xl shrink-0 ${
                         acousticActive ? 'bg-white text-[#0f766e]' : 'bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40'
                       }`}>
-                        {acousticActive ? 'STOP SONAR' : 'START SONAR'}
+                        {acousticActive ? 'STOP BEACON' : 'START BEACON'}
                       </span>
                     </button>
 
@@ -2751,17 +2751,17 @@ export default function CitizenLifelinePage() {
                       <div>
                         <div className="text-xs font-black uppercase tracking-tight flex items-center gap-1 font-mono">
                           <span>880Hz Acoustic Search Beacon</span>
-                          {acousticActive && <span className="text-[8px] bg-white text-[#0f766e] px-1.5 py-0.2 rounded-full font-black">ACTIVE</span>}
+                          {acousticActive && <span className="text-[8px] bg-white text-[#0f766e] px-1.5 py-0.2 rounded-full font-black animate-pulse">ACTIVE</span>}
                         </div>
                         <p className={`text-[9.5px] font-sans font-normal leading-tight mt-0.5 ${acousticActive ? 'text-white/90' : 'text-[#5A4D49]'}`}>
-                          {acousticActive ? 'Transmitting 880Hz audio pulses for K9 & SAR units' : 'Standalone emergency audio sonar for search & rescue'}
+                          {acousticActive ? 'Transmitting 880Hz audio pulses for K9 & SAR units' : 'Emit high-pitch acoustic pulses to guide rescue teams to your location'}
                         </p>
                       </div>
                     </div>
                     <span className={`text-[10px] font-mono font-bold px-2.5 py-1.5 rounded-xl shrink-0 ${
                       acousticActive ? 'bg-white text-[#0f766e]' : 'bg-[#E8F5EF] text-[#0f766e] border border-[#0d9488]/40'
                     }`}>
-                      {acousticActive ? 'STOP' : 'ACTIVATE'}
+                      {acousticActive ? 'STOP BEACON' : 'ACTIVATE BEACON'}
                     </span>
                   </button>
 
