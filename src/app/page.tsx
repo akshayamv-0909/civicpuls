@@ -754,11 +754,18 @@ export default function Dashboard() {
                   onChange={(e) => setSelectedZoneId(e.target.value)}
                   className="bg-[#FFFDF8] text-[#0f766e] border border-[#DDD5C7] hover:border-[#0d9488] focus:border-[#0d9488] text-xs font-mono font-bold pl-3 pr-7 py-1 rounded-xl outline-none shadow-sm cursor-pointer transition-all appearance-none max-w-[260px] sm:max-w-[320px] md:max-w-[380px] truncate"
                 >
-                  {liveZones.map((z) => (
-                    <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans">
-                      📍 {z.name} — {z.metro} ({(z.temperatureF !== null ? z.temperatureF.toFixed(1) : '84.4')}°F | Risk: {z.liveRiskScore ?? 74}/100)
-                    </option>
-                  ))}
+                  {[...liveZones]
+                    .sort((a, b) => (b.liveRiskScore ?? 0) - (a.liveRiskScore ?? 0))
+                    .map((z) => {
+                      const tempStr = z.temperatureF !== null ? `${z.temperatureF.toFixed(1)}°F` : '';
+                      const riskStr = z.liveRiskScore !== null ? `Risk: ${z.liveRiskScore}/100` : '';
+                      const metaInfo = [tempStr, riskStr].filter(Boolean).join(' • ');
+                      return (
+                        <option key={z.id} value={z.id} className="bg-[#FFFDF8] text-[#263238] font-sans">
+                          📍 {z.name} — {z.metro} {metaInfo ? `(${metaInfo})` : ''}
+                        </option>
+                      );
+                    })}
                 </select>
                 <ChevronDown className="w-3.5 h-3.5 text-[#0d9488] absolute right-2 pointer-events-none" />
               </div>

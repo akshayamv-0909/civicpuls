@@ -609,12 +609,12 @@ export function calculateLiveZoneRiskScore(
   coolingCap: 'Low' | 'Medium' | 'High',
   treeCovPct: number
 ): number | null {
-  if (tempF === null) return null;
+  if (tempF === null || tempF === undefined) return null;
 
-  // 1. Live Thermal Stress Factor (35 pts max)
-  const tempNorm = Math.min(Math.max((tempF - 70) / 45, 0), 1);
+  // 1. Live Thermal Stress Factor (40 pts max)
+  const tempNorm = Math.min(Math.max((tempF - 55) / 50, 0), 1);
   const humidityNorm = humidityPct !== null ? humidityPct / 100 : 0.4;
-  const thermalScore = (tempNorm * 0.75 + humidityNorm * 0.25) * 35;
+  const thermalScore = (tempNorm * 0.8 + humidityNorm * 0.2) * 40;
 
   // 2. Demographic Vulnerability Factor (25 pts max - US Census ACS)
   const elderlyNorm = Math.min(elderlyPct / 30, 1);
@@ -625,25 +625,25 @@ export function calculateLiveZoneRiskScore(
   let infraMultiplier = 0.5;
   if (coolingCap === 'Low') infraMultiplier = 1.0;
   else if (coolingCap === 'Medium') infraMultiplier = 0.5;
-  else if (coolingCap === 'High') infraMultiplier = 0.1;
+  else if (coolingCap === 'High') infraMultiplier = 0.15;
   const infraScore = infraMultiplier * 20;
 
-  // 4. Canopy Deficit & Environmental Quality (20 pts max)
+  // 4. Canopy Deficit & Environmental Quality (15 pts max)
   const treeDeficit = 1 - Math.min(treeCovPct / 40, 1);
   const aqiNorm = aqi !== null ? Math.min(aqi / 200, 1) : 0.3;
-  const envScore = (treeDeficit * 0.6 + aqiNorm * 0.4) * 20;
+  const envScore = (treeDeficit * 0.6 + aqiNorm * 0.4) * 15;
 
   const total = Math.round(thermalScore + demoScore + infraScore + envScore);
-  return Math.min(100, Math.max(0, total));
+  return Math.min(100, Math.max(10, total));
 }
 
 // Resilient Baseline Zones for instant zero-latency initialization
 export const INITIAL_ZONES: LiveZoneTelemetry[] = MUNICIPAL_ZONES.map((meta, idx) => {
-  const defaultTemps = [98.4, 96.2, 99.1, 94.8, 102.3, 100.5, 92.1, 91.4, 89.6, 88.2, 89.5, 85.0, 86.4, 84.2, 85.8, 82.5, 83.1, 87.2, 86.0, 95.4, 84.1, 74.5];
+  const defaultTemps = [84.4, 83.4, 83.3, 76.7, 67.6, 65.5, 66.9, 76.5, 75.9, 76.8, 78.9, 77.3, 73.6, 75.0, 76.7, 71.7, 72.4, 71.5, 66.4, 67.5, 69.7, 70.4];
   const tempF = defaultTemps[idx % defaultTemps.length];
   const tempC = Number(((tempF - 32) * 5 / 9).toFixed(1));
-  const humidityPct = 42;
-  const aqi = 68;
+  const humidityPct = [25, 24, 26, 56, 93, 92, 86, 10, 10, 78, 77, 74, 92, 95, 87, 80, 80, 81, 98, 99, 88, 93][idx % 22];
+  const aqi = [68, 55, 62, 45, 75, 70, 48, 52, 54, 65, 72, 58, 40, 42, 38, 48, 50, 46, 35, 38, 52, 55][idx % 22];
   const liveRiskScore = calculateLiveZoneRiskScore(
     tempF,
     humidityPct,
@@ -652,18 +652,18 @@ export const INITIAL_ZONES: LiveZoneTelemetry[] = MUNICIPAL_ZONES.map((meta, idx
     meta.populationDensity,
     meta.baseCoolingCapacity,
     meta.treeCoveragePct
-  ) ?? 74;
+  ) ?? 55;
 
   return {
     ...meta,
     temperatureF: tempF,
     temperatureC: tempC,
-    apparentTempF: tempF + 3,
+    apparentTempF: tempF + 2.5,
     humidityPct,
     precipitationIn: 0.0,
-    windSpeedMph: 8.2,
+    windSpeedMph: 7.5,
     weatherCode: 0,
-    localObservationTime: 'Live Local Solar Observation',
+    localObservationTime: 'Live Local Observation',
     isDaytime: true,
     airQualityAqi: aqi,
     pm25: 14.2,
